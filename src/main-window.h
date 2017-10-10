@@ -35,6 +35,10 @@ class MainWindow : public QMainWindow
 		void aboutProgram();
 		void aboutGithub();
 		void aboutReportBug();
+		void moviePlayPause();
+		void movieDurationChanged(qint64 duration);
+		void moviePositionChanged(qint64 pos);
+		void movieSeek(int position);
 
 	protected:
 		void generateViewers();
@@ -54,6 +58,7 @@ class MainWindow : public QMainWindow
 		QStack<QPair<int, QString>> m_lastActions;
 		QStringList m_supportedImageFormats;
 		QStringList m_supportedVideoFormats;
+		bool m_noMovieSeek;
 };
 
 #endif // MAIN_WINDOW_H

@@ -55,7 +55,7 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 
 	if (type == "move")
 	{
-		QString destination = obj["destination"].toString();
+		QString destination = obj["dest"].toString();
 		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination));
 	}
 

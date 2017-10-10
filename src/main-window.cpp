@@ -6,6 +6,7 @@
 #include <QImageReader>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QTime>
 #include <QUrl>
 #include "actions/action-loader.h"
 
@@ -46,18 +47,69 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::generateViewers()
 {
-	m_label = new QLabel(this);
-	ui->stackedWidget->addWidget(m_label);
+	m_label = ui->label;
 
 	m_videoWidget = new QVideoWidget(this);
-	ui->stackedWidget->addWidget(m_videoWidget);
+	ui->layoutMovie->insertWidget(0, m_videoWidget);
 	m_mediaPlaylist = new QMediaPlaylist(this);
 	m_mediaPlaylist->setPlaybackMode(QMediaPlaylist::Loop);
 	m_mediaPlayer = new QMediaPlayer(this);
 	m_mediaPlayer->setVideoOutput(m_videoWidget);
 	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
 
+	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	connect(ui->buttonPlayPause, &QToolButton::clicked, this, &MainWindow::moviePlayPause);
+	connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &MainWindow::movieDurationChanged);
+	connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &MainWindow::moviePositionChanged);
+	connect(ui->sliderMoviePosition, &QSlider::valueChanged, this, &MainWindow::movieSeek);
+	connect(ui->sliderMovieVolume, &QSlider::valueChanged, m_mediaPlayer, &QMediaPlayer::setVolume);
+	connect(ui->spinPlaybackRate, SIGNAL(valueChanged(double)), m_mediaPlayer, SLOT(setPlaybackRate(qreal)));
+
 	ui->stackedWidget->setCurrentIndex(0);
+}
+void MainWindow::moviePlayPause()
+{
+	if (m_mediaPlayer->state() == QMediaPlayer::PlayingState)
+	{
+		m_mediaPlayer->pause();
+		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+	}
+	else
+	{
+		m_mediaPlayer->play();
+		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	}
+}
+void MainWindow::movieDurationChanged(qint64 duration)
+{
+	ui->sliderMoviePosition->setMaximum(duration / 1000);
+}
+void MainWindow::moviePositionChanged(qint64 pos)
+{
+	int position = pos / 1000;
+	int duration = m_mediaPlayer->duration() / 1000;
+
+	if (!ui->sliderMoviePosition->isSliderDown()) {
+		m_noMovieSeek = true;
+		ui->sliderMoviePosition->setValue(position);
+		m_noMovieSeek = false;
+	}
+
+	QTime currentTime((position / 3600) % 60, (position / 60) % 60, position % 60, (position * 1000) % 1000);
+	QTime totalTime((duration / 3600) % 60, (duration / 60) % 60, duration % 60, (duration * 1000) % 1000);
+	QString format = "mm:ss";
+	if (duration > 3600)
+		format = "hh:mm:ss";
+
+	QString tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
+	ui->labelMovieDuration->setText(tStr);
+}
+void MainWindow::movieSeek(int position)
+{
+	if (m_noMovieSeek)
+		return;
+
+	m_mediaPlayer->setPosition(position * 1000);
 }
 
 void MainWindow::generateButtons()
@@ -85,16 +137,34 @@ void MainWindow::executeAction(Action *action)
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
+	bool wasPlaying = m_mediaPlayer->state() == QMediaPlayer::PlayingState;
+	if (wasPlaying)
+	{
+		m_mediaPlayer->stop();
+		m_mediaPlaylist->clear();
+	}
+
 	QFile file(m_files[m_currentFile]);
-	action->execute(file);
+	if (action->execute(file))
+	{
+		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
+		m_files[m_currentFile] = file.fileName();
 
-	m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
+		if (action->terminal())
+		{
+			nextFile();
+			return;
+		}
+	}
+	else
+	{
+		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
+	}
 
-	m_files[m_currentFile] = file.fileName();
-	refreshPreview();
-
-	if (action->terminal())
-		nextFile();
+	if (wasPlaying)
+		previewFile();
+	else
+		refreshPreview();
 }
 
 void MainWindow::undo()
@@ -142,20 +212,21 @@ void MainWindow::previewFile()
 	{
 		m_label->setText("");
 		m_label->setPixmap(QPixmap(fileName));
-		ui->stackedWidget->setCurrentWidget(m_label);
+		ui->stackedWidget->setCurrentIndex(0);
 	}
 	else if (m_supportedVideoFormats.contains(ext))
 	{
 		m_mediaPlaylist->clear();
 		m_mediaPlaylist->addMedia(QUrl::fromLocalFile(fileName));
-		ui->stackedWidget->setCurrentWidget(m_videoWidget);
+		moviePositionChanged(0);
+		ui->stackedWidget->setCurrentIndex(1);
 		m_mediaPlayer->play();
 	}
 	else
 	{
 		m_label->setText(QString("Unsupported file format: '%1'").arg(ext));
 		m_label->setPixmap(QPixmap());
-		ui->stackedWidget->setCurrentWidget(m_label);
+		ui->stackedWidget->setCurrentIndex(0);
 	}
 
 	refreshPreview();
@@ -171,10 +242,11 @@ void MainWindow::refreshPreview()
 
 void MainWindow::fileOpenDirectory()
 {
-	QString path = QFileDialog::getExistingDirectory(this, tr("Open directory"));
+	QString path = QFileDialog::getExistingDirectory(this, tr("Open directory"), m_settings->value("LastDirectory", "").toString());
 	if (path.isEmpty())
 		return;
 
+	m_settings->setValue("LastDirectory", path);
 	loadFiles(QDir(path));
 	previewFile();
 }
