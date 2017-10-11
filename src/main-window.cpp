@@ -35,6 +35,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+	if (m_mediaPlayer->state() != QMediaPlayer::StoppedState)
+		m_mediaPlayer->stop();
+	m_mediaPlayer->setMedia(QMediaContent());
+	m_mediaPlaylist->clear();
+
 	delete ui;
 }
 
