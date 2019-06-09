@@ -4,6 +4,7 @@
 #include <QMediaPlaylist>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QMovie>
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QStyle>
@@ -23,9 +24,12 @@ MainWindow::MainWindow(QWidget *parent)
 	m_settings = new QSettings("settings.ini", QSettings::IniFormat, this);
 	restoreGeometry(m_settings->value("Geometry/MainWindow").toByteArray());
 
-	QList<QByteArray> formats = QImageReader::supportedImageFormats();
-	for (const QByteArray &format : formats)
+	QList<QByteArray> imageFormats = QImageReader::supportedImageFormats();
+	for (const QByteArray &format : imageFormats)
 		m_supportedImageFormats.append(QString(format).toLower());
+	QList<QByteArray> movieFormats = QMovie::supportedFormats();
+	for (const QByteArray &format : movieFormats)
+		m_supportedMovieFormats.append(QString(format).toLower());
 	m_supportedVideoFormats << "mp4" << "flv";
 
 	generateButtons();
@@ -225,12 +229,37 @@ void MainWindow::previewFile()
 		return;
 
 	QString fileName = m_files[m_currentFile];
-	QString ext = QFileInfo(fileName).suffix();
+	QString ext = QFileInfo(fileName).suffix().toLower();
 
-	if (m_supportedImageFormats.contains(ext))
+	// Clear old movies
+	if (m_label->movie() != nullptr) {
+		QMovie *movie = m_label->movie();
+		movie->stop();
+		movie->deleteLater();
+		m_label->setMovie(nullptr);
+	}
+
+	if (m_supportedMovieFormats.contains((ext)))
 	{
+		QMovie *movie = new QMovie(fileName);
+
 		m_label->setText("");
-		m_label->setPixmap(QPixmap(fileName));
+		m_label->setMovie(movie);
+
+		ui->stackedWidget->setCurrentIndex(0);
+		movie->start();
+	}
+	else if (m_supportedImageFormats.contains(ext))
+	{
+		QPixmap pixmap(fileName);
+		QSize size(m_label->width(), m_label->height());
+		if (pixmap.size().width() > m_label->width() || pixmap.size().height() > m_label->height()) {
+			pixmap = pixmap.scaled(m_label->width(), m_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		}
+
+		m_label->setText("");
+		m_label->setPixmap(pixmap);
+
 		ui->stackedWidget->setCurrentIndex(0);
 	}
 	else if (m_supportedVideoFormats.contains(ext))
@@ -238,6 +267,7 @@ void MainWindow::previewFile()
 		m_mediaPlaylist->clear();
 		m_mediaPlaylist->addMedia(QUrl::fromLocalFile(fileName));
 		moviePositionChanged(0);
+
 		ui->stackedWidget->setCurrentIndex(1);
 		m_mediaPlayer->play();
 	}
@@ -245,6 +275,7 @@ void MainWindow::previewFile()
 	{
 		m_label->setText(QString("Unsupported file format: '%1'").arg(ext));
 		m_label->setPixmap(QPixmap());
+
 		ui->stackedWidget->setCurrentIndex(0);
 	}
 

@@ -58,6 +58,7 @@ class MainWindow : public QMainWindow
 		QMediaPlaylist *m_mediaPlaylist;
 		QStack<QPair<int, QString>> m_lastActions;
 		QStringList m_supportedImageFormats;
+		QStringList m_supportedMovieFormats;
 		QStringList m_supportedVideoFormats;
 		bool m_noMovieSeek;
 };
