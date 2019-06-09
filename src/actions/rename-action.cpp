@@ -11,5 +11,8 @@ bool RenameAction::execute(QFile &file) const
 {
 	QFileInfo info(file.fileName());
 	QString newName = info.fileName().replace(m_regexp, m_replace);
+	if (newName == info.fileName()) {
+		return true;
+	}
 	return file.rename(info.dir().absolutePath() + "/" + newName);
 }
