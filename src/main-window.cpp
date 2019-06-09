@@ -6,6 +6,7 @@
 #include <QImageReader>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QStyle>
 #include <QTime>
 #include <QUrl>
 #include "actions/action-loader.h"
