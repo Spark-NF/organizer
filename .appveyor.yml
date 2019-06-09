@@ -1,0 +1,37 @@
+version: '{build}'
+
+environment:
+  APPVEYOR: 1
+
+  matrix:
+    # MSVC x86
+    - PLATFORM: amd64_x86
+      QTDIR: C:\Qt\5.10.1\msvc2015
+      MAKE: nmake
+      MAKEFILES: NMake Makefiles
+
+    # MSVC x64
+    - PLATFORM: amd64
+      QTDIR: C:\Qt\5.10.1\msvc2015_64
+      MAKE: nmake
+      MAKEFILES: NMake Makefiles
+
+    # MinGW
+    - PLATFORM: mingw
+      QTDIR: C:\Qt\5.10.1\mingw53_32
+      MAKE: mingw32-make
+      MAKEFILES: MinGW Makefiles
+
+init:
+  - git config --global core.autocrlf input
+  - if %PLATFORM%==mingw set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - if %PLATFORM%==mingw set PATH=C:\Qt\Tools\mingw492_32\bin;%PATH%
+  - set PATH=%QTDIR%\bin;%PATH%
+  - if not %PLATFORM%==mingw call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %PLATFORM%
+
+build_script:
+  - mkdir build
+  - cd build
+  - cmake .. -G "%MAKEFILES%" -DCMAKE_BUILD_TYPE=Release
+  - if not %PLATFORM%==mingw (nmake) else (mingw32-make)
+  - cd ..
