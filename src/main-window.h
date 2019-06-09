@@ -29,6 +29,7 @@ class MainWindow : public QMainWindow
 		void executeAction(Action *action);
 		void undo();
 		void generateButtons();
+		void previousFile();
 		void nextFile();
 		void fileOpenDirectory();
 		void fileSettings();

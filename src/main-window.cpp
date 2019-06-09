@@ -32,6 +32,10 @@ MainWindow::MainWindow(QWidget *parent)
 	generateViewers();
 
 	connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &MainWindow::undo);
+
+	// Go to next and previous image using arrows
+	connect(new QShortcut(QKeySequence(Qt::Key_Left), this), &QShortcut::activated, this, &MainWindow::previousFile);
+	connect(new QShortcut(QKeySequence(Qt::Key_Right), this), &QShortcut::activated, this, &MainWindow::nextFile);
 }
 
 MainWindow::~MainWindow()
@@ -184,6 +188,15 @@ void MainWindow::undo()
 	QFile::rename(m_files[m_currentFile], action.second);
 	m_files[m_currentFile] = action.second;
 
+	previewFile();
+}
+
+void MainWindow::previousFile()
+{
+	if (m_files.isEmpty())
+		return;
+
+	m_currentFile = (m_currentFile - 1 + m_files.count()) % m_files.count();
 	previewFile();
 }
 

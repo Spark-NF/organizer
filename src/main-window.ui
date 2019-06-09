@@ -132,6 +132,13 @@
     <item>
      <layout class="QHBoxLayout" name="layoutButtons">
       <item>
+       <widget class="QPushButton" name="buttonPrevious">
+        <property name="text">
+         <string>Previous</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="buttonNext">
         <property name="text">
          <string>Next</string>
@@ -148,7 +155,7 @@
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -346,6 +353,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonPrevious</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>previousFile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>528</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>350</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>nextFile()</slot>
@@ -354,5 +377,6 @@
   <slot>aboutProgram()</slot>
   <slot>aboutGithub()</slot>
   <slot>aboutReportBug()</slot>
+  <slot>previousFile()</slot>
  </slots>
 </ui>
