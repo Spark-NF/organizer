@@ -1,6 +1,6 @@
-<img src="resources/images/readme.png" align="right" />
+<p align="center"><img src="resources/images/readme.png" alt="" /></p>
 
-# Organizer
+<h1 align="center">Organizer</h1>
 
 [![GitHub release](https://img.shields.io/github/release/Spark-NF/organizer.svg)](https://github.com/Spark-NF/organizer/releases/latest)
 [![GitHub downloads](https://img.shields.io/github/downloads/Spark-NF/organizer/latest/total.svg)](https://github.com/Spark-NF/organizer/releases/latest)
@@ -8,9 +8,28 @@
 [![GitHub issues](https://img.shields.io/github/issues/Spark-NF/organizer.svg)](https://github.com/Spark-NF/organizer/issues)
 [![Project license](https://img.shields.io/github/license/Spark-NF/organizer.svg)](https://raw.githubusercontent.com/Spark-NF/organizer/develop/LICENSE)
 
+## About
 
-## Download
+### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
 
-## Languages
+### Languages
 * English
+
+### Authors
+* Nicolas Faure ([Spark-NF](https://github.com/Spark-NF))
+
+### License
+The script is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
+## Building
+Note: you need to have CMake, a C++ compiler, and the Qt libraries installed to build the project.
+
+```
+mkdir build
+cd build
+cmake ..
+make -j 8
+```
+
+You'll find the built binary in the `build/` directory, named `Organizer`.
