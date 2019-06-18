@@ -24,9 +24,18 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 endif()
 
+# Build information
+string(REGEX REPLACE "^v" "" VERSION "${VERSION}")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "[aA][mM][dD]64")
+	set(VERSION_PLATFORM "x64")
+else()
+	set(VERSION_PLATFORM "x86")
+endif()
+
 # Project settings
 project(Organizer)
-add_definitions(-DVERSION="1.0.0")
+add_definitions(-DVERSION="${VERSION}")
+add_definitions(-DVERSION_PLATFORM="${VERSION_PLATFORM}")
 add_definitions(-DPROJECT_GITHUB_URL="https://github.com/Spark-NF/organizer")
 
 # Qt libraries

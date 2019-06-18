@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	m_settings = new QSettings("settings.ini", QSettings::IniFormat, this);
 	restoreGeometry(m_settings->value("Geometry/MainWindow").toByteArray());
+	setWindowTitle(QString("Organizer (%1 - %2)").arg(VERSION, VERSION_PLATFORM));
 
 	QList<QByteArray> imageFormats = QImageReader::supportedImageFormats();
 	for (const QByteArray &format : imageFormats)
