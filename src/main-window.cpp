@@ -31,16 +31,24 @@ MainWindow::MainWindow(QWidget *parent)
 	QList<QByteArray> movieFormats = QMovie::supportedFormats();
 	for (const QByteArray &format : movieFormats)
 		m_supportedMovieFormats.append(QString(format).toLower());
-	m_supportedVideoFormats << "mp4" << "flv";
+    m_supportedVideoFormats << "mp4" << "flv";
 
-    generateButtons("actions.json");
-	generateViewers();
+    generateViewers();
 
 	connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &MainWindow::undo);
 
 	// Go to next and previous image using arrows
 	connect(new QShortcut(QKeySequence(Qt::Key_Left), this), &QShortcut::activated, this, &MainWindow::previousFile);
 	connect(new QShortcut(QKeySequence(Qt::Key_Right), this), &QShortcut::activated, this, &MainWindow::nextFile);
+
+    if (QFile::exists("actions.json")) {
+        generateButtons("actions.json");
+    } else {
+        auto answer = QMessageBox::question(this, tr("No actions found"), tr("No actions file found in the current directory. Open one?"));
+        if (answer == QMessageBox::Yes) {
+            fileOpenActions();
+        }
+    }
 }
 
 MainWindow::~MainWindow()
