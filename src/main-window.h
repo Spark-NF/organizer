@@ -28,10 +28,11 @@ class MainWindow : public QMainWindow
 	public slots:
 		void executeAction(Action *action);
 		void undo();
-		void generateButtons();
+        void generateButtons(QString file);
 		void previousFile();
 		void nextFile();
 		void fileOpenDirectory();
+        void fileOpenActions();
 		void fileSettings();
 		void aboutProgram();
 		void aboutGithub();

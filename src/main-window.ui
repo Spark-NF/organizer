@@ -155,7 +155,7 @@
      <x>0</x>
      <y>0</y>
      <width>822</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -163,6 +163,7 @@
      <string>File</string>
     </property>
     <addaction name="actionOpenDirectory"/>
+    <addaction name="actionOpenActions"/>
     <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
@@ -228,11 +229,6 @@
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionProject_website">
-   <property name="text">
-    <string>Project website</string>
-   </property>
-  </action>
   <action name="actionAboutGithub">
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
@@ -249,6 +245,11 @@
    </property>
    <property name="text">
     <string>Report an issue</string>
+   </property>
+  </action>
+  <action name="actionOpenActions">
+   <property name="text">
+    <string>Open actions file</string>
    </property>
   </action>
  </widget>
@@ -369,6 +370,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOpenActions</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>fileOpenActions()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>410</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>nextFile()</slot>
@@ -378,5 +395,6 @@
   <slot>aboutGithub()</slot>
   <slot>aboutReportBug()</slot>
   <slot>previousFile()</slot>
+  <slot>fileOpenActions()</slot>
  </slots>
 </ui>

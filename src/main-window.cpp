@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 		m_supportedMovieFormats.append(QString(format).toLower());
 	m_supportedVideoFormats << "mp4" << "flv";
 
-	generateButtons();
+    generateButtons("actions.json");
 	generateViewers();
 
 	connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &MainWindow::undo);
@@ -127,9 +127,30 @@ void MainWindow::movieSeek(int position)
 	m_mediaPlayer->setPosition(position * 1000);
 }
 
-void MainWindow::generateButtons()
+void clearLayout(QLayout *layout)
 {
-	for (const QList<Action*> &actions : ActionLoader::load("actions.json"))
+    if (layout == nullptr) {
+        return;
+    }
+
+    while (layout->count() > 0) {
+        QLayoutItem *item = layout->takeAt(0);
+        if (item->layout() != nullptr) {
+            clearLayout(item->layout());
+            item->layout()->deleteLater();
+        }
+        if (item->widget() != nullptr) {
+            item->widget()->deleteLater();
+        }
+        delete item;
+    }
+}
+
+void MainWindow::generateButtons(QString file)
+{
+    clearLayout(ui->layoutActions);
+
+    for (const QList<Action*> &actions : ActionLoader::load(file))
 	{
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
@@ -300,6 +321,14 @@ void MainWindow::fileOpenDirectory()
 	m_settings->setValue("LastDirectory", path);
 	loadFiles(QDir(path));
 	previewFile();
+}
+void MainWindow::fileOpenActions()
+{
+    QString path = QFileDialog::getOpenFileName(this, tr("Open actions file"), QString(), tr("JSON files (*.json)"));
+    if (path.isEmpty())
+        return;
+
+    generateButtons(path);
 }
 void MainWindow::fileSettings()
 {
