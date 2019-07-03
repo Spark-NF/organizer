@@ -31,9 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
 	QList<QByteArray> movieFormats = QMovie::supportedFormats();
 	for (const QByteArray &format : movieFormats)
 		m_supportedMovieFormats.append(QString(format).toLower());
-    m_supportedVideoFormats << "mp4" << "flv";
+	m_supportedVideoFormats << "mp4" << "flv";
 
-    generateViewers();
+	generateViewers();
 
 	connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &MainWindow::undo);
 
@@ -41,14 +41,14 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(new QShortcut(QKeySequence(Qt::Key_Left), this), &QShortcut::activated, this, &MainWindow::previousFile);
 	connect(new QShortcut(QKeySequence(Qt::Key_Right), this), &QShortcut::activated, this, &MainWindow::nextFile);
 
-    if (QFile::exists("actions.json")) {
-        generateButtons("actions.json");
-    } else {
-        auto answer = QMessageBox::question(this, tr("No actions found"), tr("No actions file found in the current directory. Open one?"));
-        if (answer == QMessageBox::Yes) {
-            fileOpenActions();
-        }
-    }
+	if (QFile::exists("actions.json")) {
+		generateButtons("actions.json");
+	} else {
+		auto answer = QMessageBox::question(this, tr("No actions found"), tr("No actions file found in the current directory. Open one?"));
+		if (answer == QMessageBox::Yes) {
+			fileOpenActions();
+		}
+	}
 }
 
 MainWindow::~MainWindow()
@@ -71,7 +71,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::generateViewers()
 {
 	m_label = ui->label;
-    m_movie = nullptr;
+	m_movie = nullptr;
 
 	m_videoWidget = new QVideoWidget(this);
 	ui->layoutMovie->insertWidget(0, m_videoWidget);
@@ -138,28 +138,28 @@ void MainWindow::movieSeek(int position)
 
 void clearLayout(QLayout *layout)
 {
-    if (layout == nullptr) {
-        return;
-    }
+	if (layout == nullptr) {
+		return;
+	}
 
-    while (layout->count() > 0) {
-        QLayoutItem *item = layout->takeAt(0);
-        if (item->layout() != nullptr) {
-            clearLayout(item->layout());
-            item->layout()->deleteLater();
-        }
-        if (item->widget() != nullptr) {
-            item->widget()->deleteLater();
-        }
-        delete item;
-    }
+	while (layout->count() > 0) {
+		QLayoutItem *item = layout->takeAt(0);
+		if (item->layout() != nullptr) {
+			clearLayout(item->layout());
+			item->layout()->deleteLater();
+		}
+		if (item->widget() != nullptr) {
+			item->widget()->deleteLater();
+		}
+		delete item;
+	}
 }
 
 void MainWindow::generateButtons(QString file)
 {
-    clearLayout(ui->layoutActions);
+	clearLayout(ui->layoutActions);
 
-    for (const QList<Action*> &actions : ActionLoader::load(file))
+	for (const QList<Action*> &actions : ActionLoader::load(file))
 	{
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
@@ -182,13 +182,13 @@ void MainWindow::executeAction(Action *action)
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
-    bool wasMoving = m_movie != nullptr && m_movie->state() == QMovie::Running;
-    if (wasMoving)
-    {
-        delete m_movie;
-        m_movie = nullptr;
-        m_label->setMovie(nullptr);
-    }
+	bool wasMoving = m_movie != nullptr && m_movie->state() == QMovie::Running;
+	if (wasMoving)
+	{
+		delete m_movie;
+		m_movie = nullptr;
+		m_label->setMovie(nullptr);
+	}
 
 	bool wasPlaying = m_mediaPlayer->state() == QMediaPlayer::PlayingState;
 	if (wasPlaying)
@@ -214,7 +214,7 @@ void MainWindow::executeAction(Action *action)
 		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 	}
 
-    if (wasMoving || wasPlaying)
+	if (wasMoving || wasPlaying)
 		previewFile();
 	else
 		refreshPreview();
@@ -270,23 +270,23 @@ void MainWindow::previewFile()
 	QString fileName = m_files[m_currentFile];
 	QString ext = QFileInfo(fileName).suffix().toLower();
 
-    // Clear old movies
-    if (m_movie != nullptr)
-    {
-        delete m_movie;
-        m_movie = nullptr;
-        m_label->setMovie(nullptr);
-    }
+	// Clear old movies
+	if (m_movie != nullptr)
+	{
+		delete m_movie;
+		m_movie = nullptr;
+		m_label->setMovie(nullptr);
+	}
 
 	if (m_supportedMovieFormats.contains((ext)))
-    {
-        m_movie = new QMovie(fileName);
+	{
+		m_movie = new QMovie(fileName);
 
 		m_label->setText("");
-        m_label->setMovie(m_movie);
+		m_label->setMovie(m_movie);
 
-        ui->stackedWidget->setCurrentIndex(0);
-        m_movie->start();
+		ui->stackedWidget->setCurrentIndex(0);
+		m_movie->start();
 	}
 	else if (m_supportedImageFormats.contains(ext))
 	{
@@ -341,11 +341,11 @@ void MainWindow::fileOpenDirectory()
 }
 void MainWindow::fileOpenActions()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open actions file"), QString(), tr("JSON files (*.json)"));
-    if (path.isEmpty())
-        return;
+	QString path = QFileDialog::getOpenFileName(this, tr("Open actions file"), QString(), tr("JSON files (*.json)"));
+	if (path.isEmpty())
+		return;
 
-    generateButtons(path);
+	generateButtons(path);
 }
 void MainWindow::fileSettings()
 {

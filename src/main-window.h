@@ -28,11 +28,11 @@ class MainWindow : public QMainWindow
 	public slots:
 		void executeAction(Action *action);
 		void undo();
-        void generateButtons(QString file);
+		void generateButtons(QString file);
 		void previousFile();
 		void nextFile();
 		void fileOpenDirectory();
-        void fileOpenActions();
+		void fileOpenActions();
 		void fileSettings();
 		void aboutProgram();
 		void aboutGithub();
@@ -53,8 +53,8 @@ class MainWindow : public QMainWindow
 		QSettings *m_settings;
 		QStringList m_files;
 		int m_currentFile;
-        QLabel *m_label;
-        QMovie *m_movie;
+		QLabel *m_label;
+		QMovie *m_movie;
 		QVideoWidget *m_videoWidget;
 		QMediaPlayer *m_mediaPlayer;
 		QMediaPlaylist *m_mediaPlaylist;
