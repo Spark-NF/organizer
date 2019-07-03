@@ -53,7 +53,8 @@ class MainWindow : public QMainWindow
 		QSettings *m_settings;
 		QStringList m_files;
 		int m_currentFile;
-		QLabel *m_label;
+        QLabel *m_label;
+        QMovie *m_movie;
 		QVideoWidget *m_videoWidget;
 		QMediaPlayer *m_mediaPlayer;
 		QMediaPlaylist *m_mediaPlaylist;

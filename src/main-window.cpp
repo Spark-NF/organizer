@@ -71,6 +71,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::generateViewers()
 {
 	m_label = ui->label;
+    m_movie = nullptr;
 
 	m_videoWidget = new QVideoWidget(this);
 	ui->layoutMovie->insertWidget(0, m_videoWidget);
@@ -181,6 +182,14 @@ void MainWindow::executeAction(Action *action)
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
+    bool wasMoving = m_movie != nullptr && m_movie->state() == QMovie::Running;
+    if (wasMoving)
+    {
+        delete m_movie;
+        m_movie = nullptr;
+        m_label->setMovie(nullptr);
+    }
+
 	bool wasPlaying = m_mediaPlayer->state() == QMediaPlayer::PlayingState;
 	if (wasPlaying)
 	{
@@ -205,7 +214,7 @@ void MainWindow::executeAction(Action *action)
 		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 	}
 
-	if (wasPlaying)
+    if (wasMoving || wasPlaying)
 		previewFile();
 	else
 		refreshPreview();
@@ -261,23 +270,23 @@ void MainWindow::previewFile()
 	QString fileName = m_files[m_currentFile];
 	QString ext = QFileInfo(fileName).suffix().toLower();
 
-	// Clear old movies
-	if (m_label->movie() != nullptr) {
-		QMovie *movie = m_label->movie();
-		movie->stop();
-		movie->deleteLater();
-		m_label->setMovie(nullptr);
-	}
+    // Clear old movies
+    if (m_movie != nullptr)
+    {
+        delete m_movie;
+        m_movie = nullptr;
+        m_label->setMovie(nullptr);
+    }
 
 	if (m_supportedMovieFormats.contains((ext)))
-	{
-		QMovie *movie = new QMovie(fileName);
+    {
+        m_movie = new QMovie(fileName);
 
 		m_label->setText("");
-		m_label->setMovie(movie);
+        m_label->setMovie(m_movie);
 
-		ui->stackedWidget->setCurrentIndex(0);
-		movie->start();
+        ui->stackedWidget->setCurrentIndex(0);
+        m_movie->start();
 	}
 	else if (m_supportedImageFormats.contains(ext))
 	{
