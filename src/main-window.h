@@ -37,10 +37,18 @@ class MainWindow : public QMainWindow
 		void aboutProgram();
 		void aboutGithub();
 		void aboutReportBug();
+
+		// Video controls
 		void moviePlayPause();
 		void movieDurationChanged(qint64 duration);
 		void moviePositionChanged(qint64 pos);
 		void movieSeek(int position);
+
+		// GIF controls
+		void labelPlayPause();
+		void labelPositionChanged(int frame);
+		void labelSeek(int frame);
+		void labelSetSpeed(double speed);
 
 	protected:
 		void generateViewers();

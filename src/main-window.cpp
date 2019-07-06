@@ -72,6 +72,12 @@ void MainWindow::generateViewers()
 {
 	m_label = ui->label;
 	m_movie = nullptr;
+	ui->widgetLabelControls->hide();
+
+	ui->buttonLabelPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	connect(ui->buttonLabelPlayPause, &QToolButton::clicked, this, &MainWindow::labelPlayPause);
+	connect(ui->sliderLabelPosition, &QSlider::valueChanged, this, &MainWindow::labelSeek);
+	connect(ui->spinLabelSpeed, SIGNAL(valueChanged(double)), this, SLOT(labelSetSpeed(double)));
 
 	m_videoWidget = new QVideoWidget(this);
 	ui->layoutMovie->insertWidget(0, m_videoWidget);
@@ -134,6 +140,59 @@ void MainWindow::movieSeek(int position)
 		return;
 
 	m_mediaPlayer->setPosition(position * 1000);
+}
+
+void MainWindow::labelPlayPause()
+{
+	if (m_movie == nullptr)
+		return;
+
+	if (m_movie->state() == QMovie::Running)
+	{
+		m_movie->setPaused(true);
+		ui->buttonLabelPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+	}
+	else
+	{
+		m_movie->setPaused(false);
+		ui->buttonLabelPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+	}
+}
+void MainWindow::labelPositionChanged(int frame)
+{
+	if (!ui->sliderMoviePosition->isSliderDown()) {
+		m_noMovieSeek = true;
+		ui->sliderLabelPosition->setValue(frame);
+		m_noMovieSeek = false;
+	}
+
+	QString tStr = QString::number(frame) + " / " + QString::number(m_movie->frameCount());
+	ui->labelLabelDuration->setText(tStr);
+}
+void MainWindow::labelSeek(int frame)
+{
+	if (m_movie == nullptr || m_noMovieSeek)
+		return;
+
+	// Go back to first frame first if we want to seek back
+	if (m_movie->currentFrameNumber() > frame) {
+		m_movie->stop();
+		m_movie->start();
+	}
+
+	// We need to go through each frame for seeking
+	m_movie->setPaused(true);
+	while (m_movie->currentFrameNumber() < frame) {
+		m_movie->jumpToNextFrame();
+	}
+	m_movie->setPaused(false);
+}
+void MainWindow::labelSetSpeed(double speed)
+{
+	if (m_movie == nullptr)
+		return;
+
+	m_movie->setSpeed(static_cast<int>(speed * 100));
 }
 
 void clearLayout(QLayout *layout)
@@ -282,10 +341,16 @@ void MainWindow::previewFile()
 	{
 		m_movie = new QMovie(fileName);
 
+		ui->sliderLabelPosition->setMaximum(m_movie->frameCount());
+		connect(m_movie, &QMovie::frameChanged, this, &MainWindow::labelPositionChanged);
+		labelPositionChanged(0);
+
 		m_label->setText("");
 		m_label->setMovie(m_movie);
 
+		ui->widgetLabelControls->show();
 		ui->stackedWidget->setCurrentIndex(0);
+
 		m_movie->start();
 	}
 	else if (m_supportedImageFormats.contains(ext))
@@ -299,6 +364,7 @@ void MainWindow::previewFile()
 		m_label->setText("");
 		m_label->setPixmap(pixmap);
 
+		ui->widgetLabelControls->hide();
 		ui->stackedWidget->setCurrentIndex(0);
 	}
 	else if (m_supportedVideoFormats.contains(ext))
