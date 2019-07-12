@@ -86,6 +86,7 @@ void MainWindow::generateViewers()
 	m_mediaPlayer = new QMediaPlayer(this);
 	m_mediaPlayer->setVideoOutput(m_videoWidget);
 	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
+	m_mediaPlayer->setNotifyInterval(50);
 
 	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	connect(ui->buttonPlayPause, &QToolButton::clicked, this, &MainWindow::moviePlayPause);
@@ -110,24 +111,32 @@ void MainWindow::moviePlayPause()
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	}
 }
+#define SLIDER_DIVIDER 10
 void MainWindow::movieDurationChanged(qint64 duration)
 {
-	ui->sliderMoviePosition->setMaximum(duration / 1000);
+	ui->sliderMoviePosition->setMaximum(duration / SLIDER_DIVIDER);
+	ui->sliderMoviePosition->setSingleStep(duration / (SLIDER_DIVIDER * 100)); // 1 %
+	ui->sliderMoviePosition->setPageStep(duration / (SLIDER_DIVIDER * 10)); // 10 %
 }
 void MainWindow::moviePositionChanged(qint64 pos)
 {
-	int position = pos / 1000;
-	int duration = m_mediaPlayer->duration() / 1000;
+	qint64 dur = m_mediaPlayer->duration();
+
+	int position = (pos + 10) / 1000;
+	int duration = dur / 1000;
 
 	if (!ui->sliderMoviePosition->isSliderDown()) {
 		m_noMovieSeek = true;
-		ui->sliderMoviePosition->setValue(position);
+		ui->sliderMoviePosition->setValue(pos / SLIDER_DIVIDER);
 		m_noMovieSeek = false;
 	}
 
-	QTime currentTime((position / 3600) % 60, (position / 60) % 60, position % 60, (position * 1000) % 1000);
-	QTime totalTime((duration / 3600) % 60, (duration / 60) % 60, duration % 60, (duration * 1000) % 1000);
-	QString format = "mm:ss";
+	QTime currentTime((position / 3600) % 60, (position / 60) % 60, position % 60, pos % 1000);
+	QTime totalTime((duration / 3600) % 60, (duration / 60) % 60, duration % 60, dur % 1000);
+
+	QString format = "mm:ss.zzz";
+	if (duration > 60)
+		format = "mm:ss";
 	if (duration > 3600)
 		format = "hh:mm:ss";
 
@@ -139,7 +148,7 @@ void MainWindow::movieSeek(int position)
 	if (m_noMovieSeek)
 		return;
 
-	m_mediaPlayer->setPosition(position * 1000);
+	m_mediaPlayer->setPosition(position * SLIDER_DIVIDER);
 }
 
 void MainWindow::labelPlayPause()
