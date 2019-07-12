@@ -180,7 +180,7 @@ void MainWindow::labelPositionChanged(int frame)
 }
 void MainWindow::labelSeek(int frame)
 {
-	if (m_movie == nullptr || m_noMovieSeek)
+	if (m_movie == nullptr || m_noMovieSeek || true)
 		return;
 
 	// Go back to first frame first if we want to seek back
