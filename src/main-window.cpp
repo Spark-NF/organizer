@@ -355,7 +355,8 @@ void MainWindow::previewFile()
 	if (m_supportedMovieFormats.contains((ext)))
 	{
 		m_movie = new QMovie(fileName);
-
+		m_movie->setSpeed(static_cast<int>(ui->spinLabelSpeed->value() * 100));
+		ui->sliderLabelPosition->setValue(0);
 		ui->sliderLabelPosition->setMaximum(m_movie->frameCount());
 		connect(m_movie, &QMovie::frameChanged, this, &MainWindow::labelPositionChanged);
 		labelPositionChanged(0);
