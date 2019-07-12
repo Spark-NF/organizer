@@ -11,7 +11,12 @@ int main(int argc, char *argv[])
 	app.setOrganizationName("Spark-NF");
 
 	MainWindow mainWindow;
-	mainWindow.show();
 
+	QStringList arguments = app.arguments();
+	if (arguments.count() > 1) {
+		mainWindow.openDirectory(arguments[1]);
+	}
+
+	mainWindow.show();
 	return app.exec();
 }

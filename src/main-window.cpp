@@ -236,6 +236,12 @@ void MainWindow::generateButtons(QString file)
 	}
 }
 
+void MainWindow::openDirectory(QString path)
+{
+	loadFiles(QDir(path));
+	previewFile();
+}
+
 void MainWindow::executeAction(Action *action)
 {
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
@@ -402,8 +408,7 @@ void MainWindow::fileOpenDirectory()
 		return;
 
 	m_settings->setValue("LastDirectory", path);
-	loadFiles(QDir(path));
-	previewFile();
+	openDirectory(path);
 }
 void MainWindow::fileOpenActions()
 {
