@@ -371,7 +371,15 @@ void MainWindow::previewFile()
 	}
 	else if (m_supportedImageFormats.contains(ext))
 	{
-		QPixmap pixmap(fileName);
+		#if (QT_VERSION >= QT_VERSION_CHECK(5, 5, 0))
+			QImageReader imageReader(fileName);
+			imageReader.setAutoTransform(true);
+			QImage image = imageReader.read();
+			QPixmap pixmap = QPixmap::fromImage(image);
+		#else
+			QPixmap pixmap(fileName);
+		#endif
+
 		QSize size(m_label->width(), m_label->height());
 		if (pixmap.size().width() > m_label->width() || pixmap.size().height() > m_label->height()) {
 			pixmap = pixmap.scaled(m_label->width(), m_label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
