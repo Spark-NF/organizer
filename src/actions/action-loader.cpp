@@ -56,7 +56,8 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 	if (type == "move")
 	{
 		QString destination = obj["dest"].toString();
-		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination));
+		bool create = obj["create"].toBool(true);
+		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create);
 	}
 
 	return Q_NULLPTR;

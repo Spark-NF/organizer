@@ -70,6 +70,7 @@ Example:
 #### Move
 Additional options:
 * **dest**: the destination directory, either absolute or relative to the current browsed directory
+* **create**: whether to create the destination directory if it doesn't exist (default: `true`)
 
 Example:
 ```json
