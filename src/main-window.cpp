@@ -248,6 +248,7 @@ void MainWindow::generateButtons(QString file)
 void MainWindow::openDirectory(QString path)
 {
 	loadFiles(QDir(path));
+	QDir::setCurrent(path);
 	previewFile();
 }
 

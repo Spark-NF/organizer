@@ -69,7 +69,7 @@ Example:
 
 #### Move
 Additional options:
-* **dest**: the destination directory
+* **dest**: the destination directory, either absolute or relative to the current browsed directory
 
 Example:
 ```json
