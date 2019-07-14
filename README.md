@@ -49,7 +49,7 @@ An action is a JSON object with a few common options:
 * **type**: the type of the action (either `rename` or `move`)
 * **name**: the name of the action that will be displayed on the button
 * **shortcut**: the assignated keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
-* **final**: if set to true, triggering this action will also go to the next item
+* **final**: if set to true, triggering this action will also go to the next item (default: `false`)
 
 #### Rename
 Additional options:
