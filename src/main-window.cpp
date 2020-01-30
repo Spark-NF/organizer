@@ -257,20 +257,7 @@ void MainWindow::executeAction(Action *action)
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
-	bool wasMoving = m_movie != nullptr && m_movie->state() == QMovie::Running;
-	if (wasMoving)
-	{
-		delete m_movie;
-		m_movie = nullptr;
-		m_label->setMovie(nullptr);
-	}
-
-	bool wasPlaying = m_mediaPlayer->state() == QMediaPlayer::PlayingState;
-	if (wasPlaying)
-	{
-		m_mediaPlayer->stop();
-		m_mediaPlaylist->clear();
-	}
+	bool fullPreview = beforeAction();
 
 	QFile file(m_files[m_currentFile]);
 	if (action->execute(file))
@@ -289,10 +276,7 @@ void MainWindow::executeAction(Action *action)
 		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 	}
 
-	if (wasMoving || wasPlaying)
-		previewFile();
-	else
-		refreshPreview();
+	afterAction(fullPreview);
 }
 
 void MainWindow::undo()
@@ -300,13 +284,43 @@ void MainWindow::undo()
 	if (m_lastActions.isEmpty())
 		return;
 
+	bool fullPreview = beforeAction();
+
 	auto action = m_lastActions.pop();
 	m_currentFile = action.first;
 
 	QFile::rename(m_files[m_currentFile], action.second);
 	m_files[m_currentFile] = action.second;
 
-	previewFile();
+	afterAction(fullPreview);
+}
+
+bool MainWindow::beforeAction()
+{
+	bool wasMoving = m_movie != nullptr && m_movie->state() == QMovie::Running;
+	if (wasMoving)
+	{
+		delete m_movie;
+		m_movie = nullptr;
+		m_label->setMovie(nullptr);
+	}
+
+	bool wasPlaying = m_mediaPlayer->state() == QMediaPlayer::PlayingState;
+	if (wasPlaying)
+	{
+		m_mediaPlayer->stop();
+		m_mediaPlaylist->clear();
+	}
+
+	return wasMoving || wasPlaying;
+}
+
+void MainWindow::afterAction(bool fullPreview)
+{
+	if (fullPreview)
+		previewFile();
+	else
+		refreshPreview();
 }
 
 void MainWindow::previousFile()

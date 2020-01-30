@@ -56,6 +56,8 @@ class MainWindow : public QMainWindow
 		void loadFiles(QDir dir);
 		void previewFile();
 		void refreshPreview();
+		bool beforeAction();
+		void afterAction(bool fullPreview);
 
 	private:
 		Ui::MainWindow *ui;
