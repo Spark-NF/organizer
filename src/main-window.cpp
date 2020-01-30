@@ -31,7 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 	QList<QByteArray> movieFormats = QMovie::supportedFormats();
 	for (const QByteArray &format : movieFormats)
 		m_supportedMovieFormats.append(QString(format).toLower());
-	m_supportedVideoFormats << "mp4" << "flv";
+	m_supportedVideoFormats << "mp4" << "flv" << "webm";
 
 	generateViewers();
 
