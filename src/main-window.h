@@ -16,6 +16,10 @@ namespace Ui
 	class MainWindow;
 }
 
+
+class QDragEnterEvent;
+class QDropEvent;
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -50,6 +54,10 @@ class MainWindow : public QMainWindow
 		void labelPositionChanged(int frame);
 		void labelSeek(int frame);
 		void labelSetSpeed(double speed);
+
+		// Drag & drop
+		void dragEnterEvent(QDragEnterEvent *event) override;
+		void dropEvent(QDropEvent *event) override;
 
 	protected:
 		void generateViewers();

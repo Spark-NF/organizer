@@ -1,9 +1,12 @@
 #include "main-window.h"
 #include "ui_main-window.h"
+#include <QDragEnterEvent>
+#include <QDropEvent>
 #include <QShortcut>
 #include <QMediaPlaylist>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QMimeData>
 #include <QMovie>
 #include <QDesktopServices>
 #include <QMessageBox>
@@ -464,4 +467,18 @@ void MainWindow::aboutGithub()
 void MainWindow::aboutReportBug()
 {
 	QDesktopServices::openUrl(QUrl(QString(PROJECT_GITHUB_URL) + "/issues/new"));
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasUrls()) {
+		event->acceptProposedAction();
+	}
+}
+void MainWindow::dropEvent(QDropEvent *event)
+{
+	const QUrl url = event->mimeData()->urls().first();
+	const QFileInfo fInfo = QFileInfo(url.toLocalFile());
+	const QString path = fInfo.isDir() ? fInfo.absoluteFilePath() : fInfo.absolutePath();
+	openDirectory(path);
 }
