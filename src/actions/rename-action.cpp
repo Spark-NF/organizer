@@ -16,5 +16,10 @@ bool RenameAction::execute(QFile &file) const
 	}
 
 	const QString dest = info.dir().absolutePath() + QDir::separator() + newName;
+	QDir destDir = QFileInfo(dest).dir();
+	if (!destDir.exists() && !destDir.mkpath(".")) {
+		return false;
+	}
+
 	return file.rename(dest);
 }
