@@ -4,9 +4,6 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QDir>
-#include <QLabel>
-#include <QVideoWidget>
-#include <QMediaPlayer>
 #include <QStack>
 #include "actions/action.h"
 
@@ -17,6 +14,7 @@ namespace Ui
 }
 
 
+class Player;
 class QDragEnterEvent;
 class QDropEvent;
 
@@ -43,18 +41,6 @@ class MainWindow : public QMainWindow
 		void aboutGithub();
 		void aboutReportBug();
 
-		// Video controls
-		void moviePlayPause();
-		void movieDurationChanged(qint64 duration);
-		void moviePositionChanged(qint64 pos);
-		void movieSeek(int position);
-
-		// GIF controls
-		void labelPlayPause();
-		void labelPositionChanged(int frame);
-		void labelSeek(int frame);
-		void labelSetSpeed(double speed);
-
 		// Drag & drop
 		void dragEnterEvent(QDragEnterEvent *event) override;
 		void dropEvent(QDropEvent *event) override;
@@ -72,16 +58,9 @@ class MainWindow : public QMainWindow
 		QSettings *m_settings;
 		QStringList m_files;
 		int m_currentFile;
-		QLabel *m_label;
-		QMovie *m_movie;
-		QVideoWidget *m_videoWidget;
-		QMediaPlayer *m_mediaPlayer;
-		QMediaPlaylist *m_mediaPlaylist;
 		QStack<QPair<int, QString>> m_lastActions;
-		QStringList m_supportedImageFormats;
-		QStringList m_supportedMovieFormats;
-		QStringList m_supportedVideoFormats;
-		bool m_noMovieSeek;
+		QList<Player*> m_players;
+		Player *m_activePlayer = nullptr;
 };
 
 #endif // MAIN_WINDOW_H
