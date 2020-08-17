@@ -1,7 +1,9 @@
 #include "action-loader.h"
+#include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QSet>
 #include "actions/move-action.h"
 #include "actions/rename-action.h"
 
@@ -9,6 +11,7 @@
 QList<QList<Action*>> ActionLoader::load(const QString &file)
 {
 	QList<QList<Action*>> ret;
+	QSet<QKeySequence> shortcuts;
 
 	QFile f(file);
 	if (!f.open(QFile::ReadOnly))
@@ -18,6 +21,12 @@ QList<QList<Action*>> ActionLoader::load(const QString &file)
 	f.close();
 
 	QJsonDocument loadDoc = QJsonDocument::fromJson(dta);
+	if (loadDoc.isNull())
+	{
+		qWarning() << "Invalid actions file";
+		return ret;
+	}
+
 	QJsonArray actionsGroups = loadDoc.array();
 	for (auto actionsGroup : actionsGroups)
 	{
@@ -29,7 +38,16 @@ QList<QList<Action*>> ActionLoader::load(const QString &file)
 			Action *action = loadAction(actionObj.toObject());
 			if (action != Q_NULLPTR)
 			{
-				res.append(action);
+				QKeySequence shortcut = action->shortcut();
+				if (shortcuts.contains(shortcut))
+				{
+					qWarning() << "Shortcut already in use" << shortcut;
+				}
+				else
+				{
+					shortcuts.insert(shortcut);
+					res.append(action);
+				}
 			}
 		}
 
