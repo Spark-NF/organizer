@@ -184,6 +184,7 @@ void MainWindow::previousFile()
 	if (m_files.isEmpty())
 		return;
 
+	m_activePlayer->stop();
 	m_currentFile = (m_currentFile - 1 + m_files.count()) % m_files.count();
 	previewFile();
 }
@@ -193,6 +194,7 @@ void MainWindow::nextFile()
 	if (m_files.isEmpty())
 		return;
 
+	m_activePlayer->stop();
 	m_currentFile = (m_currentFile + 1) % m_files.count();
 	previewFile();
 }
