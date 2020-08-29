@@ -52,6 +52,7 @@ void VideoPlayer::load(const QString &file)
 	m_mediaPlaylist->addMedia(QUrl::fromLocalFile(file));
 	positionChanged(0);
 
+	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
 	m_mediaPlayer->play();
 }
 
@@ -61,7 +62,7 @@ bool VideoPlayer::stop()
 		return false;
 	}
 
-	m_mediaPlayer->stop();
+	unload();
 	return true;
 }
 
