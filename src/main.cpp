@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
 	QApplication app(argc, argv);
 	app.setApplicationName("Organizer");
-	app.setApplicationDisplayName("Organizer");
+	app.setApplicationDisplayName(QString("Organizer (%1 - %2)").arg(VERSION, VERSION_PLATFORM));
 	app.setApplicationVersion(VERSION);
 	app.setOrganizationName("Spark-NF");
 

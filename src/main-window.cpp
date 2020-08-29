@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	m_settings = new QSettings("settings.ini", QSettings::IniFormat, this);
 	restoreGeometry(m_settings->value("Geometry/MainWindow").toByteArray());
-	setWindowTitle(QString("Organizer (%1 - %2)").arg(VERSION, VERSION_PLATFORM));
+	setWindowTitle(QString());
 
 	generateViewers();
 
@@ -238,7 +238,7 @@ void MainWindow::refreshPreview()
 	QString path = m_files[m_currentFile];
 	QString fileName = QFileInfo(path).fileName();
 
-	setWindowTitle(QString("%1 - %2 / %3 - Organizer").arg(fileName).arg(m_currentFile + 1).arg(m_files.count()));
+	setWindowTitle(QString("%1 - %2 / %3").arg(fileName).arg(m_currentFile + 1).arg(m_files.count()));
 }
 
 void MainWindow::fileOpenDirectory()
