@@ -11,12 +11,16 @@
 [![Project license](https://img.shields.io/github/license/Spark-NF/organizer.svg)](https://raw.githubusercontent.com/Spark-NF/organizer/develop/LICENSE)
 
 ## About
-Organizer allows to load a bunch of media files, show/play them, and allowing the user to do custom actions on them.
+Organizer allows to load a bunch of media files, show/play them, and allowing the user to do custom actions on them on the press of a button.
 
 For example, it can be used to sort a vacation's pictures and videos and put them in separate folders according to their location, the context, etc. The images/videos will be shown one by one, then the user can use shortcuts to move them quickly to separate directories.
 
 ### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
+
+### Screenshots
+
+![Main](resources/images/screenshots/main.png)
 
 ### Actions file
 You have to create a `actions.json` file to put in the same folder as the executable file.
