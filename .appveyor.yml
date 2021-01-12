@@ -64,7 +64,7 @@ deploy:
     force_update: true
     artifact: windows_setup, windows_symbols_zip
     auth_token:
-      secure: iidqLm2GI+4+noVrt0G/SGDDOPcCincYkG8tLJfYuf7y2+1BCTOhimba5LPXPk9G
+      secure: /+pPaRQzZnUo4IgyC5MCrXyHMgk3ipvP7Gd5lNBenYzHhnsQtNb/plGuIZM1iOhr
     on:
       APPVEYOR_REPO_TAG: true
       DEPLOY: 1
