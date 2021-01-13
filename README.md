@@ -56,6 +56,8 @@ An action is a JSON object with a few common options:
 * **final**: if set to true, triggering this action will also go to the next item (default: `false`)
 
 #### Rename
+Rename the file. The new name can be in another folder. If it doesn't exist, it will be created.
+
 Additional options:
 * **from**: a regular expression to match the original filename
 * **to**: what to replace the regular expression match with (use `\1`, `\2`... for matched groups)
@@ -72,6 +74,8 @@ Example:
 ```
 
 #### Move
+Move the file to a different directory. The destination can be relative or absolute.
+
 Additional options:
 * **dest**: the destination directory, either absolute or relative to the current browsed directory
 * **create**: whether to create the destination directory if it doesn't exist (default: `true`)
