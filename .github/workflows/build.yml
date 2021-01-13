@@ -1,0 +1,290 @@
+name: Build
+
+on:
+  push:
+    paths-ignore:
+    - 'docs/**'
+    - '**.md'
+  pull_request:
+    paths-ignore:
+    - 'docs/**'
+    - '**.md'
+
+env:
+  QT_VERSION: 5.15.2
+  IS_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') }}
+  IS_NIGHTLY: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+
+jobs:
+  version:
+    name: Version
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      release: ${{ steps.get-version.outputs.release }}
+
+    steps:
+      - name: Get version
+        id: get-version
+        run: |
+          if [[ "$IS_RELEASE" == 'true' ]]; then echo "::set-output name=version::${GITHUB_REF}" ; fi
+          if [[ "$IS_RELEASE" != 'true' ]]; then echo "::set-output name=version::nightly" ; fi
+          echo "::set-output name=release::${IS_RELEASE}"
+
+  linux:
+    name: Linux
+    runs-on: ubuntu-16.04
+    needs: version
+
+    env:
+      ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          version: ${{ env.QT_VERSION }}
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION="$ORGANIZER_VERSION"
+          cmake --build . --config Release
+          make DESTDIR=../install/Organizer install
+
+      - name: Generate AppImage
+        run: |
+          curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/7/linuxdeployqt-7-x86_64.AppImage"
+          chmod a+x linuxdeployqt.AppImage
+          ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage
+          mv Organizer-*-x86_64.AppImage Organizer-x86_64.AppImage
+
+      - name: Upload package
+        uses: actions/upload-artifact@v2
+        with:
+          name: Organizer-x86_64.AppImage
+          path: Organizer-x86_64.AppImage
+          if-no-files-found: error
+
+  macos:
+    name: macOS
+    runs-on: macos-latest
+    needs: version
+
+    env:
+      ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          version: ${{ env.QT_VERSION }}
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
+          cmake --build . --config Release
+
+      - name: Generate DMG
+        run: |
+          macdeployqt build/Organizer.app -dmg
+          mv build/Organizer.dmg .
+
+      - name: Upload package
+        uses: actions/upload-artifact@v2
+        with:
+          name: Organizer.dmg
+          path: Organizer.dmg
+          if-no-files-found: error
+
+  windows:
+    name: Windows (${{ matrix.arch }}-bit)
+    runs-on: windows-latest
+    needs: version
+
+    strategy:
+      matrix:
+        include:
+        - arch: 32
+          qt_arch: win32_msvc2019
+          cmake_platform: Win32
+          suffix: x86
+        - arch: 64
+          qt_arch: win64_msvc2019_64
+          cmake_platform: x64
+          suffix: x64
+
+    env:
+      ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Cache Qt
+        id: cache-qt
+        uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+        with:
+          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          version: ${{ env.QT_VERSION }}
+          arch: ${{ matrix.qt_arch }}
+
+      - name: Build
+        shell: cmd
+        run: |
+          mkdir build
+          cd build
+          if "%IS_RELEASE%"=="true" (set "BUILD_TYPE=RelWithDebInfo") else (set "BUILD_TYPE=Release")
+          cmake .. -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
+          cmake --build . --config %BUILD_TYPE%
+          mv %BUILD_TYPE%/Organizer.exe .
+
+      - name: Generate installer
+        run: |
+          iscc /Q /DMyAppVersion="$Env:ORGANIZER_VERSION" /DPlatformName="${{ matrix.suffix }}" /DQtDir="$Env:Qt5_Dir" setup/setup.iss
+          mv setup/*.exe Organizer_${{ matrix.suffix }}.exe
+
+      - name: Upload package
+        uses: actions/upload-artifact@v2
+        with:
+          name: Organizer_${{ matrix.suffix }}.exe
+          path: Organizer_${{ matrix.suffix }}.exe
+          if-no-files-found: error
+
+      - name: Generate symbols ZIP
+        if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
+        run: 7z a "Organizer_${{ matrix.suffix }}_symbols.zip" "build/Organizer.pdb"
+
+      - name: Upload symbols
+        uses: actions/upload-artifact@v2
+        if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
+        with:
+          name: Organizer_${{ matrix.suffix }}_symbols.zip
+          path: Organizer_${{ matrix.suffix }}_symbols.zip
+          if-no-files-found: error
+
+  github:
+    name: Upload to GitHub releases
+    runs-on: ubuntu-latest
+    needs: [version, linux, macos, windows]
+
+    if: github.repository == 'Spark-NF/Organizer' && github.event_name == 'push'
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      VERSION: ${{ needs.version.outputs.version }}
+
+    steps:
+      - name: Download artifact (Linux)
+        uses: actions/download-artifact@v2
+        with:
+          name: Organizer-x86_64.AppImage
+
+      - name: Download artifact (macOS)
+        uses: actions/download-artifact@v2
+        with:
+          name: Organizer.dmg
+
+      - name: Download artifact (Windows 32-bit)
+        uses: actions/download-artifact@v2
+        with:
+          name: Organizer_x86.exe
+
+      - name: Download artifact (Windows 32-bit symbols)
+        uses: actions/download-artifact@v2
+        if: needs.version.outputs.release == 'true'
+        with:
+          name: Organizer_x86_symbols.zip
+
+      - name: Download artifact (Windows 64-bit)
+        uses: actions/download-artifact@v2
+        with:
+          name: Organizer_x64.exe
+
+      - name: Download artifact (Windows 64-bit symbols)
+        uses: actions/download-artifact@v2
+        if: needs.version.outputs.release == 'true'
+        with:
+          name: Organizer_x64_symbols.zip
+
+      - name: Rename artifacts
+        run: |
+          mv Organizer-x86_64.AppImage Organizer_${VERSION}-x86_64.AppImage
+          mv Organizer.dmg Organizer_${VERSION}.dmg
+          mv Organizer_x86.exe Organizer_${VERSION}_x86.exe
+          mv Organizer_x64.exe Organizer_${VERSION}_x64.exe
+
+      - name: Rename symbols artifacts
+        if: needs.version.outputs.release == 'true'
+        run: |
+          mv Organizer_x86_symbols.zip Organizer_${VERSION}_x86_symbols.zip
+          mv Organizer_x64_symbols.zip Organizer_${VERSION}_x64_symbols.zip
+
+      - name: Get date for Nightly body
+        id: date
+        if: needs.version.outputs.release == 'false'
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S %Z')"
+
+      - name: Nightly
+        uses: ncipollo/release-action@v1
+        if: needs.version.outputs.release == 'false'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: nightly
+          name: Nightly
+          allowUpdates: true
+          draft: false
+          prerelease: true
+          artifacts: Organizer_*
+          body: |
+            Nightly automated builds from the master branch.
+            Automatically uploaded by Github actions, **use at your own risk**!
+
+            **Head:** ${{ github.sha }}
+            **Date:** ${{ steps.date.outputs.date }}
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        if: needs.version.outputs.release == 'true'
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          draft: true
+          artifacts: Organizer_*

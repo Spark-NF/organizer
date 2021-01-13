@@ -55,10 +55,30 @@ file(GLOB_RECURSE SOURCES
 	"resources/*.qrc")
 include_directories("src/")
 
+# Apple bundle information
+if(APPLE)
+	set(MACOSX_BUNDLE_ICON_FILE "organizer.icns")
+	set(Organizer_ICON "${CMAKE_CURRENT_SOURCE_DIR}/dist/macos/resources/organizer.icns")
+	set_source_files_properties(${Organizer_ICON} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+	list(APPEND SOURCES ${Organizer_ICON})
+endif()
+
 # Target
-if (WIN32)
+if(WIN32)
 	add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+elseif(APPLE)
+	add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES})
 else()
 	add_executable(${PROJECT_NAME} ${SOURCES})
 endif()
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
+
+# Install
+if(UNIX AND (NOT APPLE))
+	install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+	install(FILES "dist/linux/organizer.desktop" DESTINATION "share/applications")
+	install(FILES "dist/linux/hicolor/48x48/organizer.png" DESTINATION "share/icons/hicolor/48x48/apps")
+	install(FILES "dist/linux/hicolor/96x96/organizer.png" DESTINATION "share/icons/hicolor/96x96/apps")
+	install(FILES "dist/linux/hicolor/128x128/organizer.png" DESTINATION "share/icons/hicolor/128x128/apps")
+	install(FILES "dist/linux/organizer.appdata.xml" DESTINATION "share/metainfo")
+endif()
