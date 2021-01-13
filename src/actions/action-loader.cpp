@@ -77,14 +77,16 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 	{
 		QString regexp = obj["from"].toString();
 		QString replace = obj["to"].toString();
-		return new RenameAction(name, QKeySequence(shortcut), final, QRegularExpression(regexp), replace);
+		bool overwrite = obj["overwrite"].toBool(false);
+		return new RenameAction(name, QKeySequence(shortcut), final, QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move")
 	{
 		QString destination = obj["dest"].toString();
 		bool create = obj["create"].toBool(true);
-		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create);
+		bool overwrite = obj["overwrite"].toBool(false);
+		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create, overwrite);
 	}
 
 	if (type == "process")

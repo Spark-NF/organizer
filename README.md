@@ -63,6 +63,7 @@ Rename the file. The new name can be in another folder. If it doesn't exist, it 
 Additional options:
 * **from**: a regular expression to match the original filename
 * **to**: what to replace the regular expression match with (use `\1`, `\2`... for matched groups)
+* **overwrite**: set to true to will overwrite any already existing file (default: `false`)
 
 Example:
 ```json
@@ -81,6 +82,7 @@ Move the file to a different directory. The destination can be relative or absol
 Additional options:
 * **dest**: the destination directory, either absolute or relative to the current browsed directory
 * **create**: whether to create the destination directory if it doesn't exist (default: `true`)
+* **overwrite**: set to true to will overwrite any already existing file (default: `false`)
 
 Example:
 ```json
