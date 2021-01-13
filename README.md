@@ -18,6 +18,8 @@ For example, it can be used to sort a vacation's pictures and videos and put the
 ### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
 
+For users interested, a nightly version is built automatically on every commit, and can be downloaded [here](https://github.com/Spark-NF/organizer/releases/nightly). Note that it might be less stable than official releases, so use at your own risk.
+
 ### Screenshots
 
 ![Main](resources/images/screenshots/main.png)
