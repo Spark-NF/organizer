@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QKeySequence>
+#include <QString>
 
 
 class Action

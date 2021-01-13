@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QSet>
 #include "actions/move-action.h"
+#include "actions/process-action.h"
 #include "actions/rename-action.h"
 
 
@@ -57,6 +58,14 @@ QList<QList<Action*>> ActionLoader::load(const QString &file)
 	return ret;
 }
 
+QStringList jsonArrayToStringList(const QJsonArray &array)
+{
+	QStringList ret;
+	for (const auto &v : array)
+		ret.append(v.toString());
+	return ret;
+}
+
 Action *ActionLoader::loadAction(const QJsonObject &obj)
 {
 	QString type = obj["type"].toString();
@@ -76,6 +85,13 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 		QString destination = obj["dest"].toString();
 		bool create = obj["create"].toBool(true);
 		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create);
+	}
+
+	if (type == "process")
+	{
+		QString command = obj["cmd"].toString();
+		QStringList args = jsonArrayToStringList(obj["args"].toArray());
+		return new ProcessAction(name, QKeySequence(shortcut), final, command, args);
 	}
 
 	return Q_NULLPTR;

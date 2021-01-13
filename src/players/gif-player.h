@@ -3,6 +3,7 @@
 
 #include "player.h"
 #include <QString>
+#include <QStringList>
 
 
 namespace Ui
