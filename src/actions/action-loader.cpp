@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QSet>
 #include "actions/move-action.h"
+#include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
 
@@ -96,5 +97,20 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 		return new ProcessAction(name, QKeySequence(shortcut), final, command, args);
 	}
 
+	if (type == "multiple")
+	{
+		QList<Action*> actions;
+		QJsonArray jsonActions = obj["actions"].toArray();
+		for (auto actionObj : jsonActions)
+		{
+			Action *action = loadAction(actionObj.toObject());
+			if (action != Q_NULLPTR)
+				actions.append(action);
+		}
+
+		return new MultipleAction(name, QKeySequence(shortcut), final, actions);
+	}
+
+	qWarning() << "Unknown action type" << type;
 	return Q_NULLPTR;
 }

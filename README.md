@@ -122,6 +122,32 @@ Example:
 }
 ```
 
+#### Multiple
+Run multiple actions in order. It will immediately stop if one of the actions fail.
+
+Additional options:
+* **actions**: a list of actions (many options such as `name`, `shortcut`, or `final` are unnecessary here)
+
+Example:
+```json
+{
+    "type": "multiple",
+    "final": false,
+    "name": "Resize and move",
+    "shortcut": "R",
+    "actions": [
+        {
+            "type": "process",
+            // ...
+        },
+        {
+            "type": "move",
+            // ...
+        }
+    ]
+}
+```
+
 ### Languages
 * English
 
