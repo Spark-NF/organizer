@@ -158,7 +158,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: ../Qt
-          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+          key: ${{ runner.os }}-${{ matrix.arch }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
