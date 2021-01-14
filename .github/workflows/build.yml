@@ -134,6 +134,7 @@ jobs:
     needs: version
 
     strategy:
+      fail-fast: false
       matrix:
         include:
         - arch: 32
