@@ -40,10 +40,11 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(new QShortcut(QKeySequence(Qt::Key_Left), this), &QShortcut::activated, this, &MainWindow::previousFile);
 	connect(new QShortcut(QKeySequence(Qt::Key_Right), this), &QShortcut::activated, this, &MainWindow::nextFile);
 
-	if (QFile::exists("actions.json")) {
-		generateButtons("actions.json");
+	const QString actionsFile = m_settings->value("LastActionsFile", "actions.json").toString();
+	if (QFile::exists(actionsFile)) {
+		generateButtons(actionsFile);
 	} else {
-		auto answer = QMessageBox::question(this, tr("No actions found"), tr("No actions file found in the current directory. Open one?"));
+		auto answer = QMessageBox::question(this, tr("No actions found"), tr("Actions file not found. Open one?"));
 		if (answer == QMessageBox::Yes) {
 			fileOpenActions();
 		}
@@ -258,6 +259,7 @@ void MainWindow::fileOpenActions()
 	if (path.isEmpty())
 		return;
 
+	m_settings->setValue("LastActionsFile", path);
 	generateButtons(path);
 }
 void MainWindow::fileSettings()
