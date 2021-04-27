@@ -28,7 +28,7 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          if [[ "$IS_RELEASE" == 'true' ]]; then echo "::set-output name=version::${GITHUB_REF}" ; fi
+          if [[ "$IS_RELEASE" == 'true' ]]; then echo "::set-output name=version::${GITHUB_REF##*/}" ; fi
           if [[ "$IS_RELEASE" != 'true' ]]; then echo "::set-output name=version::nightly" ; fi
           echo "::set-output name=release::${IS_RELEASE}"
 
@@ -176,6 +176,7 @@ jobs:
           cmake .. -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
           mv %BUILD_TYPE%/Organizer.exe .
+          if "%IS_RELEASE%"=="true" (mv %BUILD_TYPE%/Organizer.pdb .)
 
       - name: Generate installer
         run: |
