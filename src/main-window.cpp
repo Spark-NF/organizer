@@ -202,6 +202,9 @@ void MainWindow::nextFile()
 
 void MainWindow::loadFiles(QDir dir)
 {
+	if (m_activePlayer != nullptr)
+		m_activePlayer->stop();
+
 	m_currentFile = 0;
 	m_files.clear();
 
