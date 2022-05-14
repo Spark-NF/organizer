@@ -54,6 +54,8 @@ void VideoPlayer::load(const QString &file)
 
 	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
 	m_mediaPlayer->play();
+
+	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 }
 
 bool VideoPlayer::stop()
