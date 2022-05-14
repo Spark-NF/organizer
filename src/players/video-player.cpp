@@ -60,7 +60,7 @@ void VideoPlayer::load(const QString &file)
 
 bool VideoPlayer::stop()
 {
-	if (m_mediaPlayer->state() != QMediaPlayer::PlayingState) {
+	if (m_mediaPlayer->state() == QMediaPlayer::StoppedState) {
 		return false;
 	}
 
