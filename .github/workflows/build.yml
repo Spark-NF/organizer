@@ -39,6 +39,7 @@ jobs:
 
     env:
       ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
+      LINUXDEPLOYQT_VERSION: continuous
 
     steps:
       - name: Checkout
@@ -72,7 +73,7 @@ jobs:
 
       - name: Generate AppImage
         run: |
-          curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/7/linuxdeployqt-7-x86_64.AppImage"
+          curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/${LINUXDEPLOYQT_VERSION}/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage"
           chmod a+x linuxdeployqt.AppImage
           ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage
           mv Organizer-*-x86_64.AppImage Organizer-x86_64.AppImage
