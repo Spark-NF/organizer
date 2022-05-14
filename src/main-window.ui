@@ -124,6 +124,9 @@
    </property>
   </action>
   <action name="actionSettings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/images/icons/settings.png</normaloff>:/images/icons/settings.png</iconset>
@@ -133,6 +136,9 @@
    </property>
   </action>
   <action name="actionAboutProgram">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/resources.qrc">
      <normaloff>:/images/icons/about.png</normaloff>:/images/icons/about.png</iconset>
