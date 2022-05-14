@@ -24,9 +24,7 @@ For users interested, a nightly version is built automatically on every commit, 
 ![Main](resources/images/screenshots/main.png)
 
 ### Actions file
-You have to create a `actions.json` file to put in the same folder as the executable file.
-
-It is a JSON file that contains an array of arrays of actions. The first array represents the columns of actions, and the second each row of those columns.
+An actions file is a JSON file that contains an array of arrays of actions. The first array represents the columns of actions, and the second each row of those columns.
 
 Example:
 ```js
