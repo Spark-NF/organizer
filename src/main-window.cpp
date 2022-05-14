@@ -250,7 +250,8 @@ void MainWindow::refreshPreview()
 
 void MainWindow::fileOpenDirectory()
 {
-	QString path = QFileDialog::getExistingDirectory(this, tr("Open directory"), m_settings->value("LastDirectory", "").toString());
+	const QString lastPath = m_settings->value("LastDirectory").toString();
+	const QString path = QFileDialog::getExistingDirectory(this, tr("Open directory"), lastPath);
 	if (path.isEmpty())
 		return;
 
@@ -259,7 +260,8 @@ void MainWindow::fileOpenDirectory()
 }
 void MainWindow::fileOpenActions()
 {
-	QString path = QFileDialog::getOpenFileName(this, tr("Open actions file"), QString(), tr("JSON files (*.json)"));
+	const QString lastPath = m_settings->value("LastActionsFile").toString();
+	const QString path = QFileDialog::getOpenFileName(this, tr("Open actions file"), lastPath, tr("JSON files (*.json)"));
 	if (path.isEmpty())
 		return;
 
