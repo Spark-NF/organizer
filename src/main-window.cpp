@@ -200,7 +200,7 @@ void MainWindow::nextFile()
 	previewFile();
 }
 
-void MainWindow::loadFiles(QDir dir)
+void MainWindow::loadFiles(const QDir &dir)
 {
 	if (m_activePlayer != nullptr)
 		m_activePlayer->stop();

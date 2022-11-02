@@ -47,7 +47,7 @@ class MainWindow : public QMainWindow
 
 	protected:
 		void generateViewers();
-		void loadFiles(QDir dir);
+		void loadFiles(const QDir &dir);
 		void previewFile();
 		void refreshPreview();
 		bool beforeAction();
