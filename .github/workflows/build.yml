@@ -28,9 +28,9 @@ jobs:
       - name: Get version
         id: get-version
         run: |
-          if [[ "$IS_RELEASE" == 'true' ]]; then echo "::set-output name=version::${GITHUB_REF##*/}" ; fi
-          if [[ "$IS_RELEASE" != 'true' ]]; then echo "::set-output name=version::nightly" ; fi
-          echo "::set-output name=release::${IS_RELEASE}"
+          if [[ "$IS_RELEASE" == 'true' ]]; then echo "version=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT ; fi
+          if [[ "$IS_RELEASE" != 'true' ]]; then echo "version=nightly" >> $GITHUB_OUTPUT ; fi
+          echo "release=${IS_RELEASE}" >> $GITHUB_OUTPUT
 
   linux:
     name: Linux
@@ -242,7 +242,7 @@ jobs:
       - name: Get date for Nightly body
         id: date
         if: needs.version.outputs.release == 'false'
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%M:%S %Z')"
+        run: echo "date=$(date +'%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_OUTPUT
 
       - name: Nightly
         uses: ncipollo/release-action@v1
