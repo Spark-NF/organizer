@@ -43,24 +43,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0
 
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v1
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
-
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          cache: true
           version: ${{ env.QT_VERSION }}
 
       - name: Build
@@ -79,7 +72,7 @@ jobs:
           mv Organizer-*-x86_64.AppImage Organizer-x86_64.AppImage
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Organizer-x86_64.AppImage
           path: Organizer-x86_64.AppImage
@@ -95,19 +88,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v1
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+        uses: actions/checkout@v3
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          cache: true
           version: ${{ env.QT_VERSION }}
 
       - name: Build
@@ -123,7 +109,7 @@ jobs:
           mv build/Organizer.dmg .
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Organizer.dmg
           path: Organizer.dmg
@@ -152,19 +138,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Cache Qt
-        id: cache-qt
-        uses: actions/cache@v1
-        with:
-          path: ../Qt
-          key: ${{ runner.os }}-${{ matrix.arch }}-QtCache-${{ hashFiles('.github/workflows/build.yml') }}
+        uses: actions/checkout@v3
 
       - name: Install Qt
-        uses: jurplel/install-qt-action@v2
+        uses: jurplel/install-qt-action@v3
         with:
-          cached: ${{ steps.cache-qt.outputs.cache-hit }}
+          cache: true
           version: ${{ env.QT_VERSION }}
           arch: ${{ matrix.qt_arch }}
 
@@ -185,7 +164,7 @@ jobs:
           mv setup/*.exe Organizer_${{ matrix.suffix }}.exe
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Organizer_${{ matrix.suffix }}.exe
           path: Organizer_${{ matrix.suffix }}.exe
@@ -196,7 +175,7 @@ jobs:
         run: 7z a "Organizer_${{ matrix.suffix }}_symbols.zip" "build/Organizer.pdb"
 
       - name: Upload symbols
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
         with:
           name: Organizer_${{ matrix.suffix }}_symbols.zip
@@ -216,33 +195,33 @@ jobs:
 
     steps:
       - name: Download artifact (Linux)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Organizer-x86_64.AppImage
 
       - name: Download artifact (macOS)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Organizer.dmg
 
       - name: Download artifact (Windows 32-bit)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Organizer_x86.exe
 
       - name: Download artifact (Windows 32-bit symbols)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         if: needs.version.outputs.release == 'true'
         with:
           name: Organizer_x86_symbols.zip
 
       - name: Download artifact (Windows 64-bit)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: Organizer_x64.exe
 
       - name: Download artifact (Windows 64-bit symbols)
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         if: needs.version.outputs.release == 'true'
         with:
           name: Organizer_x64_symbols.zip
