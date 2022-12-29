@@ -48,7 +48,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0
+          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -68,14 +68,22 @@ jobs:
         run: |
           curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/${LINUXDEPLOYQT_VERSION}/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage"
           chmod a+x linuxdeployqt.AppImage
-          ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage
+          ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage -updateinformation="gh-releases-zsync|Spark-NF|organizer|latest|Organizer_*-x86_64.AppImage.zsync"
           mv Organizer-*-x86_64.AppImage Organizer-x86_64.AppImage
+          mv Organizer-*-x86_64.AppImage.zsync Organizer-x86_64.AppImage.zsync
 
       - name: Upload package
         uses: actions/upload-artifact@v3
         with:
           name: Organizer-x86_64.AppImage
           path: Organizer-x86_64.AppImage
+          if-no-files-found: error
+
+      - name: Upload package update information
+        uses: actions/upload-artifact@v3
+        with:
+          name: Organizer-x86_64.AppImage.zsync
+          path: Organizer-x86_64.AppImage.zsync
           if-no-files-found: error
 
   macos:
@@ -199,6 +207,11 @@ jobs:
         with:
           name: Organizer-x86_64.AppImage
 
+      - name: Download artifact (Linux update information)
+        uses: actions/download-artifact@v3
+        with:
+          name: Organizer-x86_64.AppImage.zsync
+
       - name: Download artifact (macOS)
         uses: actions/download-artifact@v3
         with:
@@ -229,6 +242,7 @@ jobs:
       - name: Rename artifacts
         run: |
           mv Organizer-x86_64.AppImage Organizer_${VERSION}-x86_64.AppImage
+          mv Organizer-x86_64.AppImage.zsync Organizer_${VERSION}-x86_64.AppImage.zsync
           mv Organizer.dmg Organizer_${VERSION}.dmg
           mv Organizer_x86.exe Organizer_${VERSION}_x86.exe
           mv Organizer_x64.exe Organizer_${VERSION}_x64.exe
