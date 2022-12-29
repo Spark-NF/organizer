@@ -32,4 +32,6 @@ target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} lib)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Organizer")
 
 # Install
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+if(UNIX AND (NOT APPLE))
+	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+endif()

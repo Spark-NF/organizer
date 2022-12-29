@@ -69,8 +69,6 @@ jobs:
           curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/${LINUXDEPLOYQT_VERSION}/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage"
           chmod a+x linuxdeployqt.AppImage
           ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage -updateinformation="gh-releases-zsync|Spark-NF|organizer|latest|Organizer_*-x86_64.AppImage.zsync"
-          mv Organizer-*-x86_64.AppImage Organizer-x86_64.AppImage
-          mv Organizer-*-x86_64.AppImage.zsync Organizer-x86_64.AppImage.zsync
 
       - name: Upload package
         uses: actions/upload-artifact@v3
@@ -113,8 +111,8 @@ jobs:
 
       - name: Generate DMG
         run: |
-          macdeployqt build/Organizer.app -dmg
-          mv build/Organizer.dmg .
+          macdeployqt build/gui/Organizer.app -dmg
+          mv build/gui/Organizer.dmg .
 
       - name: Upload package
         uses: actions/upload-artifact@v3
@@ -163,8 +161,8 @@ jobs:
           if "%IS_RELEASE%"=="true" (set "BUILD_TYPE=RelWithDebInfo") else (set "BUILD_TYPE=Release")
           cmake ../src -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
-          mv %BUILD_TYPE%/Organizer.exe .
-          if "%IS_RELEASE%"=="true" (mv %BUILD_TYPE%/Organizer.pdb .)
+          mv gui/%BUILD_TYPE%/Organizer.exe .
+          if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
 
       - name: Generate installer
         run: |
@@ -180,7 +178,7 @@ jobs:
 
       - name: Generate symbols ZIP
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
-        run: 7z a "Organizer_${{ matrix.suffix }}_symbols.zip" "build/Organizer.pdb"
+        run: 7z a "Organizer_${{ matrix.suffix }}_symbols.zip" "build/gui/Organizer.pdb"
 
       - name: Upload symbols
         uses: actions/upload-artifact@v3

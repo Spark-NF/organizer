@@ -6,7 +6,7 @@
 
 ; Useful variables
 #define BuildDir "..\build"
-#define ResourcesDir "..\resources"
+#define ResourcesDir "..\src\gui\resources"
 #define QtBin QtDir + "\bin"
 #define QtPlugins QtDir + "\plugins"
 
