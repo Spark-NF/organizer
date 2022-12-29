@@ -2,10 +2,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QProcess>
+#include <utility>
 
 
-ProcessAction::ProcessAction(QString name, QKeySequence shortcut, bool terminal, QString command, QStringList args)
-	: Action(name, shortcut, terminal), m_command(command), m_args(args)
+ProcessAction::ProcessAction(QString name, const QKeySequence &shortcut, bool terminal, QString command, QStringList args)
+	: Action(std::move(name), shortcut, terminal), m_command(std::move(command)), m_args(std::move(args))
 {}
 
 bool ProcessAction::execute(QFile &file) const

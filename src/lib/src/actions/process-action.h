@@ -11,7 +11,7 @@
 class ProcessAction : public Action
 {
 	public:
-		explicit ProcessAction(QString name, QKeySequence shortcut, bool terminal, QString command, QStringList args);
+		explicit ProcessAction(QString name, const QKeySequence &shortcut, bool terminal, QString command, QStringList args);
 		bool execute(QFile &file) const override;
 
 	private:

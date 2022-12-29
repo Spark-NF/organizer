@@ -1,8 +1,8 @@
 #include "action.h"
 
 
-Action::Action(QString name, QKeySequence shortcut, bool terminal)
-	: m_name(name), m_shortcut(shortcut), m_terminal(terminal)
+Action::Action(QString name, const QKeySequence &shortcut, bool terminal)
+	: m_name(std::move(name)), m_shortcut(shortcut), m_terminal(terminal)
 {}
 
 

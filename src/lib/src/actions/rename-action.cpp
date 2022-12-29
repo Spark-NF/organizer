@@ -1,10 +1,11 @@
 #include "rename-action.h"
 #include <QFileInfo>
 #include <QDir>
+#include <utility>
 
 
-RenameAction::RenameAction(QString name, QKeySequence shortcut, bool terminal, QRegularExpression regexp, QString replace, bool overwrite)
-	: Action(name, shortcut, terminal), m_regexp(regexp), m_replace(replace), m_overwrite(overwrite)
+RenameAction::RenameAction(QString name, const QKeySequence &shortcut, bool terminal, const QRegularExpression &regexp, QString replace, bool overwrite)
+	: Action(std::move(name), shortcut, terminal), m_regexp(regexp), m_replace(std::move(replace)), m_overwrite(overwrite)
 {}
 
 bool RenameAction::execute(QFile &file) const

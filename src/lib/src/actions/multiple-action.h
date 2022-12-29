@@ -8,7 +8,7 @@
 class MultipleAction : public Action
 {
 	public:
-		explicit MultipleAction(QString name, QKeySequence shortcut, bool terminal, QList<Action*> actions);
+		explicit MultipleAction(QString name, const QKeySequence &shortcut, bool terminal, QList<Action*> actions);
 		bool execute(QFile &file) const override;
 
 	private:

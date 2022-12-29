@@ -8,7 +8,7 @@
 class RenameAction : public Action
 {
 	public:
-		explicit RenameAction(QString name, QKeySequence shortcut, bool terminal, QRegularExpression regexp, QString replace, bool overwrite);
+		explicit RenameAction(QString name, const QKeySequence &shortcut, bool terminal, const QRegularExpression &regexp, QString replace, bool overwrite);
 		bool execute(QFile &file) const override;
 
 	private:
