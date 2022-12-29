@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2021 Spark-NF <spark_ps@hotmail.fr> -->
+<component type="desktop-application">
+	<id>organizer</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>Apache-2.0</project_license>
+	<name>Organizer</name>
+	<summary>Cross-platform file organizer</summary>
+
+	<description>
+		<p>Cross-platform file organizer.</p>
+	</description>
+
+	<launchable type="desktop-id">organizer.desktop</launchable>
+
+	<screenshots>
+		<screenshot type="default">
+			<caption>Main interface</caption>
+			<image>https://raw.githubusercontent.com/Spark-NF/organizer/master/resources/images/screenshots/main.png</image>
+		</screenshot>
+	</screenshots>
+
+	<url type="homepage">https://github.com/Spark-NF/organizer</url>
+	<url type="bugtracker">https://github.com/Spark-NF/organizer/issues</url>
+
+	<provides>
+		<id>organizer.desktop</id>
+	</provides>
+
+	<categories>
+		<category>Utility</category>
+	</categories>
+
+	<developer_name>Spark-NF</developer_name>
+	<update_contact>spark_ps@hotmail.fr</update_contact>
+</component>
