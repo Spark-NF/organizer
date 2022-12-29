@@ -160,7 +160,7 @@ Note: you need to have CMake, a C++ compiler, and the Qt libraries installed to 
 ```
 mkdir build
 cd build
-cmake ..
+cmake ../src
 make -j 8
 ```
 

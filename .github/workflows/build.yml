@@ -60,7 +60,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION="$ORGANIZER_VERSION"
+          cmake ../src -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION="$ORGANIZER_VERSION"
           cmake --build . --config Release
           make DESTDIR=../install/Organizer install
 
@@ -108,7 +108,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
+          cmake ../src -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
           cmake --build . --config Release
 
       - name: Generate DMG
@@ -161,7 +161,7 @@ jobs:
           mkdir build
           cd build
           if "%IS_RELEASE%"=="true" (set "BUILD_TYPE=RelWithDebInfo") else (set "BUILD_TYPE=Release")
-          cmake .. -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
+          cmake ../src -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
           mv %BUILD_TYPE%/Organizer.exe .
           if "%IS_RELEASE%"=="true" (mv %BUILD_TYPE%/Organizer.pdb .)
