@@ -1,19 +1,15 @@
 #ifndef ACTION_LOADER_H
 #define ACTION_LOADER_H
 
-#include "action.h"
-#include <QString>
-#include <QList>
 #include <QJsonObject>
 
 
-class ActionLoader : public Action
+class Action;
+
+class ActionLoader
 {
 	public:
-		static QList<QList<Action*>> load(const QString &file);
-
-	private:
-		static Action *loadAction(const QJsonObject &obj);
+		static Action *load(const QJsonObject &obj);
 };
 
 #endif // ACTION_LOADER_H

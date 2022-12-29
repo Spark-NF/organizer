@@ -1,63 +1,14 @@
 #include "action-loader.h"
-#include <QDebug>
 #include <QDir>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QSet>
+#include <QtGlobal>
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
 
-
-QList<QList<Action*>> ActionLoader::load(const QString &file)
-{
-	QList<QList<Action*>> ret;
-	QSet<QKeySequence> shortcuts;
-
-	QFile f(file);
-	if (!f.open(QFile::ReadOnly))
-		return ret;
-
-	QByteArray dta = f.readAll();
-	f.close();
-
-	QJsonDocument loadDoc = QJsonDocument::fromJson(dta);
-	if (loadDoc.isNull())
-	{
-		qWarning() << "Invalid actions file";
-		return ret;
-	}
-
-	QJsonArray actionsGroups = loadDoc.array();
-	for (auto actionsGroup : actionsGroups)
-	{
-		QJsonArray actions = actionsGroup.toArray();
-		QList<Action*> res;
-
-		for (auto actionObj : actions)
-		{
-			Action *action = loadAction(actionObj.toObject());
-			if (action != Q_NULLPTR)
-			{
-				QKeySequence shortcut = action->shortcut();
-				if (shortcuts.contains(shortcut))
-				{
-					qWarning() << "Shortcut already in use" << shortcut;
-				}
-				else
-				{
-					shortcuts.insert(shortcut);
-					res.append(action);
-				}
-			}
-		}
-
-		ret.append(res);
-	}
-
-	return ret;
-}
 
 QStringList jsonArrayToStringList(const QJsonArray &array)
 {
@@ -67,7 +18,7 @@ QStringList jsonArrayToStringList(const QJsonArray &array)
 	return ret;
 }
 
-Action *ActionLoader::loadAction(const QJsonObject &obj)
+Action *ActionLoader::load(const QJsonObject &obj)
 {
 	QString type = obj["type"].toString();
 	QString name = obj["name"].toString();
@@ -103,7 +54,7 @@ Action *ActionLoader::loadAction(const QJsonObject &obj)
 		QJsonArray jsonActions = obj["actions"].toArray();
 		for (auto actionObj : jsonActions)
 		{
-			Action *action = loadAction(actionObj.toObject());
+			Action *action = load(actionObj.toObject());
 			if (action != Q_NULLPTR)
 				actions.append(action);
 		}

@@ -13,11 +13,12 @@
 #include <QStyle>
 #include <QTime>
 #include <QUrl>
-#include "actions/action-loader.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
 #include "players/video-player.h"
+#include "rule.h"
+#include "rule-loader.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -99,17 +100,17 @@ void MainWindow::generateButtons(QString file)
 {
 	clearLayout(ui->layoutActions);
 
-	for (const QList<Action*> &actions : ActionLoader::load(file))
+	for (const QList<Rule*> &rules : RuleLoader::loadFile(file))
 	{
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
 
-		for (Action *action : actions)
+		for (Rule *rule : rules)
 		{
 			auto button = new QPushButton(this);
-			button->setText(QString("[%1] %2").arg(action->shortcut().toString(), action->name()));
-			button->setShortcut(action->shortcut());
-			connect(button, &QPushButton::clicked, [this, action]() { executeAction(action); });
+			button->setText(QString("[%1] %2").arg(rule->shortcut().toString(), rule->name()));
+			button->setShortcut(rule->shortcut());
+			connect(button, &QPushButton::clicked, [this, rule]() { executeAction(rule->actions().first()); });
 			layout->addWidget(button);
 		}
 
