@@ -1,4 +1,4 @@
-<p align="center"><img src="resources/images/readme.png" alt="" /></p>
+<p align="center"><img src="src/gui/resources/images/readme.png" alt="" /></p>
 
 <h1 align="center">Organizer</h1>
 
@@ -21,7 +21,7 @@ For users interested, a nightly version is built automatically on every commit, 
 
 ### Screenshots
 
-![Main](resources/images/screenshots/main.png)
+![Main](src/gui/resources/images/screenshots/main.png)
 
 ### Actions file
 An actions file is a JSON file that contains an array of arrays of actions. The first array represents the columns of actions, and the second each row of those columns.
