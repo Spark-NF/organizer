@@ -120,9 +120,6 @@ Example:
 ### Actions
 An action is a JSON object with a few common options:
 * **type**: the type of the action (such as `rename` or `move`)
-* **name**: the name of the action that will be displayed on the button
-* **shortcut**: the assigned keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
-* **final**: if set to true, triggering this action will also go to the next item (default: `false`)
 
 #### Rename
 Rename the file. The new name can be in another folder. If it doesn't exist, it will be created.
@@ -136,8 +133,6 @@ Example:
 ```json
 {
     "type": "rename",
-    "name": "!!!",
-    "shortcut": "3",
     "from": "!*(.+)",
     "to": "!!!\\1"
 }
@@ -155,9 +150,6 @@ Example:
 ```json
 {
     "type": "move",
-    "final": true,
-    "name": "Hello",
-    "shortcut": "H",
     "dest": "C:\\Users\\Nicolas\\Documents\\Test\\Hello"
 }
 ```
@@ -181,9 +173,6 @@ Example:
 ```json
 {
     "type": "process",
-    "final": false,
-    "name": "Resize image",
-    "shortcut": "R",
     "cmd": "magick",
     "args": ["{path}", "-resize", "150x150", "{dir}/{basename}_150x150.{ext}"]
 }
@@ -199,9 +188,6 @@ Example:
 ```json5
 {
     "type": "multiple",
-    "final": false,
-    "name": "Resize and move",
-    "shortcut": "R",
     "actions": [
         {
             "type": "process",
