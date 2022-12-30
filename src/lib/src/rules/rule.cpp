@@ -3,8 +3,8 @@
 #include "../actions/action.h"
 
 
-Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, QList<Condition*> conditions, QList<Action*> actions)
-	: m_name(std::move(name)), m_shortcut(shortcut), m_terminal(terminal), m_conditions(std::move(conditions)), m_actions(std::move(actions))
+Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<Condition*> conditions, QList<Action*> actions)
+	: m_name(std::move(name)), m_shortcut(shortcut), m_terminal(terminal), m_priority(priority), m_conditions(std::move(conditions)), m_actions(std::move(actions))
 {}
 
 
@@ -21,6 +21,11 @@ QKeySequence Rule::shortcut() const
 bool Rule::terminal() const
 {
 	return m_terminal;
+}
+
+int Rule::priority() const
+{
+	return m_priority;
 }
 
 QList<Condition*> Rule::conditions() const

@@ -21,10 +21,17 @@ QList<QList<Rule*>> Profile::rules() const
 
 QList<Rule*> Profile::match(QFile &file) const
 {
+	int maxPriority = 0;
 	QList<Rule*> ret;
 	for (const QList<Rule*> &column : m_rules) {
 		for (Rule* rule : column) {
-			if (rule->match(file)) {
+			if ((ret.isEmpty() || rule->priority() >= maxPriority) && rule->match(file)) {
+				if (rule->priority() > maxPriority) {
+					if (!ret.isEmpty()) {
+						ret.clear();
+					}
+					maxPriority = rule->priority();
+				}
 				ret.append(rule);
 			}
 		}

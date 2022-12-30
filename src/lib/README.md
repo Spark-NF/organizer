@@ -11,7 +11,7 @@ if (profile == nullptr) {
     return false;
 }
 
-// Find matching rules
+// Find matching rules of the highest priority
 QList<Rule*> matches = profile->match(file);
 
 // No matching rule found
