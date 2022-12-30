@@ -23,6 +23,58 @@ For users interested, a nightly version is built automatically on every commit, 
 
 ![Main](src/gui/resources/images/screenshots/main.png)
 
+### Languages
+* English
+
+### Authors
+* Nicolas Faure ([Spark-NF](https://github.com/Spark-NF))
+
+### License
+The script is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+
+## Building
+Note: you need to have CMake, a C++ compiler, and the Qt libraries installed to build the project.
+
+```
+mkdir build
+cd build
+cmake ../src
+make -j 8
+```
+
+You'll find the built binary in the `build/` directory, named `Organizer`.
+
+## Rules
+
+### Rules file
+A rules file is a JSON file that contains an array of rules.
+
+A rule is a JSON object with a few common options:
+* **name**: the name of the action that will be displayed on the button
+* **shortcut**: the assigned keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
+* **final**: if set to true, triggering this action will also go to the next item (default: `false`)
+* **conditions**: an array of conditions (see below), if any of them matches the actions will be run automatically (default: empty)
+* **actions**: an array of actions (see below) to run when running this rule
+
+Example:
+```js
+[
+    {
+        "name": "Hello",
+        "shortcut": "H",
+        "conditions": [{
+            "type": "filename",
+            "filename": "*.jpg",
+            "regex": false
+        }],
+        "actions": [{
+            "type": "move",
+            "dest": "C:\\Users\\Nicolas\\Documents\\Test\\Hello"
+        }]
+    }
+]
+```
+
 ### Actions file
 An actions file is a JSON file that contains an array of arrays of actions. The first array represents the columns of actions, and the second each row of those columns.
 
@@ -48,10 +100,11 @@ Example:
 ]
 ```
 
+### Actions
 An action is a JSON object with a few common options:
-* **type**: the type of the action (either `rename` or `move`)
+* **type**: the type of the action (such as `rename` or `move`)
 * **name**: the name of the action that will be displayed on the button
-* **shortcut**: the assignated keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
+* **shortcut**: the assigned keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
 * **final**: if set to true, triggering this action will also go to the next item (default: `false`)
 
 #### Rename
@@ -126,7 +179,7 @@ Additional options:
 * **actions**: a list of actions (many options such as `name`, `shortcut`, or `final` are unnecessary here)
 
 Example:
-```json
+```json5
 {
     "type": "multiple",
     "final": false,
@@ -145,23 +198,22 @@ Example:
 }
 ```
 
-### Languages
-* English
+### Conditions
+An condition is a JSON object with a few common options:
+* **type**: the type of the action (such as `filename`)
 
-### Authors
-* Nicolas Faure ([Spark-NF](https://github.com/Spark-NF))
+#### Filename
+Matches a file using its filename.
 
-### License
-The script is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+Additional options:
+* **filename**: the filename condition to use, including the extension
+* **regex**: set to true to use regular expressions for matching (default: `false`)
 
-## Building
-Note: you need to have CMake, a C++ compiler, and the Qt libraries installed to build the project.
-
+Example:
+```json
+{
+    "type": "filename",
+    "filename": "*.jpg",
+    "regex": false
+}
 ```
-mkdir build
-cd build
-cmake ../src
-make -j 8
-```
-
-You'll find the built binary in the `build/` directory, named `Organizer`.
