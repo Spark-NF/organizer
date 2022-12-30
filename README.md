@@ -44,12 +44,59 @@ make -j 8
 
 You'll find the built binary in the `build/` directory, named `Organizer`.
 
-## Rules
+## Profiles
 
-### Rules file
-A rules file is a JSON file that contains an array of rules.
+### Profile file
+A profile file is a JSON file that contains a single profile as the root object.
 
-A rule is a JSON object with a few common options:
+A profile is a JSON object with a few options:
+* **name**: the name of the profile to show in the interface
+* **rules**: an array or an array of arrays of rules (see below)
+
+The first array represents the columns of actions, and the second each row of those columns. When using a single depth of arrays, there will be a single column. This is mainly useful for manual rules.
+
+Example:
+```json5
+{
+    "name": "My profile",
+    "rules": [
+        {
+            // rule 1
+        },
+        {
+            // rule 2
+        }
+    ]
+}
+```
+
+With multiple columns:
+```json5
+{
+    "name": "My profile",
+    "rules": [
+        [
+            {
+                // column 1, rule 1
+            },
+            {
+                // column 1, rule 2
+            }
+        ],
+        [
+            {
+                // column 2, rule 1
+            },
+            {
+                // column 2, rule 2
+            }
+        ]
+    ]
+}
+```
+
+### Rules
+A rule is a JSON object with a few options:
 * **name**: the name of the action that will be displayed on the button
 * **shortcut**: the assigned keyboard shortcut (ex: `H`, `3`, `Ctrl+X`, etc.)
 * **final**: if set to true, triggering this action will also go to the next item (default: `false`)
@@ -57,47 +104,17 @@ A rule is a JSON object with a few common options:
 * **actions**: an array of actions (see below) to run when running this rule
 
 Example:
-```js
-[
-    {
-        "name": "Hello",
-        "shortcut": "H",
-        "conditions": [{
-            "type": "filename",
-            "filename": "*.jpg",
-            "regex": false
-        }],
-        "actions": [{
-            "type": "move",
-            "dest": "C:\\Users\\Nicolas\\Documents\\Test\\Hello"
-        }]
-    }
-]
-```
-
-### Actions file
-An actions file is a JSON file that contains an array of arrays of actions. The first array represents the columns of actions, and the second each row of those columns.
-
-Example:
-```js
-[
-    [
-        {
-            // column 1, action 1
-        },
-        {
-            // column 1, action 2
-        }
-    ],
-    [
-        {
-            // column 2, action 1
-        },
-        {
-            // column 2, action 2
-        }
-    ]
-]
+```json5
+{
+    "name": "Hello",
+    "shortcut": "H",
+    "conditions": [{
+        // ...
+    }],
+    "actions": [{
+        // ...
+    }]
+}
 ```
 
 ### Actions

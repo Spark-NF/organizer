@@ -11,14 +11,15 @@
 #include <QMovie>
 #include <QShortcut>
 #include <QStyle>
-#include <QTime>
 #include <QUrl>
+#include "actions/action.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
 #include "players/video-player.h"
-#include "rule-loader.h"
-#include "rule.h"
+#include "profile-loader.h"
+#include "profile.h"
+#include "rules/rule.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -100,7 +101,9 @@ void MainWindow::generateButtons(QString file)
 {
 	clearLayout(ui->layoutActions);
 
-	for (const QList<Rule*> &rules : RuleLoader::loadFile(file)) {
+	Profile *profile = ProfileLoader::loadFile(file);
+
+	for (const QList<Rule*> &rules : profile->rules()) {
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
 
@@ -108,7 +111,7 @@ void MainWindow::generateButtons(QString file)
 			auto button = new QPushButton(this);
 			button->setText(QString("[%1] %2").arg(rule->shortcut().toString(), rule->name()));
 			button->setShortcut(rule->shortcut());
-			connect(button, &QPushButton::clicked, [this, rule]() { executeAction(rule->actions().first()); });
+			connect(button, &QPushButton::clicked, [this, rule]() { executeAction(rule); });
 			layout->addWidget(button);
 		}
 
@@ -130,19 +133,20 @@ void MainWindow::openDirectory(QString path)
 	}
 }
 
-void MainWindow::executeAction(Action *action)
+void MainWindow::executeAction(Rule *rule)
 {
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
 	bool fullPreview = beforeAction();
 
+	Action *action = rule->actions().first();
 	QFile file(m_files[m_currentFile]);
 	if (action->execute(file)) {
 		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = file.fileName();
 
-		if (action->terminal()) {
+		if (rule->terminal()) {
 			nextFile();
 			return;
 		}

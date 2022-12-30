@@ -2,8 +2,8 @@
 #include <utility>
 
 
-MoveAction::MoveAction(QString name, const QKeySequence &shortcut, bool terminal, const QDir &destination, bool create, bool overwrite)
-	: Action(std::move(name), shortcut, terminal), m_destination(destination), m_create(create), m_overwrite(overwrite)
+MoveAction::MoveAction(const QDir &destination, bool create, bool overwrite)
+	: Action(), m_destination(destination), m_create(create), m_overwrite(overwrite)
 {}
 
 bool MoveAction::execute(QFile &file) const

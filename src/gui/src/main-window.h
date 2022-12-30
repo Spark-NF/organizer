@@ -5,7 +5,6 @@
 #include <QSettings>
 #include <QDir>
 #include <QStack>
-#include "actions/action.h"
 
 
 namespace Ui
@@ -17,6 +16,7 @@ namespace Ui
 class Player;
 class QDragEnterEvent;
 class QDropEvent;
+class Rule;
 
 class MainWindow : public QMainWindow
 {
@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 		void closeEvent(QCloseEvent *event) override;
 
 	public slots:
-		void executeAction(Action *action);
+		void executeAction(Rule *action);
 		void undo();
 		void generateButtons(QString file);
 		void openDirectory(QString path);

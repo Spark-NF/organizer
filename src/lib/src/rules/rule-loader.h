@@ -11,7 +11,6 @@ class Rule;
 class RuleLoader
 {
 	public:
-		static QList<QList<Rule*>> loadFile(const QString &file);
 		static Rule *load(const QJsonObject &obj);
 };
 

@@ -2,8 +2,8 @@
 #include <utility>
 
 
-MultipleAction::MultipleAction(QString name, const QKeySequence &shortcut, bool terminal, QList<Action*> actions)
-	: Action(std::move(name), shortcut, terminal), m_actions(std::move(actions))
+MultipleAction::MultipleAction(QList<Action*> actions)
+	: Action(), m_actions(std::move(actions))
 {}
 
 bool MultipleAction::execute(QFile &file) const

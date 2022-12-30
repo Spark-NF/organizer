@@ -20,41 +20,38 @@ QStringList jsonArrayToStringList(const QJsonArray &array)
 
 Action *ActionLoader::load(const QJsonObject &obj)
 {
-	QString type = obj["type"].toString();
-	QString name = obj["name"].toString();
-	QString shortcut = obj["shortcut"].toString();
-	bool final = obj["final"].toBool(false);
+	const QString type = obj["type"].toString();
 
 	if (type == "rename") {
-		QString regexp = obj["from"].toString();
-		QString replace = obj["to"].toString();
-		bool overwrite = obj["overwrite"].toBool(false);
-		return new RenameAction(name, QKeySequence(shortcut), final, QRegularExpression(regexp), replace, overwrite);
+		const QString regexp = obj["from"].toString();
+		const QString replace = obj["to"].toString();
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return new RenameAction(QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move") {
-		QString destination = obj["dest"].toString();
-		bool create = obj["create"].toBool(true);
-		bool overwrite = obj["overwrite"].toBool(false);
-		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create, overwrite);
+		const QString destination = obj["dest"].toString();
+		const bool create = obj["create"].toBool(true);
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return new MoveAction(QDir(destination), create, overwrite);
 	}
 
 	if (type == "process") {
-		QString command = obj["cmd"].toString();
-		QStringList args = jsonArrayToStringList(obj["args"].toArray());
-		return new ProcessAction(name, QKeySequence(shortcut), final, command, args);
+		const QString command = obj["cmd"].toString();
+		const QStringList args = jsonArrayToStringList(obj["args"].toArray());
+		return new ProcessAction(command, args);
 	}
 
 	if (type == "multiple") {
 		QList<Action*> actions;
-		QJsonArray jsonActions = obj["actions"].toArray();
+		const QJsonArray jsonActions = obj["actions"].toArray();
 		for (auto actionObj : jsonActions) {
 			Action *action = load(actionObj.toObject());
 			if (action != Q_NULLPTR)
 				actions.append(action);
 		}
 
-		return new MultipleAction(name, QKeySequence(shortcut), final, actions);
+		return new MultipleAction(actions);
 	}
 
 	qWarning() << "Unknown action type" << type;

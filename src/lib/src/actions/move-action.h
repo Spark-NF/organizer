@@ -8,7 +8,7 @@
 class MoveAction : public Action
 {
 	public:
-		explicit MoveAction(QString name, const QKeySequence &shortcut, bool terminal, const QDir &destination, bool create, bool overwrite);
+		explicit MoveAction(const QDir &destination, bool create, bool overwrite);
 		bool execute(QFile &file) const override;
 
 	private:
