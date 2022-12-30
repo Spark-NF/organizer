@@ -12,7 +12,6 @@
 #include <QShortcut>
 #include <QStyle>
 #include <QUrl>
-#include "actions/action.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
@@ -140,9 +139,8 @@ void MainWindow::executeAction(Rule *rule)
 
 	bool fullPreview = beforeAction();
 
-	Action *action = rule->actions().first();
 	QFile file(m_files[m_currentFile]);
-	if (action->execute(file)) {
+	if (rule->execute(file)) {
 		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = file.fileName();
 

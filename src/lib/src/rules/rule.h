@@ -20,6 +20,9 @@ class Rule
 		QList<Condition*> conditions() const;
 		QList<Action*> actions() const;
 
+		bool match(QFile &file) const;
+		bool execute(QFile &file) const;
+
 	private:
 		QString m_name;
 		QKeySequence m_shortcut;
