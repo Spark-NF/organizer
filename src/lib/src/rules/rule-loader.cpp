@@ -1,8 +1,6 @@
 #include "rule-loader.h"
-#include <QDir>
 #include <QJsonArray>
-#include <QJsonDocument>
-#include <QSet>
+#include <QJsonObject>
 #include <QtGlobal>
 #include "actions/action-loader.h"
 #include "conditions/condition-loader.h"
@@ -16,14 +14,6 @@ Rule *RuleLoader::load(const QJsonObject &obj)
 	const bool final = obj["final"].toBool(false);
 	QList<Condition*> conditions;
 	QList<Action*> actions;
-
-	// Legacy actions file use a union of Rule and Action as type
-	if (obj.contains("type")) {
-		Action *action = ActionLoader::load(obj);
-		if (action != nullptr) {
-			actions.append(action);
-		}
-	}
 
 	for (auto conditionObj : obj["conditions"].toArray()) {
 		Condition *condition = ConditionLoader::load(conditionObj.toObject());
