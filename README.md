@@ -14,6 +14,8 @@ Organizer allows to load a bunch of media files, show/play them, and allowing th
 
 For example, it can be used to sort a vacation's pictures and videos and put them in separate folders according to their location, the context, etc. The images/videos will be shown one by one, then the user can use shortcuts to move them quickly to separate directories.
 
+It can also be configured to perform actions automatically given the file's name, size, etc. to allow for automated sorting of many files at once.
+
 ### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
 
