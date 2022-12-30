@@ -1,19 +1,19 @@
-#ifndef MOVE_ACTION_H
-#define MOVE_ACTION_H
+#ifndef FILENAME_CONDITION_H
+#define FILENAME_CONDITION_H
 
 #include "condition.h"
-#include <QDir>
+#include <QList>
+#include <QRegularExpression>
 
 
 class FilenameCondition : public Condition
 {
 	public:
-		explicit FilenameCondition(QString filename, bool regex);
+		explicit FilenameCondition(const QString &filename, bool regex);
 		bool match(QFile &file) const override;
 
 	private:
-		QString m_filename;
-		bool m_regex;
+		QList<QRegularExpression> m_regexes;
 };
 
-#endif // MOVE_ACTION_H
+#endif // FILENAME_CONDITION_H

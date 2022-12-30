@@ -206,14 +206,14 @@ An condition is a JSON object with a few common options:
 Matches a file using its filename.
 
 Additional options:
-* **filename**: the filename condition to use, including the extension
+* **filename**: the filename condition to use, including the extension. Can use multiple patterns with the ";" separator (disabled when using regular expressions)
 * **regex**: set to true to use regular expressions for matching (default: `false`)
 
 Example:
 ```json
 {
     "type": "filename",
-    "filename": "*.jpg",
+    "filename": "*.jpg; *.png",
     "regex": false
 }
 ```
