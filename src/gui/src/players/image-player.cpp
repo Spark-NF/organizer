@@ -1,7 +1,7 @@
 #include "image-player.h"
+#include "ui_image-player.h"
 #include <QFileInfo>
 #include <QImageReader>
-#include "ui_image-player.h"
 
 
 ImagePlayer::ImagePlayer(QWidget *parent)

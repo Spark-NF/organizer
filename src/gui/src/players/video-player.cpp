@@ -1,11 +1,11 @@
 #include "video-player.h"
+#include "ui_video-player.h"
 #include <QFileInfo>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QStyle>
 #include <QTime>
 #include <QVideoWidget>
-#include "ui_video-player.h"
 
 
 VideoPlayer::VideoPlayer(QWidget *parent)
@@ -78,13 +78,10 @@ void VideoPlayer::unload()
 
 void VideoPlayer::playPause()
 {
-	if (m_mediaPlayer->state() == QMediaPlayer::PlayingState)
-	{
+	if (m_mediaPlayer->state() == QMediaPlayer::PlayingState) {
 		m_mediaPlayer->pause();
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-	}
-	else
-	{
+	} else {
 		m_mediaPlayer->play();
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	}

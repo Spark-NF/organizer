@@ -30,4 +30,3 @@ QList<Action*> Rule::actions() const
 {
 	return m_actions;
 }
-

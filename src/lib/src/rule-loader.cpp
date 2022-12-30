@@ -1,7 +1,7 @@
 #include "rule-loader.h"
 #include <QDir>
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QSet>
 #include <QtGlobal>
 #include "actions/action-loader.h"
@@ -15,8 +15,7 @@ QList<QList<Rule*>> RuleLoader::loadFile(const QString &file)
 	QSet<QKeySequence> shortcuts;
 
 	QFile f(file);
-	if (!f.open(QFile::ReadOnly))
-	{
+	if (!f.open(QFile::ReadOnly)) {
 		qCritical() << "Could not open rules file" << file;
 		return ret;
 	}
@@ -25,27 +24,23 @@ QList<QList<Rule*>> RuleLoader::loadFile(const QString &file)
 	f.close();
 
 	QJsonDocument loadDoc = QJsonDocument::fromJson(dta);
-	if (loadDoc.isNull())
-	{
+	if (loadDoc.isNull()) {
 		qCritical() << "Invalid rules file";
 		return ret;
 	}
 
 	QJsonArray rulesGroups = loadDoc.array();
-	for (auto rulesGroup : rulesGroups)
-	{
+	for (auto rulesGroup : rulesGroups) {
 		QJsonArray rules = rulesGroup.toArray();
 		QList<Rule*> res;
 
-		for (auto ruleObj : rules)
-		{
+		for (auto ruleObj : rules) {
 			Rule *rule = load(ruleObj.toObject());
 			if (rule == nullptr)
 				continue;
 
 			QKeySequence shortcut = rule->shortcut();
-			if (shortcuts.contains(shortcut))
-			{
+			if (shortcuts.contains(shortcut)) {
 				qWarning() << "Shortcut already in use" << shortcut;
 				continue;
 			}
@@ -69,34 +64,27 @@ Rule *RuleLoader::load(const QJsonObject &obj)
 	QList<Action*> actions;
 
 	// Legacy actions file use a union of Rule and Action as type
-	if (obj.contains("type"))
-	{
+	if (obj.contains("type")) {
 		Action *action = ActionLoader::load(obj);
-		if (action != nullptr)
-		{
+		if (action != nullptr) {
 			actions.append(action);
 		}
 	}
 
-	for (auto conditionObj : obj["conditions"].toArray())
-	{
+	for (auto conditionObj : obj["conditions"].toArray()) {
 		Condition *condition = ConditionLoader::load(conditionObj.toObject());
-		if (condition != nullptr)
-		{
+		if (condition != nullptr) {
 			conditions.append(condition);
 		}
 	}
 
-	for (auto actionObj : obj["actions"].toArray())
-	{
+	for (auto actionObj : obj["actions"].toArray()) {
 		Action *action = ActionLoader::load(actionObj.toObject());
-		if (action != nullptr)
-		{
+		if (action != nullptr) {
 			actions.append(action);
 		}
 	}
-	if (actions.isEmpty())
-	{
+	if (actions.isEmpty()) {
 		qWarning() << "No action for rule";
 		return nullptr;
 	}

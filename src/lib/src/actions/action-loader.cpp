@@ -1,7 +1,7 @@
 #include "action-loader.h"
 #include <QDir>
-#include <QJsonDocument>
 #include <QJsonArray>
+#include <QJsonDocument>
 #include <QSet>
 #include <QtGlobal>
 #include "actions/move-action.h"
@@ -25,35 +25,30 @@ Action *ActionLoader::load(const QJsonObject &obj)
 	QString shortcut = obj["shortcut"].toString();
 	bool final = obj["final"].toBool(false);
 
-	if (type == "rename")
-	{
+	if (type == "rename") {
 		QString regexp = obj["from"].toString();
 		QString replace = obj["to"].toString();
 		bool overwrite = obj["overwrite"].toBool(false);
 		return new RenameAction(name, QKeySequence(shortcut), final, QRegularExpression(regexp), replace, overwrite);
 	}
 
-	if (type == "move")
-	{
+	if (type == "move") {
 		QString destination = obj["dest"].toString();
 		bool create = obj["create"].toBool(true);
 		bool overwrite = obj["overwrite"].toBool(false);
 		return new MoveAction(name, QKeySequence(shortcut), final, QDir(destination), create, overwrite);
 	}
 
-	if (type == "process")
-	{
+	if (type == "process") {
 		QString command = obj["cmd"].toString();
 		QStringList args = jsonArrayToStringList(obj["args"].toArray());
 		return new ProcessAction(name, QKeySequence(shortcut), final, command, args);
 	}
 
-	if (type == "multiple")
-	{
+	if (type == "multiple") {
 		QList<Action*> actions;
 		QJsonArray jsonActions = obj["actions"].toArray();
-		for (auto actionObj : jsonActions)
-		{
+		for (auto actionObj : jsonActions) {
 			Action *action = load(actionObj.toObject());
 			if (action != Q_NULLPTR)
 				actions.append(action);

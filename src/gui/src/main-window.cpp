@@ -1,15 +1,15 @@
 #include "main-window.h"
 #include "ui_main-window.h"
+#include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QShortcut>
-#include <QMediaPlaylist>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QMediaPlaylist>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QMovie>
-#include <QDesktopServices>
-#include <QMessageBox>
+#include <QShortcut>
 #include <QStyle>
 #include <QTime>
 #include <QUrl>
@@ -17,8 +17,8 @@
 #include "players/image-player.h"
 #include "players/player.h"
 #include "players/video-player.h"
-#include "rule.h"
 #include "rule-loader.h"
+#include "rule.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -100,13 +100,11 @@ void MainWindow::generateButtons(QString file)
 {
 	clearLayout(ui->layoutActions);
 
-	for (const QList<Rule*> &rules : RuleLoader::loadFile(file))
-	{
+	for (const QList<Rule*> &rules : RuleLoader::loadFile(file)) {
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
 
-		for (Rule *rule : rules)
-		{
+		for (Rule *rule : rules) {
 			auto button = new QPushButton(this);
 			button->setText(QString("[%1] %2").arg(rule->shortcut().toString(), rule->name()));
 			button->setShortcut(rule->shortcut());
@@ -125,8 +123,7 @@ void MainWindow::openDirectory(QString path)
 
 	if (!m_files.isEmpty())
 		previewFile();
-	else
-	{
+	else {
 		ui->label->setText(QString("Empty directory: '%1'").arg(path));
 		ui->stackedWidget->setCurrentIndex(0);
 		setWindowTitle(QString());
@@ -141,19 +138,15 @@ void MainWindow::executeAction(Action *action)
 	bool fullPreview = beforeAction();
 
 	QFile file(m_files[m_currentFile]);
-	if (action->execute(file))
-	{
+	if (action->execute(file)) {
 		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = file.fileName();
 
-		if (action->terminal())
-		{
+		if (action->terminal()) {
 			nextFile();
 			return;
 		}
-	}
-	else
-	{
+	} else {
 		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 	}
 

@@ -1,0 +1,50 @@
+BasedOnStyle: WebKit
+
+# Use tabs
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+
+# Use "ptr *p" instead of "ptr* p"
+PointerAlignment: Right
+
+# Sort headers in main, <>, then "" order
+SortIncludes: CaseSensitive
+IncludeBlocks: Merge
+IncludeCategories:
+  - Regex: '"ui_.+"'
+    Priority: 1
+  - Regex: '^<.+>'
+    Priority: 2
+  - Regex: '".+"'
+    Priority: 3
+
+# Allow up to two empty lines
+MaxEmptyLinesToKeep: 2
+
+# Have initializers on one line
+PackConstructorInitializers: BinPack
+BreakConstructorInitializers: BeforeColon
+
+# Indent pre-processor blocks
+IndentPPDirectives: BeforeHash
+
+# Don't add line break in empty functions
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+SpaceInEmptyBlock: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: false
+  AfterEnum: false
+  AfterFunction: true
+  AfterNamespace: false
+  AfterObjCDeclaration: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false

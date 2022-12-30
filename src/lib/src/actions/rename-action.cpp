@@ -1,6 +1,6 @@
 #include "rename-action.h"
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
 #include <utility>
 
 

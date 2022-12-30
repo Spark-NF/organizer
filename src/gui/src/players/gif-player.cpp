@@ -1,8 +1,8 @@
 #include "gif-player.h"
+#include "ui_gif-player.h"
 #include <QFileInfo>
 #include <QMovie>
 #include <QStyle>
-#include "ui_gif-player.h"
 
 
 GifPlayer::GifPlayer(QWidget *parent)
@@ -72,13 +72,10 @@ void GifPlayer::playPause()
 		return;
 	}
 
-	if (m_movie->state() == QMovie::Running)
-	{
+	if (m_movie->state() == QMovie::Running) {
 		m_movie->setPaused(true);
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-	}
-	else
-	{
+	} else {
 		m_movie->setPaused(false);
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	}

@@ -14,8 +14,7 @@ bool ProcessAction::execute(QFile &file) const
 	QFileInfo info(file.fileName());
 
 	QStringList args;
-	for (QString arg : m_args)
-	{
+	for (QString arg : m_args) {
 		arg.replace("{path}", info.absoluteFilePath());
 		arg.replace("{dir}", info.absolutePath());
 		arg.replace("{filename}", info.fileName());

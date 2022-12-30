@@ -8,8 +8,7 @@ Condition *ConditionLoader::load(const QJsonObject &obj)
 {
 	const QString type = obj["type"].toString();
 
-	if (type == "filename")
-	{
+	if (type == "filename") {
 		const QString filename = obj["filename"].toString();
 		const bool regex = obj["regex"].toBool(false);
 		return new FilenameCondition(filename, regex);
