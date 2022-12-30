@@ -4,6 +4,8 @@
 
 int main(int argc, char *argv[])
 {
+	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
 	QApplication app(argc, argv);
 	app.setApplicationName("Organizer");
 	app.setApplicationDisplayName(QString("Organizer (%1 - %2)").arg(VERSION, VERSION_PLATFORM));
