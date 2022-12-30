@@ -17,3 +17,17 @@ QList<QList<Rule*>> Profile::rules() const
 {
 	return m_rules;
 }
+
+
+QList<Rule*> Profile::match(QFile &file) const
+{
+	QList<Rule*> ret;
+	for (const QList<Rule*> &column : m_rules) {
+		for (Rule* rule : column) {
+			if (rule->match(file)) {
+				ret.append(rule);
+			}
+		}
+	}
+	return ret;
+}

@@ -16,6 +16,8 @@ class Profile
 		QString name() const;
 		QList<QList<Rule*>> rules() const;
 
+		QList<Rule*> match(QFile &file) const;
+
 	private:
 		QString m_name;
 		QList<QList<Rule*>> m_rules;
