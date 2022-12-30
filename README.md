@@ -200,7 +200,7 @@ Example:
 
 ### Conditions
 An condition is a JSON object with a few common options:
-* **type**: the type of the action (such as `filename`)
+* **type**: the type of the action (such as `filename` or `filesize`)
 
 #### Filename
 Matches a file using its filename.
@@ -212,8 +212,23 @@ Additional options:
 Example:
 ```json
 {
-    "type": "filename",
-    "filename": "*.jpg; *.png",
-    "regex": false
+  "type": "filename",
+  "filename": "*.jpg; *.png",
+  "regex": false
+}
+```
+
+#### Filesize
+Matches a file using its size on disk.
+
+Additional options:
+* **min**: the minimum size in bytes, inclusive (`-1` for no minimum, default: `-1`)
+* **max**: the maximum size in bytes, exclusive (`-1` for no maximum, default: `-1`)
+
+Example:
+```json5
+{
+    "type": "filesize",
+    "min": 5242880 // 5 MB
 }
 ```
