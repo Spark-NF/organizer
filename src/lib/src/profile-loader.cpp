@@ -9,7 +9,7 @@
 #include "rules/rule.h"
 
 
-Profile *ProfileLoader::loadFile(const QString &file)
+QSharedPointer<Profile> ProfileLoader::loadFile(const QString &file)
 {
 	QFile f(file);
 	if (!f.open(QFile::ReadOnly)) {
@@ -29,10 +29,10 @@ Profile *ProfileLoader::loadFile(const QString &file)
 	return load(loadDoc.object());
 }
 
-Profile *ProfileLoader::load(const QJsonObject &obj)
+QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
 {
 	const QString name = obj["name"].toString();
-	QList<QList<Rule*>> rules;
+	QList<QList<QSharedPointer<Rule>>> rules;
 
 	// Handle both array and array of arrays for rules
 	const QJsonArray rulesRoot = obj["rules"].toArray();
@@ -47,10 +47,10 @@ Profile *ProfileLoader::load(const QJsonObject &obj)
 
 	QSet<QKeySequence> shortcuts;
 	for (const auto rulesArr : rulesList) {
-		QList<Rule*> res;
+		QList<QSharedPointer<Rule>> res;
 
 		for (auto ruleObj : rulesArr) {
-			Rule *rule = RuleLoader::load(ruleObj.toObject());
+			auto rule = RuleLoader::load(ruleObj.toObject());
 			if (rule == nullptr)
 				continue;
 
@@ -67,5 +67,5 @@ Profile *ProfileLoader::load(const QJsonObject &obj)
 		rules.append(res);
 	}
 
-	return new Profile(name, rules);
+	return QSharedPointer<Profile>::create(name, rules);
 }

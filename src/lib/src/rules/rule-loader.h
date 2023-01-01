@@ -11,7 +11,7 @@ class Rule;
 class RuleLoader
 {
 	public:
-		static Rule *load(const QJsonObject &obj);
+		static QSharedPointer<Rule> load(const QJsonObject &obj);
 };
 
 #endif // RULE_LOADER_H

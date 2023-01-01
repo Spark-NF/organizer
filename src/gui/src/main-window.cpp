@@ -100,13 +100,13 @@ void MainWindow::generateButtons(QString file)
 {
 	clearLayout(ui->layoutActions);
 
-	Profile *profile = ProfileLoader::loadFile(file);
+	m_profile = ProfileLoader::loadFile(file);
 
-	for (const QList<Rule*> &rules : profile->rules()) {
+	for (const auto &rules : m_profile->rules()) {
 		auto layout = new QVBoxLayout();
 		layout->setAlignment(Qt::AlignTop);
 
-		for (Rule *rule : rules) {
+		for (const auto &rule : rules) {
 			auto button = new QPushButton(this);
 			button->setText(QString("[%1] %2").arg(rule->shortcut().toString(), rule->name()));
 			button->setShortcut(rule->shortcut());
@@ -132,7 +132,7 @@ void MainWindow::openDirectory(QString path)
 	}
 }
 
-void MainWindow::executeAction(Rule *rule)
+void MainWindow::executeAction(const QSharedPointer<Rule> &rule)
 {
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;

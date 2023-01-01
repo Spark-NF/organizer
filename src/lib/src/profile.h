@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QList>
 #include <QString>
+#include <QSharedPointer>
 
 
 class Rule;
@@ -11,16 +12,16 @@ class Rule;
 class Profile
 {
 	public:
-		explicit Profile(QString name, QList<QList<Rule*>> rules);
+		explicit Profile(QString name, QList<QList<QSharedPointer<Rule>>> rules);
 
 		QString name() const;
-		QList<QList<Rule*>> rules() const;
+		const QList<QList<QSharedPointer<Rule>>> &rules() const;
 
-		QList<Rule*> match(QFile &file) const;
+		QList<QSharedPointer<Rule>> match(QFile &file) const;
 
 	private:
 		QString m_name;
-		QList<QList<Rule*>> m_rules;
+		QList<QList<QSharedPointer<Rule>>> m_rules;
 };
 
 #endif // PROFILE_H

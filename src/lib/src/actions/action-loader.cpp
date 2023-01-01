@@ -18,7 +18,7 @@ QStringList jsonArrayToStringList(const QJsonArray &array)
 	return ret;
 }
 
-Action *ActionLoader::load(const QJsonObject &obj)
+QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 {
 	const QString type = obj["type"].toString();
 
@@ -26,34 +26,34 @@ Action *ActionLoader::load(const QJsonObject &obj)
 		const QString regexp = obj["from"].toString();
 		const QString replace = obj["to"].toString();
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return new RenameAction(QRegularExpression(regexp), replace, overwrite);
+		return QSharedPointer<RenameAction>::create(QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move") {
 		const QString destination = obj["dest"].toString();
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return new MoveAction(QDir(destination), create, overwrite);
+		return QSharedPointer<MoveAction>::create(QDir(destination), create, overwrite);
 	}
 
 	if (type == "process") {
 		const QString command = obj["cmd"].toString();
 		const QStringList args = jsonArrayToStringList(obj["args"].toArray());
-		return new ProcessAction(command, args);
+		return QSharedPointer<ProcessAction>::create(command, args);
 	}
 
 	if (type == "multiple") {
-		QList<Action*> actions;
+		QList<QSharedPointer<Action>> actions;
 		const QJsonArray jsonActions = obj["actions"].toArray();
 		for (auto actionObj : jsonActions) {
-			Action *action = load(actionObj.toObject());
-			if (action != Q_NULLPTR)
+			auto action = load(actionObj.toObject());
+			if (action != nullptr)
 				actions.append(action);
 		}
 
-		return new MultipleAction(actions);
+		return QSharedPointer<MultipleAction>::create(actions);
 	}
 
 	qWarning() << "Unknown action type" << type;
-	return Q_NULLPTR;
+	return nullptr;
 }

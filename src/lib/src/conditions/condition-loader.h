@@ -9,7 +9,7 @@ class Condition;
 class ConditionLoader
 {
 	public:
-		static Condition *load(const QJsonObject &obj);
+		static QSharedPointer<Condition> load(const QJsonObject &obj);
 };
 
 #endif // CONDITION_LOADER_H

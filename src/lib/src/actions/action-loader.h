@@ -9,7 +9,7 @@ class Action;
 class ActionLoader
 {
 	public:
-		static Action *load(const QJsonObject &obj);
+		static QSharedPointer<Action> load(const QJsonObject &obj);
 };
 
 #endif // ACTION_LOADER_H
