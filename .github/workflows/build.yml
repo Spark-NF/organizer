@@ -32,6 +32,51 @@ jobs:
           if [[ "$IS_RELEASE" != 'true' ]]; then echo "version=nightly" >> $GITHUB_OUTPUT ; fi
           echo "release=${IS_RELEASE}" >> $GITHUB_OUTPUT
 
+  coverage:
+    name: Code coverage
+    runs-on: ubuntu-latest
+
+    env:
+      COVERAGE: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install lcov
+          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          cache: true
+          version: ${{ env.QT_VERSION }}
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake ../src -DCMAKE_BUILD_TYPE=Debug -DVERSION="9.9.9"
+          cmake --build . --config Debug
+
+      - name: Test
+        working-directory: build
+        run: lib/tests/lib-tests
+
+      - name: Capture coverage info
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage results
+        uses: codecov/codecov-action@v3
+
   linux:
     name: Linux
     runs-on: ubuntu-18.04

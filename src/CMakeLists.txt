@@ -24,6 +24,16 @@ elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 endif()
 
+# Enable code coverage
+if(DEFINED ENV{COVERAGE})
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		message(STATUS "Compiling with code coverage")
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 --coverage")
+	else()
+		message(WARNING "Coverage only supported for GNUCXX")
+	endif()
+endif()
+
 # Build information
 string(REGEX REPLACE "^v" "" VERSION "${VERSION}")
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "[aA][mM][dD]64")
