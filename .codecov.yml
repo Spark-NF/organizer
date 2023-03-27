@@ -1,0 +1,18 @@
+coverage:
+  ignore:
+    - "build/**/*"
+    - "src/tests/*"
+    - "src/tests/**/*"
+    - "src/*/tests/*"
+    - "src/*/tests/**/*"
+
+component_management:
+  individual_components:
+    - component_id: gui
+      name: GUI
+      paths:
+        - src/gui/*
+    - component_id: lib
+      name: Library
+      paths:
+        - src/lib/*
