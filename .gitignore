@@ -3,6 +3,7 @@
 /bin/
 /build/
 *.lnk
+.idea/
 
 # C++ objects and libs
 
