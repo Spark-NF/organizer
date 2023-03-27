@@ -49,7 +49,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install lcov
-          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
+          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -66,7 +66,7 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/tests/lib-tests
+        run: lib/lib-tests
 
       - name: Capture coverage info
         run: |
@@ -113,7 +113,7 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/tests/lib-tests
+        run: lib/lib-tests
 
       - name: Generate AppImage
         run: |
@@ -164,7 +164,7 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/tests/lib-tests
+        run: lib/lib-tests
 
       - name: Generate DMG
         run: |
@@ -225,7 +225,7 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/tests/lib-tests.exe
+        run: lib\lib-tests.exe
 
       - name: Generate installer
         run: |
