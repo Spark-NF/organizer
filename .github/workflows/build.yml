@@ -224,6 +224,7 @@ jobs:
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
 
       - name: Test
+        shell: cmd
         working-directory: build
         run: lib\lib-tests.exe
 
