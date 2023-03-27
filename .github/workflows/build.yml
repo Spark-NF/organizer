@@ -111,6 +111,10 @@ jobs:
           cmake --build . --config Release
           make DESTDIR=../install/Organizer install
 
+      - name: Test
+        working-directory: build
+        run: lib/tests/lib-tests
+
       - name: Generate AppImage
         run: |
           curl -Lo "linuxdeployqt.AppImage" "https://github.com/probonopd/linuxdeployqt/releases/download/${LINUXDEPLOYQT_VERSION}/linuxdeployqt-${LINUXDEPLOYQT_VERSION}-x86_64.AppImage"
@@ -157,6 +161,10 @@ jobs:
           cd build
           cmake ../src -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
           cmake --build . --config Release
+
+      - name: Test
+        working-directory: build
+        run: lib/tests/lib-tests
 
       - name: Generate DMG
         run: |
@@ -214,6 +222,10 @@ jobs:
           cmake --build . --config %BUILD_TYPE%
           mv gui/%BUILD_TYPE%/Organizer.exe .
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
+
+      - name: Test
+        working-directory: build
+        run: lib/tests/lib-tests.exe
 
       - name: Generate installer
         run: |
