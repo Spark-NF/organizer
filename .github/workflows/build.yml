@@ -95,7 +95,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
+          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
@@ -200,6 +200,10 @@ jobs:
       ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
 
     steps:
+      - name: Set environment
+        shell: bash
+        run: echo "BUILD_TYPE=$([ "IS_NIGHTLY" = "1" ] && echo "Release" || echo "RelWithDebInfo")" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -217,7 +221,6 @@ jobs:
         run: |
           mkdir build
           cd build
-          if "%IS_RELEASE%"=="true" (set "BUILD_TYPE=RelWithDebInfo") else (set "BUILD_TYPE=Release")
           cmake ../src -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
           mv gui/%BUILD_TYPE%/Organizer.exe .
@@ -226,7 +229,7 @@ jobs:
       - name: Test
         shell: cmd
         working-directory: build
-        run: lib\lib-tests.exe
+        run: lib\%BUILD_TYPE%\lib-tests.exe
 
       - name: Generate installer
         run: |
