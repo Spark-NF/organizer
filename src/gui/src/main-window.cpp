@@ -66,9 +66,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::generateViewers()
 {
-	m_players.append(new GifPlayer(this));
+	m_players.append(new GifPlayer(m_settings, this));
 	m_players.append(new ImagePlayer(this));
-	m_players.append(new VideoPlayer(this));
+	m_players.append(new VideoPlayer(m_settings, this));
 
 	for (Player *player : m_players) {
 		ui->stackedWidget->addWidget(player);

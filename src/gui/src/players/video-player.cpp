@@ -3,15 +3,19 @@
 #include <QFileInfo>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QSettings>
 #include <QStyle>
 #include <QTime>
 #include <QVideoWidget>
 
 
-VideoPlayer::VideoPlayer(QWidget *parent)
-	: Player(parent), ui(new Ui::VideoPlayer)
+VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
+	: Player(parent), ui(new Ui::VideoPlayer), m_settings(settings)
 {
 	ui->setupUi(this);
+
+	ui->sliderVolume->setValue(m_settings->value("Players/Video/Volume", 100).toInt());
+	ui->spinPlaybackRate->setValue(m_settings->value("Players/Video/Speed", 1).toDouble());
 
 	m_supportedFormats << "mp4" << "flv" << "webm";
 
@@ -35,6 +39,9 @@ VideoPlayer::VideoPlayer(QWidget *parent)
 
 VideoPlayer::~VideoPlayer()
 {
+	m_settings->setValue("Players/Video/Volume", ui->sliderVolume->value());
+	m_settings->setValue("Players/Video/Speed", ui->spinPlaybackRate->value());
+
 	unload();
 	delete ui;
 }

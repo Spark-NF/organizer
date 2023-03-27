@@ -2,13 +2,16 @@
 #include "ui_gif-player.h"
 #include <QFileInfo>
 #include <QMovie>
+#include <QSettings>
 #include <QStyle>
 
 
-GifPlayer::GifPlayer(QWidget *parent)
-	: Player(parent), ui(new Ui::GifPlayer)
+GifPlayer::GifPlayer(QSettings *settings, QWidget *parent)
+	: Player(parent), ui(new Ui::GifPlayer), m_settings(settings)
 {
 	ui->setupUi(this);
+
+	ui->spinSpeed->setValue(m_settings->value("Players/Gif/Speed", 1).toDouble());
 
 	QList<QByteArray> formats = QMovie::supportedFormats();
 	for (const QByteArray &format : formats) {
@@ -23,6 +26,8 @@ GifPlayer::GifPlayer(QWidget *parent)
 
 GifPlayer::~GifPlayer()
 {
+	m_settings->setValue("Players/Gif/Speed", ui->spinSpeed->value());
+
 	unload();
 	delete ui;
 }
