@@ -11,7 +11,8 @@ on:
     - '**.md'
 
 env:
-  QT_VERSION: 5.15.2
+  QT_VERSION: 6.5.0
+  QT_MODULES: qtmultimedia qtimageformats
   IS_RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') }}
   IS_NIGHTLY: ${{ !startsWith(github.ref, 'refs/tags/v') }}
 
@@ -49,13 +50,14 @@ jobs:
         run: |
           sudo apt update
           sudo apt install lcov
-          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
+          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-cursor0 libgstreamer-plugins-base1.0-0 zsync
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
           cache: true
           version: ${{ env.QT_VERSION }}
+          modules: ${{ env.QT_MODULES }}
 
       - name: Build
         run: |
@@ -79,7 +81,7 @@ jobs:
 
   linux:
     name: Linux
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     needs: version
 
     env:
@@ -95,13 +97,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libgstreamer-plugins-base1.0-0 zsync
+          sudo apt install libxkbcommon-x11-0 libpulse-dev libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-render-util0 libxcb-xinerama0 libxcb-cursor0 libgstreamer-plugins-base1.0-0 zsync
 
       - name: Install Qt
         uses: jurplel/install-qt-action@v3
         with:
           cache: true
           version: ${{ env.QT_VERSION }}
+          modules: ${{ env.QT_MODULES }}
 
       - name: Build
         run: |
@@ -154,6 +157,7 @@ jobs:
         with:
           cache: true
           version: ${{ env.QT_VERSION }}
+          modules: ${{ env.QT_MODULES }}
 
       - name: Build
         run: |
@@ -179,22 +183,9 @@ jobs:
           if-no-files-found: error
 
   windows:
-    name: Windows (${{ matrix.arch }}-bit)
+    name: Windows
     runs-on: windows-2019
     needs: version
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-        - arch: 32
-          qt_arch: win32_msvc2019
-          cmake_platform: Win32
-          suffix: x86
-        - arch: 64
-          qt_arch: win64_msvc2019_64
-          cmake_platform: x64
-          suffix: x64
 
     env:
       ORGANIZER_VERSION: ${{ needs.version.outputs.version }}
@@ -214,14 +205,14 @@ jobs:
         with:
           cache: true
           version: ${{ env.QT_VERSION }}
-          arch: ${{ matrix.qt_arch }}
+          modules: ${{ env.QT_MODULES }}
 
       - name: Build
         shell: cmd
         run: |
           mkdir build
           cd build
-          cmake ../src -G "Visual Studio 16 2019" -A "${{ matrix.cmake_platform }}" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
+          cmake ../src -G "Visual Studio 16 2019" -A "x64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
           mv gui/%BUILD_TYPE%/Organizer.exe .
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
@@ -233,26 +224,26 @@ jobs:
 
       - name: Generate installer
         run: |
-          iscc /Q /DMyAppVersion="$Env:ORGANIZER_VERSION" /DPlatformName="${{ matrix.suffix }}" /DQtDir="$Env:Qt5_Dir" setup/setup.iss
-          mv setup/*.exe Organizer_${{ matrix.suffix }}.exe
+          iscc /Q /DMyAppVersion="$Env:ORGANIZER_VERSION" /DPlatformName="x64" /DQtDir="$Env:Qt6_Dir" setup/setup.iss
+          mv setup/*.exe Organizer_x64.exe
 
       - name: Upload package
         uses: actions/upload-artifact@v3
         with:
-          name: Organizer_${{ matrix.suffix }}.exe
-          path: Organizer_${{ matrix.suffix }}.exe
+          name: Organizer_x64.exe
+          path: Organizer_x64.exe
           if-no-files-found: error
 
       - name: Generate symbols ZIP
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
-        run: 7z a "Organizer_${{ matrix.suffix }}_symbols.zip" "build/gui/Organizer.pdb"
+        run: 7z a "Organizer_x64_symbols.zip" "build/gui/Organizer.pdb"
 
       - name: Upload symbols
         uses: actions/upload-artifact@v3
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
         with:
-          name: Organizer_${{ matrix.suffix }}_symbols.zip
-          path: Organizer_${{ matrix.suffix }}_symbols.zip
+          name: Organizer_x64_symbols.zip
+          path: Organizer_x64_symbols.zip
           if-no-files-found: error
 
   github:
@@ -282,23 +273,12 @@ jobs:
         with:
           name: Organizer.dmg
 
-      - name: Download artifact (Windows 32-bit)
-        uses: actions/download-artifact@v3
-        with:
-          name: Organizer_x86.exe
-
-      - name: Download artifact (Windows 32-bit symbols)
-        uses: actions/download-artifact@v3
-        if: needs.version.outputs.release == 'true'
-        with:
-          name: Organizer_x86_symbols.zip
-
-      - name: Download artifact (Windows 64-bit)
+      - name: Download artifact (Windows)
         uses: actions/download-artifact@v3
         with:
           name: Organizer_x64.exe
 
-      - name: Download artifact (Windows 64-bit symbols)
+      - name: Download artifact (Windows symbols)
         uses: actions/download-artifact@v3
         if: needs.version.outputs.release == 'true'
         with:
@@ -309,13 +289,11 @@ jobs:
           mv Organizer-x86_64.AppImage Organizer_${VERSION}-x86_64.AppImage
           mv Organizer-x86_64.AppImage.zsync Organizer_${VERSION}-x86_64.AppImage.zsync
           mv Organizer.dmg Organizer_${VERSION}.dmg
-          mv Organizer_x86.exe Organizer_${VERSION}_x86.exe
           mv Organizer_x64.exe Organizer_${VERSION}_x64.exe
 
       - name: Rename symbols artifacts
         if: needs.version.outputs.release == 'true'
         run: |
-          mv Organizer_x86_symbols.zip Organizer_${VERSION}_x86_symbols.zip
           mv Organizer_x64_symbols.zip Organizer_${VERSION}_x64_symbols.zip
 
       - name: Get date for Nightly body

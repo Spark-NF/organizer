@@ -1,8 +1,8 @@
 #include "video-player.h"
 #include "ui_video-player.h"
+#include <QAudioOutput>
 #include <QFileInfo>
 #include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <QSettings>
 #include <QStyle>
 #include <QTime>
@@ -18,19 +18,19 @@ VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
 
 	auto *videoWidget = new QVideoWidget(this);
 	ui->verticalLayout->insertWidget(0, videoWidget);
-	m_mediaPlaylist = new QMediaPlaylist(this);
-	m_mediaPlaylist->setPlaybackMode(QMediaPlaylist::Loop);
+	m_audioOutput = new QAudioOutput(this);
 	m_mediaPlayer = new QMediaPlayer(this);
 	m_mediaPlayer->setVideoOutput(videoWidget);
-	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
-	m_mediaPlayer->setNotifyInterval(50);
+	m_mediaPlayer->setAudioOutput(m_audioOutput);
+	m_mediaPlayer->setLoops(QMediaPlayer::Infinite);
+	// TODO(Qt6): m_mediaPlayer->setNotifyInterval(50);
 
 	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	connect(ui->buttonPlayPause, &QToolButton::clicked, this, &VideoPlayer::playPause);
 	connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayer::durationChanged);
 	connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayer::positionChanged);
 	connect(ui->sliderPosition, &QSlider::valueChanged, this, &VideoPlayer::seek);
-	connect(ui->sliderVolume, &QSlider::valueChanged, m_mediaPlayer, &QMediaPlayer::setVolume);
+	connect(ui->sliderVolume, &QSlider::valueChanged, m_audioOutput, &QAudioOutput::setVolume);
 	connect(ui->spinPlaybackRate, SIGNAL(valueChanged(double)), m_mediaPlayer, SLOT(setPlaybackRate(qreal)));
 
 	// Restore previous state
@@ -56,11 +56,9 @@ bool VideoPlayer::supports(const QString &file)
 
 void VideoPlayer::load(const QString &file)
 {
-	m_mediaPlaylist->clear();
-	m_mediaPlaylist->addMedia(QUrl::fromLocalFile(file));
+	m_mediaPlayer->setSource(QUrl::fromLocalFile(file));
 	positionChanged(0);
 
-	m_mediaPlayer->setPlaylist(m_mediaPlaylist);
 	m_mediaPlayer->play();
 
 	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
@@ -68,7 +66,7 @@ void VideoPlayer::load(const QString &file)
 
 bool VideoPlayer::stop()
 {
-	if (m_mediaPlayer->state() == QMediaPlayer::StoppedState) {
+	if (m_mediaPlayer->playbackState() == QMediaPlayer::StoppedState) {
 		return false;
 	}
 
@@ -79,14 +77,13 @@ bool VideoPlayer::stop()
 void VideoPlayer::unload()
 {
 	m_mediaPlayer->stop();
-	m_mediaPlayer->setMedia(QMediaContent());
-	m_mediaPlaylist->clear();
+	m_mediaPlayer->setSource(QUrl());
 }
 
 
 void VideoPlayer::playPause()
 {
-	if (m_mediaPlayer->state() == QMediaPlayer::PlayingState) {
+	if (m_mediaPlayer->playbackState() == QMediaPlayer::PlayingState) {
 		m_mediaPlayer->pause();
 		ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
 	} else {

@@ -4,7 +4,9 @@
 
 int main(int argc, char *argv[])
 {
-	QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	#if defined(Q_OS_WIN)
+		qputenv("QT_MEDIA_BACKEND", "windows");
+	#endif
 
 	QApplication app(argc, argv);
 	app.setApplicationName("Organizer");

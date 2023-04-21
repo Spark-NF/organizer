@@ -1,8 +1,8 @@
 project(gui)
 
 # Qt libraries
-find_package(Qt5 COMPONENTS Core Gui Multimedia MultimediaWidgets Network Widgets REQUIRED)
-set(QT_LIBRARIES Qt5::Core Qt5::Gui Qt5::Multimedia Qt5::MultimediaWidgets Qt5::Network Qt5::Widgets)
+find_package(Qt6 COMPONENTS Core Gui Multimedia MultimediaWidgets Network Widgets REQUIRED)
+set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Multimedia Qt6::MultimediaWidgets Qt6::Network Qt6::Widgets)
 
 # Input
 file(GLOB_RECURSE SOURCES

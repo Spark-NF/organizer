@@ -43,18 +43,17 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#ResourcesDir}\images\icon.ico";         DestDir: "{app}"; Flags: ignoreversion
+Source: "{#ResourcesDir}\images\icon.ico";      DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BuildDir}\Organizer.exe";            DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\libEGL.dll";                  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\libGLESv2.dll";               DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5Core.dll";                 DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5Gui.dll";                  DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5Multimedia.dll";           DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5MultimediaWidgets.dll";    DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5Network.dll";              DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5OpenGL.dll";               DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtBin}\Qt5Widgets.dll";              DestDir: "{app}"; Flags: ignoreversion
-Source: "{#QtPlugins}\imageformats\qdds.dll";   DestDir: "{app}\imageformats"; Flags: ignoreversion skipifsourcedoesntexist
+Source: "{#QtBin}\D3Dcompiler_47.dll";          DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\opengl32sw.dll";              DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Core.dll";                 DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Gui.dll";                  DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Multimedia.dll";           DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6MultimediaWidgets.dll";    DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Network.dll";              DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Svg.dll";                  DestDir: "{app}"; Flags: ignoreversion
+Source: "{#QtBin}\Qt6Widgets.dll";              DestDir: "{app}"; Flags: ignoreversion
 Source: "{#QtPlugins}\imageformats\qgif.dll";   DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#QtPlugins}\imageformats\qicns.dll";  DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#QtPlugins}\imageformats\qico.dll";   DestDir: "{app}\imageformats"; Flags: ignoreversion
@@ -64,10 +63,21 @@ Source: "{#QtPlugins}\imageformats\qtga.dll";   DestDir: "{app}\imageformats"; F
 Source: "{#QtPlugins}\imageformats\qtiff.dll";  DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#QtPlugins}\imageformats\qwbmp.dll";  DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#QtPlugins}\imageformats\qwebp.dll";  DestDir: "{app}\imageformats"; Flags: ignoreversion
-Source: "{#QtPlugins}\platforms\qminimal.dll";     DestDir: "{app}\platforms"; Flags: ignoreversion
-Source: "{#QtPlugins}\platforms\qoffscreen.dll";   DestDir: "{app}\platforms"; Flags: ignoreversion
-Source: "{#QtPlugins}\platforms\qwindows.dll";     DestDir: "{app}\platforms"; Flags: ignoreversion
+Source: "{#QtPlugins}\multimedia\windowsmediaplugin.dll";  DestDir: "{app}\multimedia"; Flags: ignoreversion
+Source: "{#QtPlugins}\platforms\qwindows.dll";  DestDir: "{app}\platforms"; Flags: ignoreversion
 Source: "{#QtPlugins}\styles\qwindowsvistastyle.dll";   DestDir: "{app}\styles"; Flags: ignoreversion
+
+[InstallDelete]
+Type: files; Name: "{app}\libEGL.dll"
+Type: files; Name: "{app}\libGLESv2.dll"
+Type: files; Name: "{app}\Qt5Core.dll"
+Type: files; Name: "{app}\Qt5Gui.dll"
+Type: files; Name: "{app}\Qt5Multimedia.dll"
+Type: files; Name: "{app}\Qt5MultimediaWidgets.dll"
+Type: files; Name: "{app}\Qt5Network.dll"
+Type: files; Name: "{app}\Qt5OpenGL.dll"
+Type: files; Name: "{app}\Qt5Widgets.dll"
+Type: files; Name: "{app}\imageformats\qdds.dll"
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

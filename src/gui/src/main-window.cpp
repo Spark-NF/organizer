@@ -5,7 +5,6 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QImageReader>
-#include <QMediaPlaylist>
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMovie>
