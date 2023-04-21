@@ -11,8 +11,6 @@ GifPlayer::GifPlayer(QSettings *settings, QWidget *parent)
 {
 	ui->setupUi(this);
 
-	ui->spinSpeed->setValue(m_settings->value("Players/Gif/Speed", 1).toDouble());
-
 	QList<QByteArray> formats = QMovie::supportedFormats();
 	for (const QByteArray &format : formats) {
 		m_supportedFormats.append(QString(format).toLower());
@@ -22,6 +20,9 @@ GifPlayer::GifPlayer(QSettings *settings, QWidget *parent)
 	connect(ui->buttonPlayPause, &QToolButton::clicked, this, &GifPlayer::playPause);
 	connect(ui->sliderPosition, &QSlider::valueChanged, this, &GifPlayer::seek);
 	connect(ui->spinSpeed, SIGNAL(valueChanged(double)), this, SLOT(setSpeed(double)));
+
+	// Restore previous state
+	ui->spinSpeed->setValue(m_settings->value("Players/Gif/Speed", 1).toDouble());
 }
 
 GifPlayer::~GifPlayer()

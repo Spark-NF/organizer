@@ -14,9 +14,6 @@ VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
 {
 	ui->setupUi(this);
 
-	ui->sliderVolume->setValue(m_settings->value("Players/Video/Volume", 100).toInt());
-	ui->spinPlaybackRate->setValue(m_settings->value("Players/Video/Speed", 1).toDouble());
-
 	m_supportedFormats << "mp4" << "flv" << "webm";
 
 	auto *videoWidget = new QVideoWidget(this);
@@ -35,6 +32,10 @@ VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
 	connect(ui->sliderPosition, &QSlider::valueChanged, this, &VideoPlayer::seek);
 	connect(ui->sliderVolume, &QSlider::valueChanged, m_mediaPlayer, &QMediaPlayer::setVolume);
 	connect(ui->spinPlaybackRate, SIGNAL(valueChanged(double)), m_mediaPlayer, SLOT(setPlaybackRate(qreal)));
+
+	// Restore previous state
+	ui->sliderVolume->setValue(m_settings->value("Players/Video/Volume", 100).toInt());
+	ui->spinPlaybackRate->setValue(m_settings->value("Players/Video/Speed", 1).toDouble());
 }
 
 VideoPlayer::~VideoPlayer()
