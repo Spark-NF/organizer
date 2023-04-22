@@ -32,6 +32,9 @@ Compression=lzma
 SolidCompression=yes
 DisableReadyPage=no
 DisableReadyMemo=no
+DisableDirPage=no
+ArchitecturesAllowed=x86 x64 ia64
+ArchitecturesInstallIn64BitMode=x64 ia64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
