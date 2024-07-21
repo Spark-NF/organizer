@@ -54,13 +54,17 @@ QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
 			if (rule == nullptr)
 				continue;
 
+			// Prevent duplicate shortcuts
 			const QKeySequence shortcut = rule->shortcut();
-			if (shortcuts.contains(shortcut)) {
-				qWarning() << "Shortcut already in use" << shortcut;
-				continue;
+			if (!shortcut.isEmpty()) {
+				if (shortcuts.contains(shortcut)) {
+					qWarning() << "Shortcut already in use" << shortcut;
+					continue;
+				}
+
+				shortcuts.insert(shortcut);
 			}
 
-			shortcuts.insert(shortcut);
 			res.append(rule);
 		}
 
