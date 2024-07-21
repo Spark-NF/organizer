@@ -1,5 +1,6 @@
 #include "main-window.h"
 #include "ui_main-window.h"
+#include <QCollator>
 #include <QDesktopServices>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -11,6 +12,7 @@
 #include <QShortcut>
 #include <QStyle>
 #include <QUrl>
+#include <algorithm>
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
@@ -212,8 +214,13 @@ void MainWindow::loadFiles(const QDir &dir)
 	m_files.clear();
 
 	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
-	for (const QFileInfo &info : infoList)
+	for (const QFileInfo &info : infoList) {
 		m_files.append(info.absoluteFilePath());
+	}
+
+	QCollator collator;
+	collator.setNumericMode(true);
+	std::sort(m_files.begin(), m_files.end(), collator);
 }
 
 void MainWindow::previewFile()
