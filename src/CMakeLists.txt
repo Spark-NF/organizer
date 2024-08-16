@@ -51,6 +51,7 @@ endif()
 # Targets
 add_subdirectory(lib)
 add_subdirectory(gui)
+add_subdirectory(cli)
 
 # Install
 if(UNIX AND (NOT APPLE))

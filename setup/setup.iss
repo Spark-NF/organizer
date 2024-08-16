@@ -45,6 +45,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "{#ResourcesDir}\images\icon.ico";      DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BuildDir}\Organizer.exe";            DestDir: "{app}"; Flags: ignoreversion
+Source: "{#BuildDir}\Organizer-cli.exe";        DestDir: "{app}"; Flags: ignoreversion
 Source: "{#QtBin}\D3Dcompiler_47.dll";          DestDir: "{app}"; Flags: ignoreversion
 Source: "{#QtBin}\opengl32sw.dll";              DestDir: "{app}"; Flags: ignoreversion
 Source: "{#QtBin}\Qt6Core.dll";                 DestDir: "{app}"; Flags: ignoreversion

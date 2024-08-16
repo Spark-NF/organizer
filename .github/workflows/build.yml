@@ -215,7 +215,9 @@ jobs:
           cmake ../src -G "Visual Studio 16 2019" -A "x64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE%
           mv gui/%BUILD_TYPE%/Organizer.exe .
+          mv cli/%BUILD_TYPE%/Organizer-cli.exe .
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
+          if "%IS_RELEASE%"=="true" (mv cli/%BUILD_TYPE%/Organizer-cli.pdb .)
 
       - name: Test
         shell: cmd
@@ -236,7 +238,7 @@ jobs:
 
       - name: Generate symbols ZIP
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
-        run: 7z a "Organizer_x64_symbols.zip" "build/gui/Organizer.pdb"
+        run: 7z a "Organizer_x64_symbols.zip" "build/gui/Organizer.pdb" "build/cli/Organizer-cli.pdb"
 
       - name: Upload symbols
         uses: actions/upload-artifact@v3
