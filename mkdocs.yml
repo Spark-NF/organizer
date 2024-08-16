@@ -1,0 +1,44 @@
+site_name: Organizer
+site_url: https://spark-nf.github.io/organizer
+repo_url: https://github.com/Spark-NF/organizer
+repo_name: Spark-NF/organizer
+copyright: This project is maintained by <a href="https://github.com/Spark-NF" data-label="Owner">Spark-NF</a>
+use_directory_urls: false
+
+plugins:
+  - search
+  - git-revision-date-localized
+
+theme:
+  name: material
+  language: en
+
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.action.view
+    - content.code.copy
+    - content.tooltips
+
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+markdown_extensions:
+  - toc:
+      permalink: '¶'

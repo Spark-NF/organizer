@@ -1,0 +1,1 @@
+Organizer allows to load a bunch of media files, show/play them, and allowing the user to do custom actions on them on the press of a button.
