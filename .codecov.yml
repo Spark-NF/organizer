@@ -14,12 +14,12 @@ component_management:
     - component_id: lib
       name: Library
       paths:
-        - src/lib/*
+        - src/lib/**
     - component_id: cli
       name: CLI
       paths:
-        - src/cli/*
+        - src/cli/**
     - component_id: gui
       name: GUI
       paths:
-        - src/gui/*
+        - src/gui/**
