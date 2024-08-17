@@ -1,4 +1,4 @@
 [submodule "src/vendor/catch"]
 	path = src/vendor/catch
 	url = https://github.com/catchorg/Catch2.git
-	branch = v2.x
+	branch = v3.x
