@@ -12,6 +12,8 @@ plugins:
 theme:
   name: material
   language: en
+  logo: assets/img/icon.png
+  favicon: assets/favicon.ico
 
   features:
     - navigation.sections
