@@ -1,3 +1,6 @@
+codecov:
+  branch: master
+
 coverage:
   ignore:
     - "build/**/*"
@@ -8,11 +11,15 @@ coverage:
 
 component_management:
   individual_components:
-    - component_id: gui
-      name: GUI
-      paths:
-        - src/gui/*
     - component_id: lib
       name: Library
       paths:
         - src/lib/*
+    - component_id: cli
+      name: CLI
+      paths:
+        - src/cli/*
+    - component_id: gui
+      name: GUI
+      paths:
+        - src/gui/*
