@@ -64,7 +64,7 @@ jobs:
           mkdir build
           cd build
           cmake ../src -DCMAKE_BUILD_TYPE=Debug -DVERSION="9.9.9"
-          cmake --build . --config Debug
+          cmake --build . --config Debug --parallel
 
       - name: Test
         working-directory: build
@@ -115,7 +115,7 @@ jobs:
           mkdir build
           cd build
           cmake ../src -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION="$ORGANIZER_VERSION"
-          cmake --build . --config Release
+          cmake --build . --config Release --parallel
           make DESTDIR=../install/Organizer install
 
       - name: Test
@@ -170,7 +170,7 @@ jobs:
           mkdir build
           cd build
           cmake ../src -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
-          cmake --build . --config Release
+          cmake --build . --config Release --parallel
 
       - name: Test
         working-directory: build
@@ -221,7 +221,7 @@ jobs:
           mkdir build
           cd build
           cmake ../src -G "Visual Studio 16 2019" -A "x64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
-          cmake --build . --config %BUILD_TYPE%
+          cmake --build . --config %BUILD_TYPE% --parallel
           mv gui/%BUILD_TYPE%/Organizer.exe .
           mv cli/%BUILD_TYPE%/Organizer-cli.exe .
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
