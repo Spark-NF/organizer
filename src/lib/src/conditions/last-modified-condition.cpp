@@ -1,9 +1,10 @@
 #include "last-modified-condition.h"
 #include <QFileInfo>
+#include <utility>
 
 
 LastModifiedCondition::LastModifiedCondition(QDateTime min, QDateTime max)
-	: Condition(), m_min(min), m_max(max)
+	: Condition(), m_min(std::move(min)), m_max(std::move(max))
 {}
 
 bool LastModifiedCondition::match(QFile &file) const

@@ -1,9 +1,10 @@
 #include "created-condition.h"
 #include <QFileInfo>
+#include <utility>
 
 
 CreatedCondition::CreatedCondition(QDateTime min, QDateTime max)
-	: Condition(), m_min(min), m_max(max)
+ 	: Condition(), m_min(std::move(min)), m_max(std::move(max))
 {}
 
 bool CreatedCondition::match(QFile &file) const
