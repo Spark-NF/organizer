@@ -6,7 +6,7 @@
 
 TEST_CASE("CreatedCondition")
 {
-	const QDateTime before = QDateTime::currentDateTimeUtc();
+	const QDateTime before = QDateTime::currentDateTimeUtc().addSecs(-1);
 	QTemporaryFile file;
 	file.open();
 	file.close();

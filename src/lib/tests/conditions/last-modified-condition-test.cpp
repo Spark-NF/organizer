@@ -12,7 +12,7 @@ TEST_CASE("LastModifiedCondition")
 	file.close();
 
 	// Modify the file
-	const QDateTime before = QDateTime::currentDateTimeUtc();
+	const QDateTime before = QDateTime::currentDateTimeUtc().addSecs(-1);
 	file.open();
 	file.write("test");
 	file.close();
