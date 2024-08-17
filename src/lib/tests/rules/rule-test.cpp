@@ -1,17 +1,17 @@
- #include "actions/move-action.h"
+#include <QFileInfo>
+#include <catch.h>
+#include "actions/move-action.h"
 #include "actions/rename-action.h"
 #include "conditions/filename-condition.h"
 #include "profile.h"
 #include "rules/rule.h"
-#include <QFileInfo>
-#include <catch.h>
 
 
 TEST_CASE("Rule")
 {
 	const auto imgCondition = QSharedPointer<FilenameCondition>::create("*.jpg; *.png", false);
 	const auto jpgCondition = QSharedPointer<FilenameCondition>::create("*.jpg", false);
-	const QList<QSharedPointer<Condition>> conditions{imgCondition, jpgCondition};
+	const QList<QSharedPointer<Condition>> conditions { imgCondition, jpgCondition };
 
 	const QList<QSharedPointer<Action>> actions {
 		QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),

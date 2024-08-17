@@ -4,7 +4,7 @@
 
 
 CreatedCondition::CreatedCondition(QDateTime min, QDateTime max)
- 	: Condition(), m_min(std::move(min)), m_max(std::move(max))
+	: Condition(), m_min(std::move(min)), m_max(std::move(max))
 {}
 
 bool CreatedCondition::match(QFile &file) const

@@ -1,11 +1,11 @@
-#include "profile-loader.h"
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryFile>
+#include <catch.h>
+#include "profile-loader.h"
 #include "profile.h"
 #include "rules/rule.h"
-#include <catch.h>
 
 
 TEST_CASE("ProfileLoader")

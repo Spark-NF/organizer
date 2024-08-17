@@ -1,13 +1,13 @@
-#include "actions/action-loader.h"
 #include <QJsonArray>
 #include <QJsonObject>
+#include <catch.h>
+#include "actions/action-loader.h"
 #include "actions/action.h"
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
 #include "actions/trash-action.h"
-#include <catch.h>
 
 
 TEST_CASE("ActionLoader")
@@ -71,7 +71,7 @@ TEST_CASE("ActionLoader")
 			QJsonObject data {
 				{ "type", "process" },
 				{ "cmd", "magick" },
-				{ "args", QJsonArray {"{path}"} },
+				{ "args", QJsonArray { "{path}" } },
 			};
 
 			QSharedPointer<Action> action = ActionLoader::load(data);
@@ -83,7 +83,7 @@ TEST_CASE("ActionLoader")
 		{
 			QJsonObject data {
 				{ "type", "multiple" },
-				{ "actions", QJsonArray { QJsonObject {{ "type", "trash" }} } },
+				{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
 			};
 
 			QSharedPointer<Action> action = ActionLoader::load(data);

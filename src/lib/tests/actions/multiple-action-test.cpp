@@ -1,8 +1,8 @@
-#include "actions/multiple-action.h"
-#include "actions/rename-action.h"
-#include "actions/move-action.h"
 #include <QFileInfo>
 #include <catch.h>
+#include "actions/move-action.h"
+#include "actions/multiple-action.h"
+#include "actions/rename-action.h"
 
 
 TEST_CASE("MultipleAction")

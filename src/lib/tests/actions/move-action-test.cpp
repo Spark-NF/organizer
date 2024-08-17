@@ -1,8 +1,8 @@
-#include "actions/move-action.h"
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryDir>
 #include <catch.h>
+#include "actions/move-action.h"
 
 
 TEST_CASE("MoveAction")

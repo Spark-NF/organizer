@@ -1,6 +1,6 @@
 #include "rule.h"
-#include "../conditions/condition.h"
 #include "../actions/action.h"
+#include "../conditions/condition.h"
 
 
 Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<QSharedPointer<Condition>> conditions, QList<QSharedPointer<Action>> actions)

@@ -1,6 +1,6 @@
 #include <QFile>
-#include "conditions/filename-condition.h"
 #include <catch.h>
+#include "conditions/filename-condition.h"
 
 
 TEST_CASE("FilenameCondition")

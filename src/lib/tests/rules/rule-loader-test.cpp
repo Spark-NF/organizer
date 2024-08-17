@@ -1,8 +1,8 @@
-#include "rules/rule-loader.h"
 #include <QJsonArray>
 #include <QJsonObject>
-#include "rules/rule.h"
 #include <catch.h>
+#include "rules/rule-loader.h"
+#include "rules/rule.h"
 
 
 TEST_CASE("RuleLoader")
@@ -25,8 +25,8 @@ TEST_CASE("RuleLoader")
 		QJsonObject data {
 			{ "name", "Test rule" },
 			{ "shortcut", "A" },
-			{ "conditions", QJsonArray { QJsonObject {{ "type", "filename" }, { "filename", "*.txt" }} } },
-			{ "actions", QJsonArray { QJsonObject {{ "type", "trash" }} } },
+			{ "conditions", QJsonArray { QJsonObject { { "type", "filename" }, { "filename", "*.txt" } } } },
+			{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
 		};
 
 		QSharedPointer<Rule> rule = RuleLoader::load(data);

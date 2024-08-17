@@ -1,6 +1,6 @@
 #include <QTemporaryFile>
-#include "conditions/filesize-condition.h"
 #include <catch.h>
+#include "conditions/filesize-condition.h"
 
 
 TEST_CASE("FilesizeCondition")

@@ -4,8 +4,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include "profile.h"
 #include "profile-loader.h"
+#include "profile.h"
 #include "rules/rule.h"
 
 
@@ -20,10 +20,10 @@ int runCli(const QStringList &arguments)
 	parser.setApplicationDescription("Organizer");
 
 	// Options
-	QCommandLineOption helpOption({"h", "help"}, "Displays help on commandline options.");
+	QCommandLineOption helpOption({ "h", "help" }, "Displays help on commandline options.");
 	parser.addOption(helpOption);
 	parser.addVersionOption();
-	QCommandLineOption profileOption({"p", "profile"}, "The rule profile file to use.", "profile");
+	QCommandLineOption profileOption({ "p", "profile" }, "The rule profile file to use.", "profile");
 	parser.addOption(profileOption);
 
 	// Positional arguments

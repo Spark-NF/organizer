@@ -1,12 +1,12 @@
-#include "conditions/condition-loader.h"
 #include <QJsonArray>
 #include <QJsonObject>
+#include <catch.h>
+#include "conditions/condition-loader.h"
 #include "conditions/condition.h"
 #include "conditions/created-condition.h"
 #include "conditions/filename-condition.h"
 #include "conditions/filesize-condition.h"
 #include "conditions/last-modified-condition.h"
-#include <catch.h>
 
 
 TEST_CASE("ConditionLoader")

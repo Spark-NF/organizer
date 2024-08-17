@@ -1,6 +1,6 @@
-#include "actions/trash-action.h"
 #include <QFile>
 #include <catch.h>
+#include "actions/trash-action.h"
 
 
 TEST_CASE("TrashAction")

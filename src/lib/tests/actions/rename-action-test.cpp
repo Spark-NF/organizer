@@ -1,7 +1,7 @@
-#include "actions/rename-action.h"
 #include <QFile>
 #include <QFileInfo>
 #include <catch.h>
+#include "actions/rename-action.h"
 
 
 TEST_CASE("RenameAction")

@@ -1,7 +1,7 @@
 #include <QDateTime>
 #include <QTemporaryFile>
-#include "conditions/created-condition.h"
 #include <catch.h>
+#include "conditions/created-condition.h"
 
 
 TEST_CASE("CreatedCondition")

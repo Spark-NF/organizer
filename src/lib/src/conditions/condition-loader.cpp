@@ -20,7 +20,7 @@ QSharedPointer<Condition> ConditionLoader::load(const QJsonObject &obj)
 	if (type == "filesize") {
 		const double min = obj["min"].toDouble(-1);
 		const double max = obj["max"].toDouble(-1);
-		return QSharedPointer<FilesizeCondition>::create((qint64) min, (qint64) max);
+		return QSharedPointer<FilesizeCondition>::create((qint64)min, (qint64)max);
 	}
 
 	if (type == "created") {

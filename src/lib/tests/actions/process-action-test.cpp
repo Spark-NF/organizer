@@ -1,6 +1,6 @@
-#include "actions/process-action.h"
 #include <QFile>
 #include <catch.h>
+#include "actions/process-action.h"
 
 
 TEST_CASE("ProcessAction")

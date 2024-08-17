@@ -1,7 +1,7 @@
 #include <QDateTime>
 #include <QTemporaryFile>
-#include "conditions/last-modified-condition.h"
 #include <catch.h>
+#include "conditions/last-modified-condition.h"
 
 
 TEST_CASE("LastModifiedCondition")
