@@ -8,6 +8,7 @@
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
+#include "actions/trash-action.h"
 
 
 QStringList jsonArrayToStringList(const QJsonArray &array)
@@ -34,6 +35,10 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return QSharedPointer<MoveAction>::create(QDir(destination), create, overwrite);
+	}
+
+	if (type == "trash") {
+		return QSharedPointer<TrashAction>::create();
 	}
 
 	if (type == "process") {
