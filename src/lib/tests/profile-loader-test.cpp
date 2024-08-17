@@ -2,7 +2,7 @@
 #include "profile.h"
 #include "rules/rule.h"
 #include <QTemporaryFile>
-#include <catch2/catch_test_macros.hpp>
+#include <catch.h>
 
 
 const QString basicProfile = R"0(

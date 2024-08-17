@@ -1,7 +1,7 @@
 #include "actions/rename-action.h"
 #include <QFile>
 #include <QFileInfo>
-#include <catch2/catch_test_macros.hpp>
+#include <catch.h>
 
 
 TEST_CASE("RenameAction")

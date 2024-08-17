@@ -2,7 +2,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QTemporaryDir>
-#include <catch2/catch_test_macros.hpp>
+#include <catch.h>
 
 
 TEST_CASE("MoveAction")

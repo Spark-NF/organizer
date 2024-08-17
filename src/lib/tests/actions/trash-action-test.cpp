@@ -1,6 +1,6 @@
 #include "actions/trash-action.h"
 #include <QFile>
-#include <catch2/catch_test_macros.hpp>
+#include <catch.h>
 
 
 TEST_CASE("TrashAction")

@@ -1,7 +1,7 @@
 #include "conditions/filename-condition.h"
 #include "profile.h"
 #include "rules/rule.h"
-#include <catch2/catch_test_macros.hpp>
+#include <catch.h>
 
 
 TEST_CASE("Profile")
