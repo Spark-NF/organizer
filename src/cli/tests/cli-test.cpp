@@ -1,7 +1,9 @@
-#include <catch.h>
-#include <catch2/generators/catch_generators.hpp>
 #include <QCoreApplication>
 #include <QProcess>
+#include <catch.h>
+#include <catch2/generators/catch_generators.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
+#include <iostream>
 #include "cli.h"
 
 
@@ -14,10 +16,7 @@
 
 TEST_CASE("CLI")
 {
-	QString program = QCoreApplication::applicationDirPath() + QDir::separator() + "Organizer-cli";
-	#if defined(Q_OS_WIN)
-		program += ".exe";
-	#endif
+	const QString program = QDir::toNativeSeparators(QCoreApplication::applicationDirPath()) + QDir::separator() + "Organizer-cli";
 
 	SECTION("Help")
 	{
@@ -27,10 +26,11 @@ TEST_CASE("CLI")
 		{
 			QProcess process;
 			process.start(program, arguments);
-			process.waitForFinished();
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
 
 			REQUIRE(process.exitCode() == 0);
-			REQUIRE(QString(process.readAllStandardOutput()).contains("Organizer-cli [options] files..." + br));
+			REQUIRE(QString(process.readAllStandardOutput()).contains("Usage: " + program + " [options] files..." + br));
 			REQUIRE(process.readAllStandardError() == "");
 		}
 	}
@@ -43,11 +43,12 @@ TEST_CASE("CLI")
 		{
 			QProcess process;
 			process.start(program, { argument });
-			process.waitForFinished();
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
 
 			REQUIRE(process.exitCode() == 0);
-			REQUIRE(process.readAllStandardOutput() == "Organizer " + QString(VERSION) + br);
-			REQUIRE(process.readAllStandardError() == "");
+			REQUIRE(QString(process.readAllStandardOutput()) == "Organizer " + QString(VERSION) + br);
+			REQUIRE(QString(process.readAllStandardError()) == "");
 		}
 	}
 }

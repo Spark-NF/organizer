@@ -222,10 +222,6 @@ jobs:
           cd build
           cmake ../src -G "Visual Studio 16 2019" -A "x64" -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DVERSION=%ORGANIZER_VERSION%
           cmake --build . --config %BUILD_TYPE% --parallel
-          mv gui/%BUILD_TYPE%/Organizer.exe .
-          mv cli/%BUILD_TYPE%/Organizer-cli.exe .
-          if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
-          if "%IS_RELEASE%"=="true" (mv cli/%BUILD_TYPE%/Organizer-cli.pdb .)
 
       - name: Test
         shell: cmd
@@ -233,6 +229,15 @@ jobs:
         run: |
           lib\%BUILD_TYPE%\lib-tests.exe
           cli\%BUILD_TYPE%\cli-tests.exe
+
+      - name: Move build files
+        shell: cmd
+        working-directory: build
+        run: |
+          mv gui/%BUILD_TYPE%/Organizer.exe .
+          mv cli/%BUILD_TYPE%/Organizer-cli.exe .
+          if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
+          if "%IS_RELEASE%"=="true" (mv cli/%BUILD_TYPE%/Organizer-cli.pdb .)
 
       - name: Generate installer
         run: |
