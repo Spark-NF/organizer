@@ -1,11 +1,23 @@
 #include "actions/trash-action.h"
+#include <QFile>
 #include <catch2/catch_test_macros.hpp>
 
 
 TEST_CASE("TrashAction")
 {
-	SECTION("execute()")
+	TrashAction action;
+
+	SECTION("Execute")
 	{
-		REQUIRE(true == true);
+		QFile file("file.bin");
+		file.open(QFile::WriteOnly);
+		file.close();
+
+		const QString filenameBefore = file.fileName();
+		REQUIRE(action.execute(file) == true);
+		const QString filenameAfter = file.fileName();
+
+		REQUIRE(filenameAfter != filenameBefore);
+		REQUIRE(file.remove());
 	}
 }

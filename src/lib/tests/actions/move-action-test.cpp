@@ -1,11 +1,35 @@
 #include "actions/move-action.h"
+#include <QFile>
+#include <QFileInfo>
+#include <QTemporaryDir>
 #include <catch2/catch_test_macros.hpp>
 
 
 TEST_CASE("MoveAction")
 {
-	SECTION("execute()")
+	QTemporaryDir dest;
+	MoveAction action(QDir(dest.path()), false, false);
+
+	SECTION("Execute")
 	{
-		REQUIRE(true == true);
+		QFile file("file.bin");
+		file.open(QFile::WriteOnly);
+		file.close();
+
+		REQUIRE(action.execute(file) == true);
+		REQUIRE(QFileInfo(file).dir().path() == dest.path());
+		REQUIRE(file.remove());
+	}
+
+	SECTION("Already exists")
+	{
+		QFile file("file.bin");
+		file.open(QFile::WriteOnly);
+		file.close();
+		file.copy(dest.path() + QDir::separator() + "file.bin");
+
+		REQUIRE(action.execute(file) == false);
+		REQUIRE(file.remove());
+		REQUIRE(QFile::remove(dest.path() + QDir::separator() + "file.bin"));
 	}
 }
