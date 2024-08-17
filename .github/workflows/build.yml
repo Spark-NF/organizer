@@ -68,7 +68,9 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/lib-tests
+        run: |
+          lib/lib-tests
+          cli/cli-tests
 
       - name: Capture coverage info
         run: |
@@ -118,7 +120,9 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/lib-tests
+        run: |
+          lib/lib-tests
+          cli/cli-tests
 
       - name: Generate AppImage
         run: |
@@ -170,7 +174,9 @@ jobs:
 
       - name: Test
         working-directory: build
-        run: lib/lib-tests
+        run: |
+          lib/lib-tests
+          cli/cli-tests
 
       - name: Generate DMG
         run: |
@@ -224,7 +230,9 @@ jobs:
       - name: Test
         shell: cmd
         working-directory: build
-        run: lib\%BUILD_TYPE%\lib-tests.exe
+        run: |
+          lib\%BUILD_TYPE%\lib-tests.exe
+          cli\%BUILD_TYPE%\cli-tests.exe
 
       - name: Generate installer
         run: |
