@@ -1,3 +1,4 @@
+ #include "actions/move-action.h"
 #include "actions/rename-action.h"
 #include "conditions/filename-condition.h"
 #include "profile.h"
@@ -74,6 +75,24 @@ TEST_CASE("Rule")
 
 			REQUIRE(rule.execute(file) == true);
 			REQUIRE(QFileInfo(file).fileName() == "second_first_file.bin");
+			REQUIRE(file.remove());
+		}
+
+		SECTION("Fail if any action fails")
+		{
+			const QList<QSharedPointer<Action>> actions {
+				QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
+				QSharedPointer<MoveAction>::create(QDir("unknown_dir/"), false, false),
+			};
+
+			Rule failingRule("Test rule", QKeySequence("A"), true, 1, conditions, actions);
+
+			QFile file("file.bin");
+			file.open(QFile::WriteOnly);
+			file.close();
+
+			REQUIRE(failingRule.execute(file) == false);
+			REQUIRE(QFileInfo(file).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
 			REQUIRE(file.remove());
 		}
 	}
