@@ -2,8 +2,6 @@
 #define FILESIZE_CONDITION_H
 
 #include "condition.h"
-#include <QList>
-#include <QRegularExpression>
 
 
 class FilesizeCondition : public Condition
