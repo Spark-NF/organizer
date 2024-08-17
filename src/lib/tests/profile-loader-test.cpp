@@ -79,7 +79,8 @@ TEST_CASE("ProfileLoader")
 
 		SECTION("Ignore invalid rules")
 		{
-			jsonProfile["rules"].toArray().append(QJsonObject {
+			QJsonArray rules = jsonProfile["rules"].toArray();
+			rules.append(QJsonObject {
 				QJsonObject {
 					{ "name", "Another rule" },
 					{ "shortcut", "B" },
@@ -87,6 +88,7 @@ TEST_CASE("ProfileLoader")
 					{ "actions", QJsonArray() },
 				}
 			});
+			jsonProfile["rules"] = rules;
 
 			QSharedPointer<Profile> profile = ProfileLoader::load(jsonProfile);
 			REQUIRE(profile != nullptr);
@@ -98,7 +100,8 @@ TEST_CASE("ProfileLoader")
 
 		SECTION("Duplicate shortcut")
 		{
-			jsonProfile["rules"].toArray().append(QJsonObject {
+			QJsonArray rules = jsonProfile["rules"].toArray();
+			rules.append(QJsonObject {
 				QJsonObject {
 					{ "name", "Another rule" },
 					{ "shortcut", "A" },
@@ -114,6 +117,7 @@ TEST_CASE("ProfileLoader")
 					 }}},
 				}
 			});
+			jsonProfile["rules"] = rules;
 
 			QSharedPointer<Profile> profile = ProfileLoader::load(jsonProfile);
 			REQUIRE(profile != nullptr);
