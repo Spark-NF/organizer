@@ -1,4 +1,5 @@
 #include "filename-condition.h"
+#include <QFileInfo>
 #include <QRegularExpression>
 
 
@@ -17,7 +18,7 @@ FilenameCondition::FilenameCondition(const QString &filename, bool regex)
 
 bool FilenameCondition::match(QFile &file) const
 {
-	const QString filename = file.fileName();
+	const QString filename = QFileInfo(file).fileName();
 	for (const QRegularExpression &regex : m_regexes) {
 		if (regex.match(filename).hasMatch()) {
 			return true;
