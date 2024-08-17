@@ -125,14 +125,14 @@ jobs:
           ./linuxdeployqt.AppImage "install/Organizer/usr/share/applications/organizer.desktop" -appimage -updateinformation="gh-releases-zsync|Spark-NF|organizer|latest|Organizer_*-x86_64.AppImage.zsync"
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Organizer-x86_64.AppImage
           path: Organizer-x86_64.AppImage
           if-no-files-found: error
 
       - name: Upload package update information
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Organizer-x86_64.AppImage.zsync
           path: Organizer-x86_64.AppImage.zsync
@@ -176,7 +176,7 @@ jobs:
           mv build/gui/Organizer.dmg .
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Organizer.dmg
           path: Organizer.dmg
@@ -230,7 +230,7 @@ jobs:
           mv setup/*.exe Organizer_x64.exe
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: Organizer_x64.exe
           path: Organizer_x64.exe
@@ -241,7 +241,7 @@ jobs:
         run: 7z a "Organizer_x64_symbols.zip" "build/gui/Organizer.pdb" "build/cli/Organizer-cli.pdb"
 
       - name: Upload symbols
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
         with:
           name: Organizer_x64_symbols.zip
