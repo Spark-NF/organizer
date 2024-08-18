@@ -241,7 +241,7 @@ jobs:
 
       - name: Generate installer
         run: |
-          iscc /Q /DMyAppVersion="$Env:ORGANIZER_VERSION" /DPlatformName="x64" /DQtDir="$Env:Qt6_Dir" setup/setup.iss
+          iscc /Q /DMyAppVersion="$Env:ORGANIZER_VERSION" /DPlatformName="x64" /DQtDir="$Env:QT_ROOT_DIR" setup/setup.iss
           mv setup/*.exe Organizer_x64.exe
 
       - name: Upload package
