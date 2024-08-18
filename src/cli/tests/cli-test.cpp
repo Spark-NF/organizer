@@ -34,7 +34,7 @@ TEST_CASE("CLI")
 
 			REQUIRE(process.exitCode() == 0);
 			REQUIRE(QString(process.readAllStandardOutput()).contains("Usage: " + program + " [options] files..." + br));
-			REQUIRE(process.readAllStandardError() == "");
+			REQUIRE(QString(process.readAllStandardError()) == "");
 		}
 	}
 
@@ -57,18 +57,6 @@ TEST_CASE("CLI")
 
 	SECTION("Usage")
 	{
-		QTemporaryDir dir;
-
-		QFile fileA(dir.filePath("a.txt"));
-		fileA.open(QFile::WriteOnly);
-		fileA.close();
-		QFile fileB(dir.filePath("b.png"));
-		fileB.open(QFile::WriteOnly);
-		fileB.close();
-		QFile fileC(dir.filePath("c.jpg"));
-		fileC.open(QFile::WriteOnly);
-		fileC.close();
-
 		QJsonObject jsonProfile {
 			{ "name", "Test profile" },
 			{ "rules", QJsonArray {
@@ -119,13 +107,111 @@ TEST_CASE("CLI")
 		profileFile.write(QJsonDocument(jsonProfile).toJson());
 		profileFile.close();
 
-		QProcess process;
-		process.start(program, { "-p", profileFile.fileName(), dir.path() });
-		REQUIRE(process.waitForStarted());
-		REQUIRE(process.waitForFinished());
-		REQUIRE(process.exitCode() == 0);
+		SECTION("Profile file not found")
+		{
+			QProcess process;
+			process.start(program, { "-p", "file_does_not_exists", "test.txt" });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
 
-		const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
-		REQUIRE(files == QStringList{ "image_b.png", "jpg_c.jpg", "txt_a.txt" });
+			REQUIRE(process.exitCode() == 1);
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
+			REQUIRE(QString(process.readAllStandardError()) == "Could not open profile file \"file_does_not_exists\"" + br + "Error loading profile file file_does_not_exists" + br);
+		}
+
+		SECTION("Invalid profile file")
+		{
+			QTemporaryFile invalidProfileFile;
+			invalidProfileFile.open();
+			invalidProfileFile.write("invalid");
+			invalidProfileFile.close();
+
+			QProcess process;
+			process.start(program, { "-p", invalidProfileFile.fileName(), "test.txt" });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 1);
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
+			REQUIRE(QString(process.readAllStandardError()) == "Invalid profile file" + br + "Error loading profile file " + invalidProfileFile.fileName() + br);
+		}
+
+		SECTION("Input file not found")
+		{
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), "file_does_not_exists" });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 1);
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
+			REQUIRE(QString(process.readAllStandardError()) == "Path file_does_not_exists does not exist" + br);
+		}
+
+		SECTION("File input")
+		{
+			QTemporaryDir dir;
+
+			QFile file(dir.filePath("a.txt"));
+			file.open(QFile::WriteOnly);
+			file.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), file.fileName() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 0);
+			REQUIRE(QString(process.readAllStandardOutput()) == "Ran rule TXT on file " + file.fileName() + br);
+			REQUIRE(QString(process.readAllStandardError()) == "");
+
+			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+			REQUIRE(files == QStringList{ "txt_a.txt" });
+		}
+
+		SECTION("Directory input")
+		{
+			QTemporaryDir dir;
+
+			QFile fileA(dir.filePath("a.txt"));
+			fileA.open(QFile::WriteOnly);
+			fileA.close();
+			QFile fileB(dir.filePath("b.png"));
+			fileB.open(QFile::WriteOnly);
+			fileB.close();
+			QFile fileC(dir.filePath("c.jpg"));
+			fileC.open(QFile::WriteOnly);
+			fileC.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), dir.path() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+			REQUIRE(process.exitCode() == 0);
+
+			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+			REQUIRE(files == QStringList{ "image_b.png", "jpg_c.jpg", "txt_a.txt" });
+		}
+
+		SECTION("No matching rule")
+		{
+			QTemporaryDir dir;
+
+			QFile file(dir.filePath("a.test"));
+			file.open(QFile::WriteOnly);
+			file.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), file.fileName() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 0);
+			REQUIRE(QString(process.readAllStandardOutput()) == "No matching rule for " + file.fileName() + ", ignoring" + br);
+			REQUIRE(QString(process.readAllStandardError()) == "");
+
+			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+			REQUIRE(files == QStringList{ "a.test" });
+		}
 	}
 }

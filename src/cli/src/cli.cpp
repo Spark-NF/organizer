@@ -41,7 +41,7 @@ int runCli(const QStringList &arguments)
 
 	QSharedPointer<Profile> profile = ProfileLoader::loadFile(profilePath);
 	if (profile == nullptr) {
-		stdErr << "Error loading profile file" << profilePath << Qt::endl;
+		stdErr << "Error loading profile file " << profilePath << Qt::endl;
 		return 1;
 	}
 
@@ -67,17 +67,18 @@ int runCli(const QStringList &arguments)
 
 void processFile(const QSharedPointer<Profile> &profile, QFile &file)
 {
+	const QString fileName = file.fileName();
 	QList<QSharedPointer<Rule>> matches = profile->match(file);
 
 	// No matching rule found
 	if (matches.isEmpty()) {
-		stdOut << "No matching rule for " << file.fileName() << ", ignoring" << Qt::endl;
+		stdOut << "No matching rule for " << fileName << ", ignoring" << Qt::endl;
 		return;
 	}
 
 	// Conflicting rules found
 	if (matches.count() > 1) {
-		stdErr << "Conflicting rules for " << file.fileName() << ":" << Qt::endl;
+		stdErr << "Conflicting rules for " << fileName << ":" << Qt::endl;
 		for (const QSharedPointer<Rule> &rule : matches) {
 			stdErr << "- " << rule->name() << Qt::endl;
 		}
@@ -87,11 +88,11 @@ void processFile(const QSharedPointer<Profile> &profile, QFile &file)
 	// Execute rule on the file
 	bool result = matches.first()->execute(file);
 	if (!result) {
-		stdErr << "Error executing rule for" << file.fileName() << Qt::endl;
+		stdErr << "Error executing rule for" << fileName << Qt::endl;
 		return;
 	}
 
-	stdOut << "Ran rule " << matches.first()->name() << " on file " << file.fileName() << Qt::endl;
+	stdOut << "Ran rule " << matches.first()->name() << " on file " << fileName << Qt::endl;
 }
 
 
