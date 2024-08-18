@@ -8,8 +8,8 @@ coverage:
     - "src/tests/**/*"
     - "src/*/tests/*"
     - "src/*/tests/**/*"
-    - "vendor/*"
-    - "vendor/**/*"
+    - "src/vendor/*"
+    - "src/vendor/**/*"
 
 component_management:
   individual_components:
