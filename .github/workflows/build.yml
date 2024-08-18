@@ -68,9 +68,12 @@ jobs:
 
       - name: Test
         working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           lib/lib-tests
           cli/cli-tests
+          gui/gui-tests
 
       - name: Capture coverage info
         run: |
@@ -120,9 +123,12 @@ jobs:
 
       - name: Test
         working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           lib/lib-tests
           cli/cli-tests
+          gui/gui-tests
 
       - name: Generate AppImage
         run: |
@@ -174,9 +180,12 @@ jobs:
 
       - name: Test
         working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           lib/lib-tests
           cli/cli-tests
+          gui/gui-tests
 
       - name: Generate DMG
         run: |
@@ -226,9 +235,12 @@ jobs:
       - name: Test
         shell: cmd
         working-directory: build
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
           lib\%BUILD_TYPE%\lib-tests.exe
           cli\%BUILD_TYPE%\cli-tests.exe
+          gui\%BUILD_TYPE%\gui-tests.exe
 
       - name: Move build files
         shell: cmd

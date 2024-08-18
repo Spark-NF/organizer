@@ -55,6 +55,9 @@ class MainWindow : public QMainWindow
 		bool beforeAction();
 		void afterAction(bool fullPreview);
 
+	signals:
+		void closed();
+
 	private:
 		Ui::MainWindow *ui;
 		QSettings *m_settings;

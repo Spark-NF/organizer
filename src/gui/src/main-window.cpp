@@ -60,6 +60,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+	emit closed();
 	m_settings->setValue("Geometry/MainWindow", saveGeometry());
 
 	QMainWindow::closeEvent(event);
