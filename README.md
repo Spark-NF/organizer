@@ -11,11 +11,15 @@
 [![Project license](https://img.shields.io/github/license/Spark-NF/organizer.svg)](https://raw.githubusercontent.com/Spark-NF/organizer/develop/LICENSE)
 
 ## About
-Organizer allows to load a bunch of media files, show/play them, and allowing the user to do custom actions on them on the press of a button.
+Organizer allows to automatically or manually apply actions on your files. It can be configured to perform actions automatically given the file's name, size, etc. to allow for automated sorting of many files at once.
 
-For example, it can be used to sort a vacation's pictures and videos and put them in separate folders according to their location, the context, etc. The images/videos will be shown one by one, then the user can use shortcuts to move them quickly to separate directories.
+For example, it can be used to sort a vacation's pictures and videos and put them in separate folders according to their location, the context, etc. or to move old unused downloaded files to the trash automatically.
 
-It can also be configured to perform actions automatically given the file's name, size, etc. to allow for automated sorting of many files at once.
+It is composed of a few projects:
+
+* A command-line interface (CLI), which takes a configuration file and a list of files, and will apply actions matching conditions on your files automatically.
+* A drop window that does the same thing as the CLI, but with a user interface.
+* A manual sorting interface, which allows to load a bunch of media files, show/play them one-by-one, and allowing the user to do custom actions on them on the press of a button.
 
 ### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
@@ -45,4 +49,4 @@ cmake ../src
 make -j 8
 ```
 
-You'll find the built binary in the `build/` directory, named `Organizer`.
+You'll find the built binaries in the `build/` directory, named `Organizer`.
