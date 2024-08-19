@@ -265,7 +265,7 @@ jobs:
 
       - name: Generate symbols ZIP
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
-        run: 7z a "Organizer_x64_symbols.zip" "build/gui/Organizer.pdb" "build/cli/Organizer-cli.pdb"
+        run: 7z a "Organizer_x64_symbols.zip" "build/Organizer.pdb" "build/Organizer-cli.pdb"
 
       - name: Upload symbols
         uses: actions/upload-artifact@v4
