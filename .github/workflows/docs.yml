@@ -35,7 +35,7 @@ jobs:
             mkdocs-material-
 
       - name: Install Python dependencies
-        run: pip install mkdocs-material mkdocs-git-revision-date-localized-plugin
+        run: pip install mkdocs-material mkdocs-git-revision-date-localized-plugin markdown-callouts
 
       - name: Deploy to GitHub Pages
         run: mkdocs gh-deploy --force

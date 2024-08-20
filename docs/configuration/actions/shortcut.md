@@ -2,9 +2,9 @@
 
 Create a Windows shortcut (LNK file) to the file.
 
-!!! info
-
-    This action is Windows-only. On other systems, see the [Symbolic link](symbolic-link.md) or [Hard link](hard-link.md) actions.
+> [!NOTE]
+>
+> This action is Windows-only. On other systems, see the [Symbolic link](symbolic-link.md) or [Hard link](hard-link.md) actions.
 
 
 ## Options

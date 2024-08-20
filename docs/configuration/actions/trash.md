@@ -7,6 +7,6 @@ Move the file to the trash.
 
 ```json
 {
-    "type": "trash",
+    "type": "trash"
 }
 ```
