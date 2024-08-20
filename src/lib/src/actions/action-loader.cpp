@@ -4,6 +4,7 @@
 #include <QJsonDocument>
 #include <QSet>
 #include <QtGlobal>
+#include "actions/delete-action.h"
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
@@ -35,6 +36,10 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return QSharedPointer<MoveAction>::create(QDir(destination), create, overwrite);
+	}
+
+	if (type == "delete") {
+		return QSharedPointer<DeleteAction>::create();
 	}
 
 	if (type == "trash") {

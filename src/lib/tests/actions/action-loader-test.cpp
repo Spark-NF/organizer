@@ -3,6 +3,7 @@
 #include <catch.h>
 #include "actions/action-loader.h"
 #include "actions/action.h"
+#include "actions/delete-action.h"
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
@@ -53,6 +54,17 @@ TEST_CASE("ActionLoader")
 			QSharedPointer<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
 			REQUIRE(action.dynamicCast<MoveAction>() != nullptr);
+		}
+
+		SECTION("Delete action")
+		{
+			QJsonObject data {
+				{ "type", "delete" },
+			};
+
+			QSharedPointer<Action> action = ActionLoader::load(data);
+			REQUIRE(action != nullptr);
+			REQUIRE(action.dynamicCast<DeleteAction>() != nullptr);
 		}
 
 		SECTION("Trash action")
