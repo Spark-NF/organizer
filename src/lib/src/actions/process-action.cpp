@@ -3,15 +3,16 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <utility>
+#include "media.h"
 
 
 ProcessAction::ProcessAction(QString command, QStringList args)
 	: Action(), m_command(std::move(command)), m_args(std::move(args))
 {}
 
-bool ProcessAction::execute(QFile &file) const
+bool ProcessAction::execute(Media &media) const
 {
-	QFileInfo info(file.fileName());
+	const QFileInfo &info = media.fileInfo();
 
 	QStringList args;
 	for (QString arg : m_args) {

@@ -1,9 +1,9 @@
 #include "cli.h"
 #include <QCommandLineParser>
 #include <QDir>
-#include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
+#include "media.h"
 #include "profile-loader.h"
 #include "profile.h"
 #include "rules/rule.h"
@@ -56,8 +56,7 @@ int runCli(const QStringList &arguments)
 		if (fileInfo.isDir()) {
 			processDir(profile, QDir(filePath));
 		} else {
-			QFile file(filePath);
-			processFile(profile, file);
+			processFile(profile, filePath);
 		}
 	}
 
@@ -65,10 +64,10 @@ int runCli(const QStringList &arguments)
 }
 
 
-void processFile(const QSharedPointer<Profile> &profile, QFile &file)
+void processFile(const QSharedPointer<Profile> &profile, const QString &fileName)
 {
-	const QString fileName = file.fileName();
-	QList<QSharedPointer<Rule>> matches = profile->match(file);
+	Media media(fileName);
+	QList<QSharedPointer<Rule>> matches = profile->match(media);
 
 	// No matching rule found
 	if (matches.isEmpty()) {
@@ -86,7 +85,7 @@ void processFile(const QSharedPointer<Profile> &profile, QFile &file)
 	}
 
 	// Execute rule on the file
-	bool result = matches.first()->execute(file);
+	bool result = matches.first()->execute(media);
 	if (!result) {
 		stdErr << "Error executing rule for" << fileName << Qt::endl;
 		return;
@@ -100,7 +99,6 @@ void processDir(const QSharedPointer<Profile> &profile, const QDir &dir)
 {
 	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 	for (const QFileInfo &info : infoList) {
-		QFile file(info.absoluteFilePath());
-		processFile(profile, file);
+		processFile(profile, info.absoluteFilePath());
 	}
 }

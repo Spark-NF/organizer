@@ -1,13 +1,14 @@
 #include "shortcut-action.h"
 #include <QFileInfo>
 #include <utility>
+#include "media.h"
 
 
 ShortcutAction::ShortcutAction(QString name, bool overwrite)
 	: Action(), m_name(std::move(name)), m_overwrite(overwrite)
 {}
 
-bool ShortcutAction::execute(QFile &file) const
+bool ShortcutAction::execute(Media &media) const
 {
 	#if !defined(Q_OS_WINDOWS)
 		return false;
@@ -25,6 +26,6 @@ bool ShortcutAction::execute(QFile &file) const
 			QFile::remove(dest);
 		}
 
-		return file.link(dest);
+		return QFile::link(media.path(), dest);
 	#endif
 }

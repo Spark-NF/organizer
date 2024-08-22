@@ -9,7 +9,7 @@ class CreatedCondition : public Condition
 {
 	public:
 		explicit CreatedCondition(QDateTime min, QDateTime max);
-		bool match(QFile &file) const override;
+		bool match(Media &media) const override;
 
 	private:
 		QDateTime m_min;

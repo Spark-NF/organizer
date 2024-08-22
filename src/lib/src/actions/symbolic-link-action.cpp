@@ -1,5 +1,6 @@
 #include "symbolic-link-action.h"
 #include <utility>
+#include "media.h"
 
 #if defined(Q_OS_WINDOWS)
 	#include <windows.h>
@@ -10,7 +11,7 @@ SymbolicLinkAction::SymbolicLinkAction(QString name, bool overwrite)
 	: Action(), m_name(std::move(name)), m_overwrite(overwrite)
 {}
 
-bool SymbolicLinkAction::execute(QFile &file) const
+bool SymbolicLinkAction::execute(Media &media) const
 {
 	// Delete the destination if "overwrite" is enabled and the destination already exists
 	if (QFile::exists(m_name)) {
@@ -21,8 +22,8 @@ bool SymbolicLinkAction::execute(QFile &file) const
 	}
 
 	#if defined(Q_OS_WINDOWS)
-		return CreateSymbolicLinkW(m_name.toStdWString().c_str(), file.fileName().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
+		return CreateSymbolicLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
 	#else
-		return file.link(m_name);
+		return QFile::link(media.path(), m_name);
 	#endif
 }

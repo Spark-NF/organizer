@@ -1,12 +1,12 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
-#include <QFile>
 #include <QList>
 #include <QString>
 #include <QSharedPointer>
 
 
+class Media;
 class Rule;
 
 class Profile
@@ -17,7 +17,7 @@ class Profile
 		QString name() const;
 		const QList<QList<QSharedPointer<Rule>>> &rules() const;
 
-		QList<QSharedPointer<Rule>> match(QFile &file) const;
+		QList<QSharedPointer<Rule>> match(Media &media) const;
 
 	private:
 		QString m_name;

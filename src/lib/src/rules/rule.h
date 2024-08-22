@@ -1,14 +1,15 @@
 #ifndef RULE_H
 #define RULE_H
 
-#include <QFile>
 #include <QKeySequence>
+#include <QList>
 #include <QSharedPointer>
 #include <QString>
 
 
 class Action;
 class Condition;
+class Media;
 
 class Rule
 {
@@ -22,8 +23,8 @@ class Rule
 		const QList<QSharedPointer<Condition>> &conditions() const;
 		const QList<QSharedPointer<Action>> &actions() const;
 
-		bool match(QFile &file) const;
-		bool execute(QFile &file) const;
+		bool match(Media &media) const;
+		bool execute(Media &media) const;
 
 	private:
 		QString m_name;

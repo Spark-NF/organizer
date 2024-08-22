@@ -2,6 +2,7 @@
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/symbolic-link-action.h"
+#include "media.h"
 
 
 TEST_CASE("SymbolicLinkAction")
@@ -9,11 +10,12 @@ TEST_CASE("SymbolicLinkAction")
 	QTemporaryFile file;
 	file.open();
 	file.close();
+	Media media(file);
 
 	SECTION("Execute")
 	{
 		SymbolicLinkAction action("symlink_shortcut", false);
-		REQUIRE(action.execute(file) == true);
+		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::exists("symlink_shortcut"));
 		REQUIRE(QFile::remove("symlink_shortcut"));
@@ -26,7 +28,7 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.close();
 
 		SymbolicLinkAction action("symlink_shortcut", false);
-		REQUIRE(action.execute(file) == false);
+		REQUIRE(action.execute(media) == false);
 
 		REQUIRE(QFile::remove("symlink_shortcut"));
 	}
@@ -38,7 +40,7 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.close();
 
 		SymbolicLinkAction action("symlink_shortcut", true);
-		REQUIRE(action.execute(file) == true);
+		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::remove("symlink_shortcut"));
 	}

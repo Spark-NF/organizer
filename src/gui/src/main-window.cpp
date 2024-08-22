@@ -13,6 +13,7 @@
 #include <QStyle>
 #include <QUrl>
 #include <algorithm>
+#include "media.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
@@ -141,10 +142,10 @@ void MainWindow::executeAction(const QSharedPointer<Rule> &rule)
 
 	bool fullPreview = beforeAction();
 
-	QFile file(m_files[m_currentFile]);
-	if (rule->execute(file)) {
+	Media media(m_files[m_currentFile]);
+	if (rule->execute(media)) {
 		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
-		m_files[m_currentFile] = file.fileName();
+		m_files[m_currentFile] = media.path();
 
 		if (rule->terminal()) {
 			nextFile();

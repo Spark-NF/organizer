@@ -2,14 +2,14 @@
 #define SHORTCUT_ACTION_H
 
 #include "action.h"
-#include <QFile>
+#include <QString>
 
 
 class ShortcutAction : public Action
 {
 	public:
 		explicit ShortcutAction(QString name, bool overwrite);
-		bool execute(QFile &file) const override;
+		bool execute(Media &media) const override;
 
 	private:
 		QString m_name;

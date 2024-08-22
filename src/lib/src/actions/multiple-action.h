@@ -10,7 +10,7 @@ class MultipleAction : public Action
 {
 	public:
 		explicit MultipleAction(QList<QSharedPointer<Action>> actions);
-		bool execute(QFile &file) const override;
+		bool execute(Media &media) const override;
 
 	private:
 		QList<QSharedPointer<Action>> m_actions;

@@ -3,6 +3,7 @@
 #include <QTemporaryDir>
 #include <catch.h>
 #include "actions/move-action.h"
+#include "media.h"
 
 
 TEST_CASE("MoveAction")
@@ -17,10 +18,11 @@ TEST_CASE("MoveAction")
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
 		file.close();
+		Media media(file);
 
-		REQUIRE(action.execute(file) == true);
-		REQUIRE(QFileInfo(file).dir().absolutePath() == dir.absolutePath());
-		REQUIRE(file.remove());
+		REQUIRE(action.execute(media) == true);
+		REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
+		REQUIRE(QFile::remove(media.path()));
 	}
 
 	SECTION("Already exists")
@@ -31,8 +33,9 @@ TEST_CASE("MoveAction")
 		file.open(QFile::WriteOnly);
 		file.close();
 		file.copy(dir.path() + QDir::separator() + "file.bin");
+		Media media(file);
 
-		REQUIRE(action.execute(file) == false);
+		REQUIRE(action.execute(media) == false);
 		REQUIRE(file.remove());
 		REQUIRE(QFile::remove(dir.path() + QDir::separator() + "file.bin"));
 	}
@@ -48,8 +51,9 @@ TEST_CASE("MoveAction")
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
 			file.close();
+			Media media(file);
 
-			REQUIRE(action.execute(file) == false);
+			REQUIRE(action.execute(media) == false);
 			REQUIRE(file.remove());
 			REQUIRE(dir.exists() == false);
 		}
@@ -61,11 +65,12 @@ TEST_CASE("MoveAction")
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
 			file.close();
+			Media media(file);
 
-			REQUIRE(action.execute(file) == true);
-			REQUIRE(file.remove());
+			REQUIRE(action.execute(media) == true);
+			REQUIRE(QFile::remove(media.path()));
 			REQUIRE(dir.exists() == true);
-			REQUIRE(QFileInfo(file).dir().absolutePath() == dir.absolutePath());
+			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
 		}
 	}
 }

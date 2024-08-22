@@ -4,13 +4,14 @@
 #include "condition.h"
 #include <QList>
 #include <QRegularExpression>
+#include <QString>
 
 
 class FilenameCondition : public Condition
 {
 	public:
 		explicit FilenameCondition(const QString &filename, bool regex);
-		bool match(QFile &file) const override;
+		bool match(Media &media) const override;
 
 	private:
 		QList<QRegularExpression> m_regexes;

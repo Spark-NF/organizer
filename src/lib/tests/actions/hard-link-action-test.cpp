@@ -2,6 +2,7 @@
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/hard-link-action.h"
+#include "media.h"
 
 
 TEST_CASE("HardLinkAction")
@@ -9,11 +10,12 @@ TEST_CASE("HardLinkAction")
 	QTemporaryFile file;
 	file.open();
 	file.close();
+	Media media(file);
 
 	SECTION("Execute")
 	{
 		HardLinkAction action("hardlink_shortcut", false);
-		REQUIRE(action.execute(file) == true);
+		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::exists("hardlink_shortcut"));
 		REQUIRE(QFile::remove("hardlink_shortcut"));
@@ -26,7 +28,7 @@ TEST_CASE("HardLinkAction")
 		duplicate.close();
 
 		HardLinkAction action("hardlink_shortcut", false);
-		REQUIRE(action.execute(file) == false);
+		REQUIRE(action.execute(media) == false);
 
 		REQUIRE(QFile::remove("hardlink_shortcut"));
 	}
@@ -38,7 +40,7 @@ TEST_CASE("HardLinkAction")
 		duplicate.close();
 
 		HardLinkAction action("hardlink_shortcut", true);
-		REQUIRE(action.execute(file) == true);
+		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::remove("hardlink_shortcut"));
 	}

@@ -1,6 +1,7 @@
 #include <QFile>
 #include <catch.h>
 #include "actions/process-action.h"
+#include "media.h"
 
 
 TEST_CASE("ProcessAction")
@@ -9,8 +10,8 @@ TEST_CASE("ProcessAction")
 	{
 		ProcessAction action("this_program_does_not_exist", {});
 
-		QFile file("test.jpg");
-		REQUIRE(action.execute(file) == false);
+		Media media("test.jpg");
+		REQUIRE(action.execute(media) == false);
 	}
 
 	SECTION("Execute")
@@ -25,7 +26,7 @@ TEST_CASE("ProcessAction")
 
 		ProcessAction action(command, args);
 
-		QFile file("test.jpg");
-		REQUIRE(action.execute(file) == true);
+		Media media("test.jpg");
+		REQUIRE(action.execute(media) == true);
 	}
 }

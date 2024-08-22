@@ -1,15 +1,13 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-#include <QFile>
-#include <QKeySequence>
-#include <QString>
+class Media;
 
 
 class Action
 {
 	public:
-		virtual bool execute(QFile &file) const = 0;
+		virtual bool execute(Media &media) const = 0;
 };
 
 #endif // ACTION_H

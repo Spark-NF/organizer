@@ -19,13 +19,13 @@ const QList<QList<QSharedPointer<Rule>>> &Profile::rules() const
 }
 
 
-QList<QSharedPointer<Rule>> Profile::match(QFile &file) const
+QList<QSharedPointer<Rule>> Profile::match(Media &media) const
 {
 	int maxPriority = 0;
 	QList<QSharedPointer<Rule>> ret;
 	for (const auto &column : m_rules) {
 		for (const auto &rule : column) {
-			if ((ret.isEmpty() || rule->priority() >= maxPriority) && rule->match(file)) {
+			if ((ret.isEmpty() || rule->priority() >= maxPriority) && rule->match(media)) {
 				if (rule->priority() > maxPriority) {
 					if (!ret.isEmpty()) {
 						ret.clear();

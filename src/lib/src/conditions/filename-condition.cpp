@@ -1,6 +1,7 @@
 #include "filename-condition.h"
 #include <QFileInfo>
 #include <QRegularExpression>
+#include "media.h"
 
 
 FilenameCondition::FilenameCondition(const QString &filename, bool regex)
@@ -16,9 +17,9 @@ FilenameCondition::FilenameCondition(const QString &filename, bool regex)
 	}
 }
 
-bool FilenameCondition::match(QFile &file) const
+bool FilenameCondition::match(Media &media) const
 {
-	const QString filename = QFileInfo(file).fileName();
+	const QString filename = media.fileInfo().fileName();
 	for (const QRegularExpression &regex : m_regexes) {
 		if (regex.match(filename).hasMatch()) {
 			return true;

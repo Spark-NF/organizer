@@ -1,11 +1,12 @@
 #include "delete-action.h"
+#include "media.h"
 
 
 DeleteAction::DeleteAction()
 	: Action()
 {}
 
-bool DeleteAction::execute(QFile &file) const
+bool DeleteAction::execute(Media &media) const
 {
-	return file.remove();
+	return QFile::remove(media.path());
 }

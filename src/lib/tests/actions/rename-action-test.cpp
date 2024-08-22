@@ -2,6 +2,7 @@
 #include <QFileInfo>
 #include <catch.h>
 #include "actions/rename-action.h"
+#include "media.h"
 
 
 TEST_CASE("RenameAction")
@@ -13,10 +14,11 @@ TEST_CASE("RenameAction")
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
 		file.close();
+		Media media(file);
 
-		REQUIRE(action.execute(file) == true);
-		REQUIRE(QFileInfo(file).fileName() == "test_file.bin");
-		REQUIRE(file.remove());
+		REQUIRE(action.execute(media) == true);
+		REQUIRE(QFileInfo(media.path()).fileName() == "test_file.bin");
+		REQUIRE(QFile::remove(media.path()));
 	}
 
 	SECTION("No change")
@@ -26,9 +28,10 @@ TEST_CASE("RenameAction")
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
 		file.close();
+		Media media(file);
 
-		REQUIRE(action.execute(file) == true);
-		REQUIRE(file.remove());
+		REQUIRE(action.execute(media) == true);
+		REQUIRE(QFile::remove(media.path()));
 	}
 
 	SECTION("Already exists")
@@ -39,8 +42,9 @@ TEST_CASE("RenameAction")
 		file.open(QFile::WriteOnly);
 		file.close();
 		file.copy("test_file.bin");
+		Media media(file);
 
-		REQUIRE(action.execute(file) == false);
+		REQUIRE(action.execute(media) == false);
 		REQUIRE(file.remove());
 		REQUIRE(QFile::remove("test_file.bin"));
 	}
@@ -53,17 +57,19 @@ TEST_CASE("RenameAction")
 		file.open(QFile::WriteOnly);
 		file.write("data");
 		file.close();
+		Media media(file);
 
 		QFile newFile("test_file.bin");
 		newFile.open(QFile::WriteOnly);
 		newFile.close();
 
-		REQUIRE(action.execute(file) == true);
+		REQUIRE(action.execute(media) == true);
 
 		newFile.open(QFile::ReadOnly);
 		REQUIRE(newFile.readAll() == "data");
 		newFile.close();
 
-		REQUIRE(file.remove());
+		REQUIRE(!file.exists());
+		REQUIRE(newFile.remove());
 	}
 }

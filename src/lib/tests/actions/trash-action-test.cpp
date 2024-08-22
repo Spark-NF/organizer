@@ -1,6 +1,7 @@
 #include <QFile>
 #include <catch.h>
 #include "actions/trash-action.h"
+#include "media.h"
 
 
 TEST_CASE("TrashAction")
@@ -12,12 +13,13 @@ TEST_CASE("TrashAction")
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
 		file.close();
+		Media media(file);
 
-		const QString filenameBefore = file.fileName();
-		REQUIRE(action.execute(file) == true);
-		const QString filenameAfter = file.fileName();
+		const QString filenameBefore = media.path();
+		REQUIRE(action.execute(media) == true);
+		const QString filenameAfter = media.path();
 
 		REQUIRE(filenameAfter != filenameBefore);
-		REQUIRE(file.remove());
+		REQUIRE(QFile::remove(media.path()));
 	}
 }

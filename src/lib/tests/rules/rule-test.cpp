@@ -3,6 +3,7 @@
 #include "actions/move-action.h"
 #include "actions/rename-action.h"
 #include "conditions/filename-condition.h"
+#include "media.h"
 #include "profile.h"
 #include "rules/rule.h"
 
@@ -36,20 +37,20 @@ TEST_CASE("Rule")
 		{
 			Rule emptyRule("Test rule", QKeySequence("A"), true, 1, {}, actions);
 
-			QFile file("test.jpg");
-			REQUIRE(emptyRule.match(file) == true);
+			Media media("test.jpg");
+			REQUIRE(emptyRule.match(media) == true);
 		}
 
 		SECTION("Partial match")
 		{
-			QFile file("test.png");
-			REQUIRE(rule.match(file) == false);
+			Media media("test.png");
+			REQUIRE(rule.match(media) == false);
 		}
 
 		SECTION("Full match")
 		{
-			QFile file("test.jpg");
-			REQUIRE(rule.match(file) == true);
+			Media media("test.jpg");
+			REQUIRE(rule.match(media) == true);
 		}
 	}
 
@@ -62,8 +63,9 @@ TEST_CASE("Rule")
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
 			file.close();
+			Media media(file);
 
-			REQUIRE(emptyRule.execute(file) == true);
+			REQUIRE(emptyRule.execute(media) == true);
 			REQUIRE(file.remove());
 		}
 
@@ -72,10 +74,11 @@ TEST_CASE("Rule")
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
 			file.close();
+			Media media(file);
 
-			REQUIRE(rule.execute(file) == true);
-			REQUIRE(QFileInfo(file).fileName() == "second_first_file.bin");
-			REQUIRE(file.remove());
+			REQUIRE(rule.execute(media) == true);
+			REQUIRE(QFileInfo(media.path()).fileName() == "second_first_file.bin");
+			REQUIRE(QFile::remove(media.path()));
 		}
 
 		SECTION("Fail if any action fails")
@@ -90,10 +93,11 @@ TEST_CASE("Rule")
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
 			file.close();
+			Media media(file);
 
-			REQUIRE(failingRule.execute(file) == false);
-			REQUIRE(QFileInfo(file).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
-			REQUIRE(file.remove());
+			REQUIRE(failingRule.execute(media) == false);
+			REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
+			REQUIRE(QFile::remove(media.path()));
 		}
 	}
 }

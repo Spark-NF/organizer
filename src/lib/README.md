@@ -3,10 +3,10 @@
 Usage:
 ```cpp
 // File to apply rules on
-QFile file("test.jpg");
+Media media("test.jpg");
 
 // Load the profile file
-Profile *profile = ProfileLoader::load("profile.json");
+Profile *profile = ProfileLoader::loadFile("profile.json");
 if (profile == nullptr) {
     return false;
 }

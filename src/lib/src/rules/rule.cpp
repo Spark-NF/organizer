@@ -39,20 +39,20 @@ const QList<QSharedPointer<Action>> &Rule::actions() const
 }
 
 
-bool Rule::match(QFile &file) const
+bool Rule::match(Media &media) const
 {
 	for (const auto &condition : m_conditions) {
-		if (!condition->match(file)) {
+		if (!condition->match(media)) {
 			return false;
 		}
 	}
 	return true;
 }
 
-bool Rule::execute(QFile &file) const
+bool Rule::execute(Media &media) const
 {
 	for (const auto &action : m_actions) {
-		if (!action->execute(file)) {
+		if (!action->execute(media)) {
 			return false;
 		}
 	}

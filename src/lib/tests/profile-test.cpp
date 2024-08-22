@@ -1,5 +1,6 @@
 #include <catch.h>
 #include "conditions/filename-condition.h"
+#include "media.h"
 #include "profile.h"
 #include "rules/rule.h"
 
@@ -31,20 +32,20 @@ TEST_CASE("Profile")
 	{
 		SECTION("Basic")
 		{
-			QFile file("test.txt");
-			REQUIRE(profile.match(file) == QList<QSharedPointer<Rule>> { txtRule });
+			Media media("test.txt");
+			REQUIRE(profile.match(media) == QList<QSharedPointer<Rule>> { txtRule });
 		}
 
 		SECTION("Priority")
 		{
-			QFile file("test.png");
-			REQUIRE(profile.match(file) == QList<QSharedPointer<Rule>> { imgRule });
+			Media media("test.png");
+			REQUIRE(profile.match(media) == QList<QSharedPointer<Rule>> { imgRule });
 		}
 
 		SECTION("Conflict")
 		{
-			QFile file("test.jpg");
-			REQUIRE(profile.match(file) == QList<QSharedPointer<Rule>> { jpgRule, imgRule });
+			Media media("test.jpg");
+			REQUIRE(profile.match(media) == QList<QSharedPointer<Rule>> { jpgRule, imgRule });
 		}
 	}
 }
