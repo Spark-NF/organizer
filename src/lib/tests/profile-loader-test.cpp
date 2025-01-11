@@ -77,6 +77,20 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
+		SECTION("Array of array for rules")
+		{
+			QJsonObject arrayOfArrayProfile {
+				{ "name", "Test profile" },
+				{ "rules", QJsonArray { jsonProfile["rules"] } }
+			};
+
+			QSharedPointer<Profile> profile = ProfileLoader::load(arrayOfArrayProfile);
+			REQUIRE(profile != nullptr);
+
+			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
+		}
+
 		SECTION("Ignore invalid rules")
 		{
 			QJsonArray rules = jsonProfile["rules"].toArray();

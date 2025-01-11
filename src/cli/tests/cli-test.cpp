@@ -91,12 +91,25 @@ TEST_CASE("CLI")
 					{ "priority", 1 },
 					{ "conditions", QJsonArray { QJsonObject {
 						{ "type", "filename" },
-						{ "filename", "*.txt" },
+						{ "filename", "*.txt; *.text" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
 						{ "from", "(.+)" },
 						{ "to", "txt_\\1" },
+					}}},
+				},
+				QJsonObject {
+					{ "name", "TEXT" },
+					{ "priority", 1 },
+					{ "conditions", QJsonArray { QJsonObject {
+						{ "type", "filename" },
+						{ "filename", "*.text" },
+					}}},
+					{ "actions", QJsonArray { QJsonObject {
+						{ "type", "rename" },
+						{ "from", "(.+)" },
+						{ "to", "text_\\1" },
 					}}},
 				}
 			}}
@@ -212,6 +225,49 @@ TEST_CASE("CLI")
 
 			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
 			REQUIRE(files == QStringList{ "a.test" });
+		}
+
+		SECTION("Conflicting rules")
+		{
+			QTemporaryDir dir;
+
+			QFile file(dir.filePath("a.text"));
+			file.open(QFile::WriteOnly);
+			file.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), file.fileName() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 0);
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
+			REQUIRE(QString(process.readAllStandardError()) == "Conflicting rules for " + file.fileName() + ":" + br + "- TXT" + br + "- TEXT" + br);
+
+			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+			REQUIRE(files == QStringList{ "a.text" });
+		}
+
+		SECTION("Error executing rule")
+		{
+			QTemporaryDir dir;
+
+			QFile file(dir.filePath("c.jpg"));
+			file.open(QFile::WriteOnly);
+			file.close();
+			file.copy(dir.filePath("jpg_c.jpg"));
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), file.fileName() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 0);
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
+			REQUIRE(QString(process.readAllStandardError()) == "Error executing rule JPG on file " + file.fileName() + br);
+
+			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+			REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
 		}
 	}
 }

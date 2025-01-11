@@ -4,10 +4,17 @@
 
 TEST_CASE("Media")
 {
-	Media media(QFile("test.png"));
+	SECTION("Constructors")
+	{
+		REQUIRE(Media(QString("test.png")).path() == "test.png");
+		REQUIRE(Media(QFile("test.png")).path() == "test.png");
+		REQUIRE(Media(QDir("some_dir")).path() == "some_dir");
+	}
 
 	SECTION("Getters")
 	{
+		Media media(QFile("test.png"));
+
 		REQUIRE(media.path() == "test.png");
 		REQUIRE(media.data() == QVariantMap());
 	}

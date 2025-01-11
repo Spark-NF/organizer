@@ -9,6 +9,7 @@
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
 #include "actions/trash-action.h"
+#include <catch2/generators/catch_generators.hpp>
 
 
 TEST_CASE("ActionLoader")
@@ -80,15 +81,20 @@ TEST_CASE("ActionLoader")
 
 		SECTION("Process action")
 		{
-			QJsonObject data {
-				{ "type", "process" },
-				{ "cmd", "magick" },
-				{ "args", QJsonArray { "{path}" } },
-			};
+			const bool args = GENERATE(false, true);
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
-			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<ProcessAction>() != nullptr);
+			DYNAMIC_SECTION((args ? "With args" : "Without args"))
+			{
+				QJsonObject data {
+					{ "type", "process" },
+					{ "cmd", "magick" },
+					{ "args", (args ? QJsonArray { "{path}" } : QJsonArray {}) },
+				};
+
+				QSharedPointer<Action> action = ActionLoader::load(data);
+				REQUIRE(action != nullptr);
+				REQUIRE(action.dynamicCast<ProcessAction>() != nullptr);
+			}
 		}
 
 		SECTION("Multiple action")

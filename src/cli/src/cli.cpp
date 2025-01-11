@@ -85,13 +85,14 @@ void processFile(const QSharedPointer<Profile> &profile, const QString &fileName
 	}
 
 	// Execute rule on the file
-	bool result = matches.first()->execute(media);
+	const QSharedPointer<Rule> rule = matches.first();
+	const bool result = rule->execute(media);
 	if (!result) {
-		stdErr << "Error executing rule for" << fileName << Qt::endl;
+		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
 		return;
 	}
 
-	stdOut << "Ran rule " << matches.first()->name() << " on file " << fileName << Qt::endl;
+	stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
 }
 
 

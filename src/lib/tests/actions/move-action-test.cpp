@@ -4,6 +4,7 @@
 #include <catch.h>
 #include "actions/move-action.h"
 #include "media.h"
+#include <catch2/generators/catch_generators.hpp>
 
 
 TEST_CASE("MoveAction")
@@ -27,17 +28,26 @@ TEST_CASE("MoveAction")
 
 	SECTION("Already exists")
 	{
-		MoveAction action(dir, false, false);
+		const bool overwrite = GENERATE(false, true);
 
-		QFile file("file.bin");
-		file.open(QFile::WriteOnly);
-		file.close();
-		file.copy(dir.path() + QDir::separator() + "file.bin");
-		Media media(file);
+		DYNAMIC_SECTION("Overwrite: " << (overwrite ? "true" : "false"))
+		{
+			MoveAction action(dir, false, overwrite);
 
-		REQUIRE(action.execute(media) == false);
-		REQUIRE(file.remove());
-		REQUIRE(QFile::remove(dir.path() + QDir::separator() + "file.bin"));
+			QFile file("file.bin");
+			file.open(QFile::WriteOnly);
+			file.close();
+			file.copy(dir.path() + QDir::separator() + "file.bin");
+			Media media(file);
+
+			REQUIRE(action.execute(media) == overwrite);
+			if (overwrite) {
+				REQUIRE(!file.exists());
+			} else {
+				REQUIRE(file.remove());
+			}
+			REQUIRE(QFile::remove(dir.path() + QDir::separator() + "file.bin"));
+		}
 	}
 
 	SECTION("New directory")
