@@ -17,9 +17,8 @@ TEST_CASE("ProfileLoader")
 				{ "name", "Test rule" },
 				{ "shortcut", "A" },
 				{ "conditions", QJsonArray { QJsonObject {
-					{ "type", "filename" },
-					{ "filename", "match" },
-					{ "regex", true },
+					{ "data", "filename" },
+					{ "regex", "match" },
 				}}},
 				{ "actions", QJsonArray { QJsonObject {
 					{ "type", "rename" },
@@ -120,9 +119,8 @@ TEST_CASE("ProfileLoader")
 					{ "name", "Another rule" },
 					{ "shortcut", "A" },
 					{ "conditions", QJsonArray { QJsonObject {
-						{ "type", "filename" },
-						{ "filename", "match" },
-						{ "regex", true },
+						{ "data", "filename" },
+						{ "regex", "match" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						 { "type", "rename" },

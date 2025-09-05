@@ -64,8 +64,8 @@ TEST_CASE("CLI")
 					{ "name", "Image" },
 					{ "priority", 1 },
 					{ "conditions", QJsonArray { QJsonObject {
-						{ "type", "filename" },
-						{ "filename", "*.jpg; *.png" },
+						{ "data", "filename" },
+						{ "glob", "*.jpg; *.png" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
@@ -77,8 +77,8 @@ TEST_CASE("CLI")
 					{ "name", "JPG" },
 					{ "priority", 2 },
 					{ "conditions", QJsonArray { QJsonObject {
-						{ "type", "filename" },
-						{ "filename", "*.jpg" },
+						{ "data", "filename" },
+						{ "glob", "*.jpg" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
@@ -90,8 +90,8 @@ TEST_CASE("CLI")
 					{ "name", "TXT" },
 					{ "priority", 1 },
 					{ "conditions", QJsonArray { QJsonObject {
-						{ "type", "filename" },
-						{ "filename", "*.txt; *.text" },
+						{ "data", "filename" },
+						{ "glob", "*.txt; *.text" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
@@ -103,8 +103,8 @@ TEST_CASE("CLI")
 					{ "name", "TEXT" },
 					{ "priority", 1 },
 					{ "conditions", QJsonArray { QJsonObject {
-						{ "type", "filename" },
-						{ "filename", "*.text" },
+						{ "data", "filename" },
+						{ "glob", "*.text" },
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },

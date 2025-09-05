@@ -25,7 +25,7 @@ TEST_CASE("RuleLoader")
 		QJsonObject data {
 			{ "name", "Test rule" },
 			{ "shortcut", "A" },
-			{ "conditions", QJsonArray { QJsonObject { { "type", "filename" }, { "filename", "*.txt" } } } },
+			{ "conditions", QJsonArray { QJsonObject { { "data", "filename" }, { "glob", "*.txt" } } } },
 			{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
 		};
 

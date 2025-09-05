@@ -2,16 +2,26 @@
 #include <catch.h>
 #include "actions/move-action.h"
 #include "actions/rename-action.h"
-#include "conditions/filename-condition.h"
+#include "conditions/condition.h"
+#include "conditions/comparators/glob-comparator.h"
+#include "conditions/loaders/filename-loader.h"
 #include "media.h"
-#include "profile.h"
 #include "rules/rule.h"
 
 
+static QSharedPointer<Condition> makeFilenameCondition(const QString &globPattern)
+{
+	return QSharedPointer<Condition>::create(
+		"filename",
+		QSharedPointer<FilenameLoader>::create(),
+		QSharedPointer<GlobComparator>::create(globPattern)
+	);
+}
+
 TEST_CASE("Rule")
 {
-	const auto imgCondition = QSharedPointer<FilenameCondition>::create("*.jpg; *.png", false);
-	const auto jpgCondition = QSharedPointer<FilenameCondition>::create("*.jpg", false);
+	const auto imgCondition = makeFilenameCondition("*.jpg; *.png");
+	const auto jpgCondition = makeFilenameCondition("*.jpg");
 	const QList<QSharedPointer<Condition>> conditions { imgCondition, jpgCondition };
 
 	const QList<QSharedPointer<Action>> actions {
