@@ -66,7 +66,7 @@ Source: "{#QtPlugins}\imageformats\qwbmp.dll";  DestDir: "{app}\imageformats"; F
 Source: "{#QtPlugins}\imageformats\qwebp.dll";  DestDir: "{app}\imageformats"; Flags: ignoreversion
 Source: "{#QtPlugins}\multimedia\windowsmediaplugin.dll";  DestDir: "{app}\multimedia"; Flags: ignoreversion
 Source: "{#QtPlugins}\platforms\qwindows.dll";  DestDir: "{app}\platforms"; Flags: ignoreversion
-Source: "{#QtPlugins}\styles\qwindowsvistastyle.dll";   DestDir: "{app}\styles"; Flags: ignoreversion
+Source: "{#QtPlugins}\styles\qmodernwindowsstyle.dll";   DestDir: "{app}\styles"; Flags: ignoreversion
 
 [InstallDelete]
 Type: files; Name: "{app}\libEGL.dll"
