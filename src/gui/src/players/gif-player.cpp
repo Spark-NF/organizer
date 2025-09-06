@@ -43,6 +43,25 @@ bool GifPlayer::supports(const QString &file)
 void GifPlayer::load(const QString &file)
 {
 	m_movie = new QMovie(file);
+
+	// Treat single-frame GIF files as images
+	if (m_movie->frameCount() == 1) {
+		// Load file as pixmap
+		QImageReader imageReader(file);
+		imageReader.setAutoTransform(true);
+		QImage image = imageReader.read();
+		QPixmap pixmap = QPixmap::fromImage(image);
+
+		// Resize as needed
+		if (pixmap.size().width() > ui->label->width() || pixmap.size().height() > ui->label->height()) {
+			pixmap = pixmap.scaled(ui->label->width(), ui->label->height(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		}
+
+		ui->controls->hide();
+		ui->label->setPixmap(pixmap);
+		return;
+	}
+
 	m_movie->setSpeed(static_cast<int>(ui->spinSpeed->value() * 100));
 
 	ui->sliderPosition->setValue(0);
