@@ -63,14 +63,21 @@ void GifPlayer::load(const QString &file)
 	}
 
 	m_movie->setSpeed(static_cast<int>(ui->spinSpeed->value() * 100));
+	m_movie->start();
+
+	const QSize &movieSize = m_movie->currentPixmap().size();
+	const QSize &labelSize = ui->label->size();
+	if (labelSize.width() < movieSize.width() || labelSize.height() < movieSize.height()) {
+		m_movie->setScaledSize(movieSize.scaled(labelSize, Qt::KeepAspectRatio));
+	}
 
 	ui->sliderPosition->setValue(0);
 	ui->sliderPosition->setMaximum(m_movie->frameCount());
 	connect(m_movie, &QMovie::frameChanged, this, &GifPlayer::positionChanged);
 	positionChanged(0);
 
+	ui->controls->show();
 	ui->label->setMovie(m_movie);
-	m_movie->start();
 }
 
 bool GifPlayer::stop()
