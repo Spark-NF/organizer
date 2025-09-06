@@ -16,10 +16,17 @@ TEST_CASE("TrashAction")
 		Media media(file);
 
 		const QString filenameBefore = media.path();
-		REQUIRE(action.execute(media) == true);
+		const bool result = action.execute(media);
 		const QString filenameAfter = media.path();
 
-		REQUIRE(filenameAfter != filenameBefore);
+		if (QFile::supportsMoveToTrash()) {
+			REQUIRE(result == true);
+			REQUIRE(filenameAfter != filenameBefore);
+		} else {
+			REQUIRE(result == false);
+			REQUIRE(filenameAfter == filenameBefore);
+		}
+
 		REQUIRE(QFile::remove(media.path()));
 	}
 }
