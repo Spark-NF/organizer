@@ -48,7 +48,6 @@ class MainWindow : public QMainWindow
 		void dropEvent(QDropEvent *event) override;
 
 	protected:
-		void generateViewers();
 		void loadFiles(const QDir &dir);
 		void previewFile();
 		void refreshPreview();
@@ -65,8 +64,6 @@ class MainWindow : public QMainWindow
 		QStringList m_files;
 		int m_currentFile;
 		QStack<QPair<int, QString>> m_lastActions;
-		QList<Player*> m_players;
-		Player *m_activePlayer = nullptr;
 };
 
 #endif // MAIN_WINDOW_H

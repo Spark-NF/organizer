@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
 	restoreGeometry(m_settings->value("Geometry/MainWindow").toByteArray());
 	setWindowTitle(QString());
 
-	generateViewers();
+	ui->playerWidget->initialize(m_settings);
 
 	connect(new QShortcut(QKeySequence::Undo, this), &QShortcut::activated, this, &MainWindow::undo);
 
@@ -65,18 +65,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	m_settings->setValue("Geometry/MainWindow", saveGeometry());
 
 	QMainWindow::closeEvent(event);
-}
-
-void MainWindow::generateViewers()
-{
-	m_players.append(new GifPlayer(m_settings, this));
-	m_players.append(new ImagePlayer(this));
-	m_players.append(new VideoPlayer(m_settings, this));
-
-	for (Player *player : m_players) {
-		ui->stackedWidget->addWidget(player);
-	}
-	ui->stackedWidget->setCurrentIndex(0);
 }
 
 
@@ -129,8 +117,7 @@ void MainWindow::openDirectory(QString path)
 	if (!m_files.isEmpty())
 		previewFile();
 	else {
-		ui->label->setText(QString("Empty directory: '%1'").arg(path));
-		ui->stackedWidget->setCurrentIndex(0);
+		ui->playerWidget->showMessage(QString("Empty directory: '%1'").arg(path));
 		setWindowTitle(QString());
 	}
 }
@@ -176,7 +163,7 @@ void MainWindow::undo()
 
 bool MainWindow::beforeAction()
 {
-	return m_activePlayer->stop();
+	return ui->playerWidget->stop();
 }
 
 void MainWindow::afterAction(bool fullPreview)
@@ -192,7 +179,7 @@ void MainWindow::previousFile()
 	if (m_files.isEmpty())
 		return;
 
-	m_activePlayer->stop();
+	ui->playerWidget->stop();
 	m_currentFile = (m_currentFile - 1 + m_files.count()) % m_files.count();
 	previewFile();
 }
@@ -202,15 +189,14 @@ void MainWindow::nextFile()
 	if (m_files.isEmpty())
 		return;
 
-	m_activePlayer->stop();
+	ui->playerWidget->stop();
 	m_currentFile = (m_currentFile + 1) % m_files.count();
 	previewFile();
 }
 
 void MainWindow::loadFiles(const QDir &dir)
 {
-	if (m_activePlayer != nullptr)
-		m_activePlayer->stop();
+	ui->playerWidget->stop();
 
 	m_currentFile = 0;
 	m_files.clear();
@@ -230,25 +216,9 @@ void MainWindow::previewFile()
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;
 
-	QString fileName = m_files[m_currentFile];
-	QString ext = QFileInfo(fileName).suffix().toLower();
-
-	for (int i = 0; i < m_players.count(); ++i) {
-		Player *player = m_players[i];
-		if (!player->supports(fileName)) {
-			continue;
-		}
-
-		m_activePlayer = player;
-		ui->stackedWidget->setCurrentIndex(i + 1);
-
-		player->load(fileName);
-		refreshPreview();
-		return;
-	}
-
-	ui->label->setText(QString("Unsupported file format: '%1'").arg(ext));
-	ui->stackedWidget->setCurrentIndex(0);
+	const QString fileName = m_files[m_currentFile];
+	ui->playerWidget->load(fileName);
+	refreshPreview();
 }
 
 void MainWindow::refreshPreview()
