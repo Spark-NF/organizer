@@ -1,8 +1,8 @@
 project(drop)
 
 # Qt libraries
-find_package(Qt6 COMPONENTS Core Gui Network Widgets REQUIRED)
-set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Network Qt6::Widgets)
+find_package(Qt6 COMPONENTS Core Gui Multimedia MultimediaWidgets Network Widgets REQUIRED)
+set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Multimedia Qt6::MultimediaWidgets Qt6::Network Qt6::Widgets)
 
 # Input
 file(GLOB_RECURSE SOURCES
@@ -37,3 +37,13 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Organizer-Drop")
 if(UNIX AND (NOT APPLE))
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
 endif()
+
+# Tests
+file(GLOB_RECURSE SOURCES_TESTS "tests/*.cpp")
+list(APPEND SOURCES_TESTS ${SOURCES})
+list(REMOVE_ITEM SOURCES_TESTS "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+include_directories("src/" "../vendor" "../vendor/catch/src")
+add_executable(${PROJECT_NAME}-tests ${SOURCES_TESTS})
+add_test(${PROJECT_NAME}-tests ${PROJECT_NAME}-tests)
+find_package(Qt6 COMPONENTS Test REQUIRED)
+target_link_libraries(${PROJECT_NAME}-tests ${QT_LIBRARIES} Qt6::Test lib Catch2::Catch2)

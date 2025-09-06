@@ -74,6 +74,7 @@ jobs:
           lib/lib-tests
           cli/cli-tests
           gui/gui-tests
+          drop/drop-tests
 
       - name: Capture coverage info
         run: |
@@ -129,6 +130,7 @@ jobs:
           lib/lib-tests
           cli/cli-tests
           gui/gui-tests
+          drop/drop-tests
 
       - name: Generate AppImage
         run: |
@@ -186,6 +188,7 @@ jobs:
           lib/lib-tests
           cli/cli-tests
           gui/gui-tests
+          drop/drop-tests
 
       - name: Generate DMG
         run: |
@@ -241,6 +244,7 @@ jobs:
           lib\%BUILD_TYPE%\lib-tests.exe
           cli\%BUILD_TYPE%\cli-tests.exe
           gui\%BUILD_TYPE%\gui-tests.exe
+          drop\%BUILD_TYPE%\drop-tests.exe
 
       - name: Move build files
         shell: cmd
