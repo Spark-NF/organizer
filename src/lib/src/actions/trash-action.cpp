@@ -1,4 +1,5 @@
 #include "trash-action.h"
+#include <QDebug>
 #include "media.h"
 
 
@@ -9,9 +10,11 @@ TrashAction::TrashAction()
 bool TrashAction::execute(Media &media) const
 {
 	QFile file(media.path());
-	bool ok = file.moveToTrash();
+	const bool ok = file.moveToTrash();
 	if (ok) {
 		media.setPath(file.fileName());
+	} else {
+		qCritical() << "Error moving file to trash" << file.error() << file.errorString();
 	}
 	return ok;
 }

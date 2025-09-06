@@ -29,9 +29,12 @@ bool MoveAction::execute(Media &media) const
 		QFile::remove(dest);
 	}
 
-	bool ok = QFile::rename(media.path(), dest);
+	QFile file(media.path());
+	const bool ok = file.rename(dest);
 	if (ok) {
 		media.setPath(dest);
+	} else {
+		qCritical() << "Error moving file" << file.error() << file.errorString();
 	}
 	return ok;
 }

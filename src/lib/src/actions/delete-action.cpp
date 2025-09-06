@@ -8,5 +8,10 @@ DeleteAction::DeleteAction()
 
 bool DeleteAction::execute(Media &media) const
 {
-	return QFile::remove(media.path());
+	QFile file(media.path());
+	const bool ok = file.remove();
+	if (!ok) {
+		qCritical() << "Error deleting file" << file.error() << file.errorString();
+	}
+	return ok;
 }
