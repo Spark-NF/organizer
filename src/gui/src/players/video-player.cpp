@@ -14,7 +14,7 @@ VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
 {
 	ui->setupUi(this);
 
-	m_supportedFormats << "mp4" << "flv" << "webm";
+	m_supportedFormats << "mp4" << "flv" << "webm" << "avi";
 
 	auto *videoWidget = new QVideoWidget(this);
 	ui->verticalLayout->insertWidget(0, videoWidget);
