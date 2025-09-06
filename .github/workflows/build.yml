@@ -252,8 +252,10 @@ jobs:
         run: |
           mv gui/%BUILD_TYPE%/Organizer.exe .
           mv cli/%BUILD_TYPE%/Organizer-cli.exe .
+          mv drop/%BUILD_TYPE%/Organizer-drop.exe .
           if "%IS_RELEASE%"=="true" (mv gui/%BUILD_TYPE%/Organizer.pdb .)
           if "%IS_RELEASE%"=="true" (mv cli/%BUILD_TYPE%/Organizer-cli.pdb .)
+          if "%IS_RELEASE%"=="true" (mv drop/%BUILD_TYPE%/Organizer-drop.pdb .)
 
       - name: Generate installer
         run: |
@@ -269,7 +271,7 @@ jobs:
 
       - name: Generate symbols ZIP
         if: ${{ github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/v') }}
-        run: 7z a "Organizer_x64_symbols.zip" "build/Organizer.pdb" "build/Organizer-cli.pdb"
+        run: 7z a "Organizer_x64_symbols.zip" "build/Organizer.pdb" "build/Organizer-cli.pdb" "build/Organizer-drop.pdb"
 
       - name: Upload symbols
         uses: actions/upload-artifact@v4

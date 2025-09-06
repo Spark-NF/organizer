@@ -31,7 +31,7 @@ else()
 	add_executable(${PROJECT_NAME} ${SOURCES})
 endif()
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} lib)
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Organizer-Drop")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Organizer-drop")
 
 # Install
 if(UNIX AND (NOT APPLE))
