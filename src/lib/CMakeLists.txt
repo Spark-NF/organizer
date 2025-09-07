@@ -14,8 +14,8 @@ target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
 # Tests
 file(GLOB_RECURSE SOURCES_TESTS "tests/*.cpp")
-include_directories("src/" "../vendor" "../vendor/catch/src")
+include_directories("src/" "../tests/src/" "../vendor" "../vendor/catch/src")
 add_executable(${PROJECT_NAME}-tests ${SOURCES_TESTS})
 add_test(${PROJECT_NAME}-tests ${PROJECT_NAME}-tests)
 find_package(Qt6 COMPONENTS Test REQUIRED)
-target_link_libraries(${PROJECT_NAME}-tests ${QT_LIBRARIES} Qt6::Test lib Catch2::Catch2)
+target_link_libraries(${PROJECT_NAME}-tests ${QT_LIBRARIES} tests Qt6::Test lib Catch2::Catch2)

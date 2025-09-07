@@ -56,6 +56,7 @@ add_subdirectory(lib)
 add_subdirectory(gui)
 add_subdirectory(drop)
 add_subdirectory(cli)
+add_subdirectory(tests)
 
 # Install
 if(UNIX AND (NOT APPLE))
