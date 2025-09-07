@@ -13,9 +13,7 @@
 #include "conflict-window.h"
 #include "media.h"
 #include "rules/rule.h"
-
-// FIXME: we should use a "waitFor" system
-#define WAIT 3000
+#include "test-utils.h"
 
 
 static QSharedPointer<Condition> makeFilenameCondition(const QString &globPattern)
@@ -45,12 +43,7 @@ TEST_CASE("ConflictWindow")
 
 	SECTION("Should show one button for each rule")
 	{
-		QTimer::singleShot(WAIT, [&rules]() {
-			// The active window should be the conflict window
-			auto *activeWindow = qApp->activeWindow();
-			auto *mainWindow = qobject_cast<ConflictWindow*>(activeWindow);
-			REQUIRE(mainWindow != nullptr);
-
+		waitForWindow<ConflictWindow>([&rules](ConflictWindow *mainWindow) {
 			// There should be only two buttons, one for each action
 			auto buttons = mainWindow->findChildren<QPushButton*>();
 			REQUIRE(buttons.count() == 2);
