@@ -1,5 +1,6 @@
 #include <catch.h>
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -10,6 +11,7 @@
 #include <QTemporaryFile>
 #include <QTest>
 #include <QTimer>
+#include "custom-url-handler.h"
 #include "main-window.h"
 
 // FIXME: we should use a "waitFor" system
@@ -111,6 +113,77 @@ TEST_CASE("Main window")
 			QSignalSpy spy(&mainWindow, &MainWindow::closed);
 			mainWindow.show();
 			spy.wait();
+		}
+
+		SECTION("Help menu")
+		{
+			SECTION("View on Github")
+			{
+				QTimer::singleShot(WAIT, []() {
+					// The active window should directly be the main window
+					auto *activeWindow = qApp->activeWindow();
+					auto *mainWindow = qobject_cast<MainWindow*>(activeWindow);
+					REQUIRE(mainWindow != nullptr);
+
+					const auto menus = mainWindow->menuBar()->actions();
+					const auto helpMenu = *std::find_if(menus.begin(), menus.end(), [](const QAction *action) {
+						return action->text() == "Help";
+					});
+					const auto actions = helpMenu->menu()->actions();
+					const auto aboutMenu = *std::find_if(actions.begin(), actions.end(), [](const QAction *action) {
+						return action->text() == "View on Github";
+					});
+
+					CustomUrlHandler handler;
+					QDesktopServices::setUrlHandler("https", &handler, "handle");
+
+					aboutMenu->trigger();
+
+					REQUIRE(handler.urls.count() == 1);
+					REQUIRE(handler.urls[0].toString() == "https://github.com/Spark-NF/organizer");
+
+					mainWindow->close();
+				});
+
+				MainWindow mainWindow;
+				QSignalSpy spy(&mainWindow, &MainWindow::closed);
+				mainWindow.show();
+				spy.wait();
+			}
+
+			SECTION("Report an issue")
+			{
+				QTimer::singleShot(WAIT, []() {
+					// The active window should directly be the main window
+					auto *activeWindow = qApp->activeWindow();
+					auto *mainWindow = qobject_cast<MainWindow*>(activeWindow);
+					REQUIRE(mainWindow != nullptr);
+
+					const auto menus = mainWindow->menuBar()->actions();
+					const auto helpMenu = *std::find_if(menus.begin(), menus.end(), [](const QAction *action) {
+						return action->text() == "Help";
+					});
+					const auto actions = helpMenu->menu()->actions();
+					const auto aboutMenu = *std::find_if(actions.begin(), actions.end(), [](const QAction *action) {
+						return action->text() == "Report an issue";
+					});
+
+					CustomUrlHandler handler;
+					QDesktopServices::setUrlHandler("https", &handler, "handle");
+
+					aboutMenu->trigger();
+
+					REQUIRE(handler.urls.count() == 1);
+					REQUIRE(handler.urls[0].toString() == "https://github.com/Spark-NF/organizer/issues/new");
+
+					mainWindow->close();
+				});
+
+				MainWindow mainWindow;
+				QSignalSpy spy(&mainWindow, &MainWindow::closed);
+				mainWindow.show();
+				spy.wait();
+			}
 		}
 	}
 }
