@@ -1,2 +1,7 @@
+#ifndef CATCH_H
+#define CATCH_H
+
 #include <catch2/catch_test_macros.hpp>
 #include "catch-tostring.h"
+
+#endif // CATCH_H
