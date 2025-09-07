@@ -72,7 +72,7 @@ void GifPlayer::load(const QString &file)
 	}
 
 	ui->sliderPosition->setValue(0);
-	ui->sliderPosition->setMaximum(m_movie->frameCount());
+	ui->sliderPosition->setMaximum(m_movie->frameCount() - 1);
 	connect(m_movie, &QMovie::frameChanged, this, &GifPlayer::positionChanged);
 	positionChanged(0);
 
@@ -121,7 +121,7 @@ void GifPlayer::positionChanged(int frame)
 		m_noSeek = false;
 	}
 
-	QString tStr = QString::number(frame) + " / " + QString::number(m_movie->frameCount());
+	const QString tStr = QString::number(frame + 1) + " / " + QString::number(m_movie->frameCount());
 	ui->labelDuration->setText(tStr);
 }
 
