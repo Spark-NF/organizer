@@ -241,9 +241,9 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: |
-          lib\%BUILD_TYPE%\lib-tests.exe
-          cli\%BUILD_TYPE%\cli-tests.exe
-          gui\%BUILD_TYPE%\gui-tests.exe
+          lib\%BUILD_TYPE%\lib-tests.exe && ^
+          cli\%BUILD_TYPE%\cli-tests.exe && ^
+          gui\%BUILD_TYPE%\gui-tests.exe && ^
           drop\%BUILD_TYPE%\drop-tests.exe
 
       - name: Move build files
