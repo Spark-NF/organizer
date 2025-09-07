@@ -19,18 +19,40 @@ TEST_CASE("GifPlayer")
 
 	SECTION("Renders the provided GIF file")
 	{
+		QColor pixelColor;
+
 		GifPlayer gifPlayer(&settings);
 		gifPlayer.resize(QSize(400, 300));
 		gifPlayer.load(QString(TEST_RESOURCES) + "/100x100-green.gif");
 
 		QPixmap target(gifPlayer.size());
 		gifPlayer.render(&target);
-		REQUIRE(target.toImage().pixelColor(10, 150) == QColor(Qt::green));
+		pixelColor = target.toImage().pixelColor(10, 130);
+		REQUIRE((pixelColor == QColor(Qt::green) || pixelColor == QColor(Qt::yellow)));
 
 		gifPlayer.stop();
 		gifPlayer.unload();
 
 		gifPlayer.render(&target);
-		REQUIRE(target.toImage().pixelColor(10, 150) != QColor(Qt::green));
+		pixelColor = target.toImage().pixelColor(10, 130);
+		REQUIRE((pixelColor != QColor(Qt::green) && pixelColor != QColor(Qt::yellow)));
+	}
+
+	SECTION("Seek")
+	{
+		GifPlayer gifPlayer(&settings);
+		gifPlayer.resize(QSize(400, 300));
+		gifPlayer.load(QString(TEST_RESOURCES) + "/100x100-green.gif");
+		gifPlayer.playPause();
+		gifPlayer.seek(0);
+
+		QPixmap target(gifPlayer.size());
+		gifPlayer.render(&target);
+		REQUIRE(target.toImage().pixelColor(10, 130) == QColor(Qt::green));
+
+		gifPlayer.seek(1);
+
+		gifPlayer.render(&target);
+		REQUIRE(target.toImage().pixelColor(10, 130) == QColor(Qt::yellow));
 	}
 }

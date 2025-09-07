@@ -127,11 +127,13 @@ void GifPlayer::positionChanged(int frame)
 
 void GifPlayer::seek(int frame)
 {
-	if (m_movie == nullptr || m_noSeek || true) {
+	if (m_movie == nullptr || m_noSeek) {
 		return;
 	}
 
-	// Go back to first frame first if we want to seek back
+	const bool paused = m_movie->state() == QMovie::Paused;
+
+	// Start by going back to the first frame if we want to seek back
 	if (m_movie->currentFrameNumber() > frame) {
 		m_movie->stop();
 		m_movie->start();
@@ -142,7 +144,7 @@ void GifPlayer::seek(int frame)
 	while (m_movie->currentFrameNumber() < frame) {
 		m_movie->jumpToNextFrame();
 	}
-	m_movie->setPaused(false);
+	m_movie->setPaused(paused);
 }
 
 void GifPlayer::setSpeed(double speed)

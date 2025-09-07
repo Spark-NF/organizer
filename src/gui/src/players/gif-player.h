@@ -28,11 +28,13 @@ class GifPlayer : public Player
 		bool stop() override;
 		void unload() override;
 
-	protected slots:
+	public slots:
 		void playPause();
-		void positionChanged(int frame);
 		void seek(int frame);
 		void setSpeed(double speed);
+
+	protected slots:
+		void positionChanged(int frame);
 
 	private:
 		Ui::GifPlayer *ui;
