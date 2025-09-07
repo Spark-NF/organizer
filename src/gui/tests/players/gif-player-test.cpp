@@ -1,5 +1,6 @@
 #include <QSettings>
 #include <QTest>
+#include <QToolButton>
 #include <catch.h>
 #include "players/gif-player.h"
 
@@ -17,7 +18,7 @@ TEST_CASE("GifPlayer")
 		REQUIRE(gifPlayer.supports("test.bin") == false);
 	}
 
-	SECTION("Renders the provided GIF file")
+	SECTION("Renders the provided GIF file with controls")
 	{
 		QColor pixelColor;
 
@@ -36,6 +37,8 @@ TEST_CASE("GifPlayer")
 		gifPlayer.render(&target);
 		pixelColor = target.toImage().pixelColor(10, 130);
 		REQUIRE((pixelColor != QColor(Qt::green) && pixelColor != QColor(Qt::yellow)));
+
+		REQUIRE(gifPlayer.findChild<QToolButton*>()->isVisibleTo(&gifPlayer));
 	}
 
 	SECTION("Seek")
@@ -54,5 +57,18 @@ TEST_CASE("GifPlayer")
 
 		gifPlayer.render(&target);
 		REQUIRE(target.toImage().pixelColor(10, 130) == QColor(Qt::yellow));
+	}
+
+	SECTION("Renders static GIF files without controls")
+	{
+		GifPlayer gifPlayer(&settings);
+		gifPlayer.resize(QSize(400, 300));
+		gifPlayer.load(QString(TEST_RESOURCES) + "/100x100-green-static.gif");
+
+		QPixmap target(gifPlayer.size());
+		gifPlayer.render(&target);
+		REQUIRE(target.toImage().pixelColor(10, 150) == QColor(Qt::green));
+
+		REQUIRE(!gifPlayer.findChild<QToolButton*>()->isVisibleTo(&gifPlayer));
 	}
 }
