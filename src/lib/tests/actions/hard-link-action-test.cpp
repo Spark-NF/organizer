@@ -25,36 +25,39 @@ TEST_CASE("HardLinkAction")
 	file.close();
 	Media media(file);
 
+	// The target of the hard link must be on the same device, so we have it in TMP as well
+	const QString targetFile = QDir::temp().absoluteFilePath("hardlink_shortcut");
+
 	SECTION("Execute")
 	{
-		HardLinkAction action("hardlink_shortcut", false);
+		HardLinkAction action(targetFile, false);
 		REQUIRE(action.execute(media) == true);
 
-		REQUIRE(QFile::exists("hardlink_shortcut"));
-		REQUIRE(QFile::remove("hardlink_shortcut"));
+		REQUIRE(QFile::exists(targetFile));
+		REQUIRE(QFile::remove(targetFile));
 	}
 
 	SECTION("Already exists")
 	{
-		QFile duplicate("hardlink_shortcut");
+		QFile duplicate(targetFile);
 		duplicate.open(QFile::WriteOnly);
 		duplicate.close();
 
-		HardLinkAction action("hardlink_shortcut", false);
+		HardLinkAction action(targetFile, false);
 		REQUIRE(action.execute(media) == false);
 
-		REQUIRE(QFile::remove("hardlink_shortcut"));
+		REQUIRE(QFile::remove(targetFile));
 	}
 
 	SECTION("Overwrite")
 	{
-		QFile duplicate("hardlink_shortcut");
+		QFile duplicate(targetFile);
 		duplicate.open(QFile::WriteOnly);
 		duplicate.close();
 
-		HardLinkAction action("hardlink_shortcut", true);
+		HardLinkAction action(targetFile, true);
 		REQUIRE(action.execute(media) == true);
 
-		REQUIRE(QFile::remove("hardlink_shortcut"));
+		REQUIRE(QFile::remove(targetFile));
 	}
 }
