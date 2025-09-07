@@ -120,18 +120,10 @@ TEST_CASE("Main window")
 			SECTION("View on Github")
 			{
 				openAndWaitForWindow<MainWindow>([](MainWindow *mainWindow) {
-					const auto menus = mainWindow->menuBar()->actions();
-					const auto helpMenu = *std::find_if(menus.begin(), menus.end(), [](const QAction *action) {
-						return action->text() == "Help";
-					});
-					const auto actions = helpMenu->menu()->actions();
-					const auto aboutMenu = *std::find_if(actions.begin(), actions.end(), [](const QAction *action) {
-						return action->text() == "View on Github";
-					});
-
 					CustomUrlHandler handler;
 					QDesktopServices::setUrlHandler("https", &handler, "handle");
 
+					QAction *aboutMenu = getMenuAction(mainWindow, {"Help", "View on Github"});
 					aboutMenu->trigger();
 
 					REQUIRE(handler.urls.count() == 1);
@@ -144,18 +136,10 @@ TEST_CASE("Main window")
 			SECTION("Report an issue")
 			{
 				openAndWaitForWindow<MainWindow>([](MainWindow *mainWindow) {
-					const auto menus = mainWindow->menuBar()->actions();
-					const auto helpMenu = *std::find_if(menus.begin(), menus.end(), [](const QAction *action) {
-						return action->text() == "Help";
-					});
-					const auto actions = helpMenu->menu()->actions();
-					const auto aboutMenu = *std::find_if(actions.begin(), actions.end(), [](const QAction *action) {
-						return action->text() == "Report an issue";
-					});
-
 					CustomUrlHandler handler;
 					QDesktopServices::setUrlHandler("https", &handler, "handle");
 
+					QAction *aboutMenu = getMenuAction(mainWindow, {"Help", "Report an issue"});
 					aboutMenu->trigger();
 
 					REQUIRE(handler.urls.count() == 1);
