@@ -4,9 +4,22 @@
 #include "actions/hard-link-action.h"
 #include "media.h"
 
+#if defined(Q_OS_WINDOWS)
+	#include <QDebug>
+	#include <QDir>
+	#include <QStorageInfo>
+#endif
+
 
 TEST_CASE("HardLinkAction")
 {
+	#if defined(Q_OS_WINDOWS)
+		QStorageInfo storageInfo(QDir::tempPath());
+		if (storageInfo.fileSystemType() != "NTFS") {
+			SKIP("HardLinkAction is not supported for Windows on non-NTFS drives");
+		}
+	#endif
+
 	QTemporaryFile file;
 	file.open();
 	file.close();
