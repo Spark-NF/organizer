@@ -24,7 +24,11 @@ bool HardLinkAction::execute(Media &media) const
 	}
 
 	#if defined(Q_OS_WINDOWS)
-		return CreateHardLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), NULL);
+		const bool ok = CreateHardLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), NULL);
+		if (!ok) {
+			qCritical() << "Error creating hard link" << GetLastError();
+		}
+		return ok;
 	#else
 		return link(media.path().toStdString().c_str(), m_name.toStdString().c_str()) == 0;
 	#endif

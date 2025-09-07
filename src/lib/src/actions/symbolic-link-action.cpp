@@ -22,7 +22,11 @@ bool SymbolicLinkAction::execute(Media &media) const
 	}
 
 	#if defined(Q_OS_WINDOWS)
-		return CreateSymbolicLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
+		const bool ok = CreateSymbolicLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
+		if (!ok) {
+			qCritical() << "Error creating hard link" << GetLastError();
+		}
+		return ok;
 	#else
 		return QFile::link(media.path(), m_name);
 	#endif
