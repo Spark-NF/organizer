@@ -227,7 +227,7 @@ void MainWindow::refreshPreview()
 	const QString fileName = fileInfo.fileName();
 	const QString directory = fileInfo.dir().absolutePath();
 
-	setWindowTitle(QString("%1 - %2 / %3  - %4").arg(fileName).arg(m_currentFile + 1).arg(m_files.count()).arg(directory));
+	setWindowTitle(QString("%1 - %2 / %3 - %4").arg(fileName).arg(m_currentFile + 1).arg(m_files.count()).arg(directory));
 }
 
 void MainWindow::fileOpenDirectory()

@@ -1,9 +1,9 @@
-#include <catch.h>
 #include <QApplication>
 #include <QDesktopServices>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
@@ -11,6 +11,7 @@
 #include <QTemporaryFile>
 #include <QTest>
 #include <QTimer>
+#include <catch.h>
 #include "custom-url-handler.h"
 #include "main-window.h"
 
@@ -113,6 +114,30 @@ TEST_CASE("Main window")
 			QSignalSpy spy(&mainWindow, &MainWindow::closed);
 			mainWindow.show();
 			spy.wait();
+		}
+
+		SECTION("Open empty directory")
+		{
+			QTemporaryDir temporaryDir;
+
+			MainWindow mainWindow;
+			mainWindow.openDirectory(temporaryDir.path());
+
+			REQUIRE(mainWindow.windowTitle() == "");
+			REQUIRE(mainWindow.findChild<QLabel*>("labelMessage")->text().startsWith("Empty directory"));
+		}
+
+		SECTION("Open directory with multiple files")
+		{
+			QTemporaryDir temporaryDir;
+			QFile::copy(QString(TEST_RESOURCES) + "/100x100-red.png", temporaryDir.filePath("test-1.png"));
+			QFile::copy(QString(TEST_RESOURCES) + "/100x100-red.png", temporaryDir.filePath("test-2.png"));
+			QFile::copy(QString(TEST_RESOURCES) + "/100x100-red.png", temporaryDir.filePath("test-3.png"));
+
+			MainWindow mainWindow;
+			mainWindow.openDirectory(temporaryDir.path());
+
+			REQUIRE(mainWindow.windowTitle().startsWith("test-1.png - 1 / 3 - "));
 		}
 
 		SECTION("Help menu")

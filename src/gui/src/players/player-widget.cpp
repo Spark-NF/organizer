@@ -42,13 +42,13 @@ void PlayerWidget::load(const QString &file)
 		return;
 	}
 
-	ui->label->setText(QString("Unsupported file format: '%1'").arg(ext));
+	ui->labelMessage->setText(QString("Unsupported file format: '%1'").arg(ext));
 	ui->stackedWidget->setCurrentIndex(0);
 }
 
 void PlayerWidget::showMessage(const QString &msg)
 {
-	ui->label->setText(msg);
+	ui->labelMessage->setText(msg);
 	ui->stackedWidget->setCurrentIndex(0);
 }
 
