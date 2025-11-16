@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file alias="images/icon.ico">../../gui/resources/images/icon.ico</file>
         <file>images/dropzone.png</file>
     </qresource>
 </RCC>
