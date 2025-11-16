@@ -294,27 +294,27 @@ jobs:
 
     steps:
       - name: Download artifact (Linux)
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Organizer-x86_64.AppImage
 
       - name: Download artifact (Linux update information)
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Organizer-x86_64.AppImage.zsync
 
       - name: Download artifact (macOS)
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Organizer.dmg
 
       - name: Download artifact (Windows)
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: Organizer_x64.exe
 
       - name: Download artifact (Windows symbols)
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         if: needs.version.outputs.release == 'true'
         with:
           name: Organizer_x64_symbols.zip
