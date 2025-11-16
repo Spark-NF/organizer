@@ -1,5 +1,6 @@
 #include "test-utils.h"
 #include <QApplication>
+#include <QElapsedTimer>
 #include <QSignalSpy>
 #include <QTimer>
 #include <QWidget>
