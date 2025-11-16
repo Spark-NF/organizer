@@ -95,7 +95,7 @@ TEST_CASE("Rule")
 		{
 			const QList<QSharedPointer<Action>> actions {
 				QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
-				QSharedPointer<MoveAction>::create(QDir("unknown_dir/"), false, false),
+				QSharedPointer<MoveAction>::create("unknown_dir/", false, false),
 			};
 
 			Rule failingRule("Test rule", QKeySequence("A"), true, 1, conditions, actions);

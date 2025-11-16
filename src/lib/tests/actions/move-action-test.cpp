@@ -14,9 +14,24 @@ TEST_CASE("MoveAction")
 
 	SECTION("Execute")
 	{
-		MoveAction action(dir, false, false);
+		MoveAction action(dir.absolutePath(), false, false);
 
 		QFile file("file.bin");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		REQUIRE(action.execute(media) == true);
+		REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
+		REQUIRE(QFile::remove(media.path()));
+	}
+
+	SECTION("Relative path")
+	{
+		MoveAction action("../", false, false);
+
+		dir.mkdir("test_dir/");
+		QFile file(dir.absoluteFilePath("test_dir/file.bin"));
 		file.open(QFile::WriteOnly);
 		file.close();
 		Media media(file);
@@ -32,7 +47,7 @@ TEST_CASE("MoveAction")
 
 		DYNAMIC_SECTION("Overwrite: " << (overwrite ? "true" : "false"))
 		{
-			MoveAction action(dir, false, overwrite);
+			MoveAction action(dir.absolutePath(), false, overwrite);
 
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
@@ -56,7 +71,7 @@ TEST_CASE("MoveAction")
 
 		SECTION("Don't create")
 		{
-			MoveAction action(dir, false, false);
+			MoveAction action(dir.absolutePath(), false, false);
 
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);
@@ -70,7 +85,7 @@ TEST_CASE("MoveAction")
 
 		SECTION("Create")
 		{
-			MoveAction action(dir, true, false);
+			MoveAction action(dir.absolutePath(), true, false);
 
 			QFile file("file.bin");
 			file.open(QFile::WriteOnly);

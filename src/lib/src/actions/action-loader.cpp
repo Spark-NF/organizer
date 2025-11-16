@@ -1,5 +1,4 @@
 #include "action-loader.h"
-#include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QSet>
@@ -35,7 +34,7 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 		const QString destination = obj["dest"].toString();
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<MoveAction>::create(QDir(destination), create, overwrite);
+		return QSharedPointer<MoveAction>::create(destination, create, overwrite);
 	}
 
 	if (type == "delete") {

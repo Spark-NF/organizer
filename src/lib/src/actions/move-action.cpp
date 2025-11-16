@@ -3,23 +3,25 @@
 #include "media.h"
 
 
-MoveAction::MoveAction(const QDir &destination, bool create, bool overwrite)
+MoveAction::MoveAction(const QString &destination, bool create, bool overwrite)
 	: Action(), m_destination(destination), m_create(create), m_overwrite(overwrite)
 {}
 
 bool MoveAction::execute(Media &media) const
 {
+	const QDir destination(media.fileInfo().dir().absoluteFilePath(m_destination));
+
 	// Create the destination directory if necessary
-	if (!m_destination.exists()) {
+	if (!destination.exists()) {
 		if (!m_create) {
 			return false;
 		}
-		if (!m_destination.mkpath(".")) {
+		if (!destination.mkpath(".")) {
 			return false;
 		}
 	}
 
-	const QString dest = m_destination.absoluteFilePath(media.fileInfo().fileName());
+	const QString dest = destination.absoluteFilePath(media.fileInfo().fileName());
 
 	// Delete the destination if "overwrite" is enabled and the destination already exists
 	if (QFile::exists(dest)) {

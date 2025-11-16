@@ -12,9 +12,18 @@ Move the file to a different directory. The destination can be relative or absol
 
 ## Examples
 
+Absolute destination:
 ```json
 {
     "type": "move",
-    "dest": "C:\\Users\\Nicolas\\Documents\\Test\\Hello"
+    "dest": "D:\\Test\\Hello"
+}
+```
+
+Relative destination:
+```json
+{
+    "type": "move",
+    "dest": "../Hello"
 }
 ```

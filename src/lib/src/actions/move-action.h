@@ -8,11 +8,11 @@
 class MoveAction : public Action
 {
 	public:
-		explicit MoveAction(const QDir &destination, bool create, bool overwrite);
+		explicit MoveAction(const QString &destination, bool create, bool overwrite);
 		bool execute(Media &media) const override;
 
 	private:
-		QDir m_destination;
+		QString m_destination;
 		bool m_create;
 		bool m_overwrite;
 };
