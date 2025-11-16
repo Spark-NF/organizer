@@ -15,6 +15,10 @@ CommandWindow::CommandWindow(QSharedPointer<Profile> profile, const QStringList 
 {
 	ui->setupUi(this);
 
+	ui->resultsTable->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+	ui->resultsTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+	ui->resultsTable->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+
 	loadPaths(paths);
 
 	for (int i = 0; i < m_files.count(); ++i) {
