@@ -177,7 +177,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake ../src -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION"
+          cmake ../src -DCMAKE_BUILD_TYPE=Release -DVERSION="$ORGANIZER_VERSION" -DCMAKE_POLICY_VERSION_MINIMUM=3.5
           cmake --build . --config Release --parallel
 
       - name: Test
