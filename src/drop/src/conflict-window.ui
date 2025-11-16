@@ -10,11 +10,8 @@
     <height>550</height>
    </rect>
   </property>
-  <property name="acceptDrops">
-   <bool>true</bool>
-  </property>
   <property name="windowTitle">
-   <string>Organizer</string>
+   <string>Conflict</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/resources.qrc">
