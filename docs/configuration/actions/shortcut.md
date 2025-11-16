@@ -17,7 +17,7 @@ Create a Windows shortcut (LNK file) to the file.
 
 ```json
 {
-  "type": "shortcut",
-  "name": "Shortcut to this file"
+    "type": "shortcut",
+    "name": "Shortcut to this file"
 }
 ```
