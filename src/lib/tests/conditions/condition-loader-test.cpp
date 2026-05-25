@@ -5,12 +5,15 @@
 #include "conditions/comparators/glob-comparator.h"
 #include "conditions/comparators/or-comparator.h"
 #include "conditions/comparators/range-comparator.h"
+#include "conditions/comparators/regex-comparator.h"
 #include "conditions/condition-loader.h"
 #include "conditions/condition.h"
 #include "conditions/loaders/created-loader.h"
+#include "conditions/loaders/directory-loader.h"
 #include "conditions/loaders/filename-loader.h"
 #include "conditions/loaders/filesize-loader.h"
 #include "conditions/loaders/last-modified-loader.h"
+#include "conditions/loaders/path-loader.h"
 
 
 TEST_CASE("ConditionLoader")
@@ -67,6 +70,32 @@ TEST_CASE("ConditionLoader")
 			REQUIRE(condition != nullptr);
 			REQUIRE(condition->loader().dynamicCast<FilesizeLoader>() != nullptr);
 			REQUIRE(condition->comparator().dynamicCast<RangeComparator>() != nullptr);
+		}
+
+		SECTION("Directory condition")
+		{
+			QJsonObject data {
+				{ "data", "directory" },
+				{ "regex", "^start_" },
+			};
+
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<DirectoryLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RegexComparator>(condition->comparator()) != nullptr);
+		}
+
+		SECTION("Path condition")
+		{
+			QJsonObject data {
+				{ "data", "path" },
+				{ "regex", "^start_" },
+			};
+
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<PathLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RegexComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Created condition")

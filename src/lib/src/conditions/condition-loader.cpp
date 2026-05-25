@@ -9,9 +9,11 @@
 #include "comparators/range-comparator.h"
 #include "comparators/regex-comparator.h"
 #include "loaders/created-loader.h"
+#include "loaders/directory-loader.h"
 #include "loaders/filename-loader.h"
 #include "loaders/filesize-loader.h"
 #include "loaders/last-modified-loader.h"
+#include "loaders/path-loader.h"
 
 
 QSharedPointer<Condition> ConditionLoader::load(const QJsonObject &obj)
@@ -69,6 +71,8 @@ QSharedPointer<Comparator> ConditionLoader::loadComparator(const QJsonObject &ob
 
 QSharedPointer<Loader> ConditionLoader::loadLoader(const QString &key)
 {
+	if (key == "directory")
+		return QSharedPointer<DirectoryLoader>::create();
 	if (key == "filename")
 		return QSharedPointer<FilenameLoader>::create();
 	if (key == "filesize")
@@ -77,6 +81,8 @@ QSharedPointer<Loader> ConditionLoader::loadLoader(const QString &key)
 		return QSharedPointer<CreatedLoader>::create();
 	if (key == "last_modified")
 		return QSharedPointer<LastModifiedLoader>::create();
+	if (key == "path")
+		return QSharedPointer<PathLoader>::create();
 
 	qWarning() << "Unknown data type" << key;
 	return nullptr;

@@ -1,15 +1,18 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <catch.h>
+#include <catch2/generators/catch_generators.hpp>
 #include "actions/action-loader.h"
 #include "actions/action.h"
 #include "actions/delete-action.h"
+#include "actions/hard-link-action.h"
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
+#include "actions/shortcut-action.h"
+#include "actions/symbolic-link-action.h"
 #include "actions/trash-action.h"
-#include <catch2/generators/catch_generators.hpp>
 
 
 TEST_CASE("ActionLoader")
@@ -55,6 +58,42 @@ TEST_CASE("ActionLoader")
 			QSharedPointer<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
 			REQUIRE(action.dynamicCast<MoveAction>() != nullptr);
+		}
+
+		SECTION("Hard link action")
+		{
+			QJsonObject data {
+				{ "type", "hardlink" },
+				{ "dest", "dir/" },
+			};
+
+			std::shared_ptr<Action> action = ActionLoader::load(data);
+			REQUIRE(action != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<HardLinkAction>(action) != nullptr);
+		}
+
+		SECTION("Symbolic link action")
+		{
+			QJsonObject data {
+				{ "type", "symlink" },
+				{ "dest", "dir/" },
+			};
+
+			std::shared_ptr<Action> action = ActionLoader::load(data);
+			REQUIRE(action != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<SymbolicLinkAction>(action) != nullptr);
+		}
+
+		SECTION("Shortcut action")
+		{
+			QJsonObject data {
+				{ "type", "shortcut" },
+				{ "dest", "dir/" },
+			};
+
+			std::shared_ptr<Action> action = ActionLoader::load(data);
+			REQUIRE(action != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<ShortcutAction>(action) != nullptr);
 		}
 
 		SECTION("Delete action")

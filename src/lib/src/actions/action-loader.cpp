@@ -4,10 +4,13 @@
 #include <QSet>
 #include <QtGlobal>
 #include "actions/delete-action.h"
+#include "actions/hard-link-action.h"
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
 #include "actions/process-action.h"
 #include "actions/rename-action.h"
+#include "actions/shortcut-action.h"
+#include "actions/symbolic-link-action.h"
 #include "actions/trash-action.h"
 
 
@@ -35,6 +38,24 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return QSharedPointer<MoveAction>::create(destination, create, overwrite);
+	}
+
+	if (type == "hardlink") {
+		const QString dest = obj["dest"].toString();
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return QSharedPointer<HardLinkAction>::create(dest, overwrite);
+	}
+
+	if (type == "symlink") {
+		const QString dest = obj["dest"].toString();
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return QSharedPointer<SymbolicLinkAction>::create(dest, overwrite);
+	}
+
+	if (type == "shortcut") {
+		const QString dest = obj["dest"].toString();
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return QSharedPointer<ShortcutAction>::create(dest, overwrite);
 	}
 
 	if (type == "delete") {
