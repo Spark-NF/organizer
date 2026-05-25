@@ -20,7 +20,7 @@ QVariant Condition::getOrLoad(Media &media) const
 {
 	// If the data was already loaded for this media, we don't need to load it again
 	if (media.data().contains(m_key)) {
-		return media.data()[m_key];
+		return media.data().value(m_key);
 	}
 
 	const QVariant value = m_loader->load(media);

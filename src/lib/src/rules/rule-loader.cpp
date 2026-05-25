@@ -16,14 +16,14 @@ QSharedPointer<Rule> RuleLoader::load(const QJsonObject &obj)
 	QList<QSharedPointer<Condition>> conditions;
 	QList<QSharedPointer<Action>> actions;
 
-	for (auto conditionObj : obj["conditions"].toArray()) {
+	for (const auto &conditionObj : obj["conditions"].toArray()) {
 		auto condition = ConditionLoader::load(conditionObj.toObject());
 		if (condition != nullptr) {
 			conditions.append(condition);
 		}
 	}
 
-	for (auto actionObj : obj["actions"].toArray()) {
+	for (const auto &actionObj : obj["actions"].toArray()) {
 		auto action = ActionLoader::load(actionObj.toObject());
 		if (action != nullptr) {
 			actions.append(action);

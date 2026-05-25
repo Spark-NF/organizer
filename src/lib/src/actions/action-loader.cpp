@@ -11,7 +11,7 @@
 #include "actions/trash-action.h"
 
 
-QStringList jsonArrayToStringList(const QJsonArray &array)
+static QStringList jsonArrayToStringList(const QJsonArray &array)
 {
 	QStringList ret;
 	for (const auto &v : array)
@@ -54,7 +54,7 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 	if (type == "multiple") {
 		QList<QSharedPointer<Action>> actions;
 		const QJsonArray jsonActions = obj["actions"].toArray();
-		for (auto actionObj : jsonActions) {
+		for (const auto &actionObj : jsonActions) {
 			auto action = load(actionObj.toObject());
 			if (action != nullptr)
 				actions.append(action);

@@ -8,7 +8,7 @@ Profile::Profile(QString name, QList<QList<QSharedPointer<Rule>>> rules)
 {}
 
 
-QString Profile::name() const
+const QString &Profile::name() const
 {
 	return m_name;
 }

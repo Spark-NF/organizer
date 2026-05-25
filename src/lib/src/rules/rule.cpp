@@ -8,12 +8,12 @@ Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priori
 {}
 
 
-QString Rule::name() const
+const QString &Rule::name() const
 {
 	return m_name;
 }
 
-QKeySequence Rule::shortcut() const
+const QKeySequence &Rule::shortcut() const
 {
 	return m_shortcut;
 }

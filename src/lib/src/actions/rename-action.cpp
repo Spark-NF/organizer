@@ -12,8 +12,9 @@ RenameAction::RenameAction(const QRegularExpression &regexp, QString replace, bo
 bool RenameAction::execute(Media &media) const
 {
 	const QFileInfo &info = media.fileInfo();
-	const QString newName = info.fileName().replace(m_regexp, m_replace);
-	if (newName == info.fileName()) {
+	const QString original = info.fileName();
+	const QString newName = QString(original).replace(m_regexp, m_replace);
+	if (newName == original) {
 		return true;
 	}
 
@@ -32,7 +33,7 @@ bool RenameAction::execute(Media &media) const
 		QFile::remove(dest);
 	}
 
-	bool ok = QFile::rename(media.path(), dest);
+	const bool ok = QFile::rename(media.path(), dest);
 	if (ok) {
 		media.setPath(dest);
 	}

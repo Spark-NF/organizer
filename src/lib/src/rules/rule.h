@@ -16,8 +16,8 @@ class Rule
 	public:
 		explicit Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<QSharedPointer<Condition>> conditions, QList<QSharedPointer<Action>> actions);
 
-		QString name() const;
-		QKeySequence shortcut() const;
+		const QString &name() const;
+		const QKeySequence &shortcut() const;
 		bool terminal() const;
 		int priority() const;
 		const QList<QSharedPointer<Condition>> &conditions() const;

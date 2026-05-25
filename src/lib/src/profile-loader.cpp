@@ -46,10 +46,10 @@ QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
 	}
 
 	QSet<QKeySequence> shortcuts;
-	for (const auto rulesArr : rulesList) {
+	for (const auto &rulesArr : rulesList) {
 		QList<QSharedPointer<Rule>> res;
 
-		for (auto ruleObj : rulesArr) {
+		for (const auto &ruleObj : rulesArr) {
 			auto rule = RuleLoader::load(ruleObj.toObject());
 			if (rule == nullptr)
 				continue;
