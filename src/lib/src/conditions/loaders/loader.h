@@ -8,6 +8,7 @@ class QVariant;
 class Loader
 {
 	public:
+		virtual ~Loader() = default;
 		virtual QVariant load(Media &media) const = 0;
 };
 

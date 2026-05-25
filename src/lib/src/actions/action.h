@@ -7,6 +7,7 @@ class Media;
 class Action
 {
 	public:
+		virtual ~Action() = default;
 		virtual bool execute(Media &media) const = 0;
 };
 
