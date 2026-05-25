@@ -1,6 +1,7 @@
 #ifndef DROP_WINDOW_H
 #define DROP_WINDOW_H
 
+#include <memory>
 #include <QDialog>
 #include <QPoint>
 
@@ -39,7 +40,7 @@ class DropWindow : public QDialog
 	private:
 		Ui::DropWindow *ui;
 		QSettings *m_settings;
-		QSharedPointer<Profile> m_profile;
+		std::shared_ptr<Profile> m_profile;
 		QPoint m_startMove;
 };
 

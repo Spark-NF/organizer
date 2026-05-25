@@ -122,7 +122,7 @@ void MainWindow::openDirectory(QString path)
 	}
 }
 
-void MainWindow::executeAction(const QSharedPointer<Rule> &rule)
+void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 {
 	if (m_currentFile < 0 || m_currentFile >= m_files.count())
 		return;

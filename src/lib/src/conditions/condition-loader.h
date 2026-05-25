@@ -1,6 +1,7 @@
 #ifndef CONDITION_LOADER_H
 #define CONDITION_LOADER_H
 
+#include <memory>
 #include <QJsonObject>
 
 
@@ -11,11 +12,11 @@ class Loader;
 class ConditionLoader
 {
 	public:
-		static QSharedPointer<Condition> load(const QJsonObject &obj);
+		static std::shared_ptr<Condition> load(const QJsonObject &obj);
 
 	private:
-		static QSharedPointer<Comparator> loadComparator(const QJsonObject &obj);
-		static QSharedPointer<Loader> loadLoader(const QString &key);
+		static std::shared_ptr<Comparator> loadComparator(const QJsonObject &obj);
+		static std::shared_ptr<Loader> loadLoader(const QString &key);
 };
 
 #endif // CONDITION_LOADER_H

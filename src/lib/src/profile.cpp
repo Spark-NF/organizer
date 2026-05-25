@@ -3,7 +3,7 @@
 #include "rules/rule.h"
 
 
-Profile::Profile(QString name, QList<QList<QSharedPointer<Rule>>> rules)
+Profile::Profile(QString name, QList<QList<std::shared_ptr<Rule>>> rules)
 	: m_name(std::move(name)), m_rules(std::move(rules))
 {}
 
@@ -13,16 +13,16 @@ const QString &Profile::name() const
 	return m_name;
 }
 
-const QList<QList<QSharedPointer<Rule>>> &Profile::rules() const
+const QList<QList<std::shared_ptr<Rule>>> &Profile::rules() const
 {
 	return m_rules;
 }
 
 
-QList<QSharedPointer<Rule>> Profile::match(Media &media) const
+QList<std::shared_ptr<Rule>> Profile::match(Media &media) const
 {
 	int maxPriority = 0;
-	QList<QSharedPointer<Rule>> ret;
+	QList<std::shared_ptr<Rule>> ret;
 	for (const auto &column : m_rules) {
 		for (const auto &rule : column) {
 			if ((ret.isEmpty() || rule->priority() >= maxPriority) && rule->match(media)) {

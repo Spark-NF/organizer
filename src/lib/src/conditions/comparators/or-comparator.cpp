@@ -2,7 +2,7 @@
 #include <utility>
 
 
-OrComparator::OrComparator(QList<QSharedPointer<Comparator>> comparators)
+OrComparator::OrComparator(QList<std::shared_ptr<Comparator>> comparators)
 	: m_comparators(std::move(comparators))
 {}
 

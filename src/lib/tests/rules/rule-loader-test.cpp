@@ -16,7 +16,7 @@ TEST_CASE("RuleLoader")
 			{ "actions", QJsonArray() },
 		};
 
-		QSharedPointer<Rule> rule = RuleLoader::load(data);
+		std::shared_ptr<Rule> rule = RuleLoader::load(data);
 		REQUIRE(rule == nullptr);
 	}
 
@@ -29,7 +29,7 @@ TEST_CASE("RuleLoader")
 			{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
 		};
 
-		QSharedPointer<Rule> rule = RuleLoader::load(data);
+		std::shared_ptr<Rule> rule = RuleLoader::load(data);
 		REQUIRE(rule != nullptr);
 
 		REQUIRE(rule->name() == "Test rule");

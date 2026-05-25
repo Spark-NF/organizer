@@ -85,7 +85,7 @@ void DropWindow::mouseMoveEvent(QMouseEvent *event)
 void DropWindow::dragEnterEvent(QDragEnterEvent *event)
 {
 	// Disallow dropping if no profile is selected
-	if (m_profile.isNull()) {
+	if (!m_profile) {
 		return;
 	}
 
@@ -122,7 +122,7 @@ void DropWindow::onContextMenuRequested(const QPoint &pos)
 {
 	QMenu menu(this);
 
-	if (m_profile.isNull()) {
+	if (!m_profile) {
 		menu.addAction("No profile selected", this, &DropWindow::chooseProfile);
 	} else {
 		menu.addAction(QString("Profile: %1").arg(m_profile->name()), this, &DropWindow::chooseProfile);

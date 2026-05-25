@@ -5,9 +5,9 @@
 
 TEST_CASE("AndComparator")
 {
-	AndComparator comparator(QList<QSharedPointer<Comparator>>{
-		QSharedPointer<RegexComparator>::create("^start_"),
-		QSharedPointer<RegexComparator>::create("_end$"),
+	AndComparator comparator(QList<std::shared_ptr<Comparator>>{
+		std::make_shared<RegexComparator>("^start_"),
+		std::make_shared<RegexComparator>("_end$"),
 	});
 
 	REQUIRE(comparator.match("start_hello_end") == true);

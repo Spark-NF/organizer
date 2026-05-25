@@ -2,7 +2,7 @@
 #include <utility>
 
 
-MultipleAction::MultipleAction(QList<QSharedPointer<Action>> actions)
+MultipleAction::MultipleAction(QList<std::shared_ptr<Action>> actions)
 	: Action(), m_actions(std::move(actions))
 {}
 

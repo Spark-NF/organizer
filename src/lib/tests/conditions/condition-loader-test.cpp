@@ -20,7 +20,7 @@ TEST_CASE("ConditionLoader")
 {
 	SECTION("Invalid")
 	{
-		QSharedPointer<Condition> condition = ConditionLoader::load(QJsonObject());
+		std::shared_ptr<Condition> condition = ConditionLoader::load(QJsonObject());
 		REQUIRE(condition == nullptr);
 	}
 
@@ -30,7 +30,7 @@ TEST_CASE("ConditionLoader")
 			{ "data", "unknown" },
 		};
 
-		QSharedPointer<Condition> condition = ConditionLoader::load(data);
+		std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 		REQUIRE(condition == nullptr);
 	}
 
@@ -40,7 +40,7 @@ TEST_CASE("ConditionLoader")
 			{ "data", "filename" },
 		};
 
-		QSharedPointer<Condition> condition = ConditionLoader::load(data);
+		std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 		REQUIRE(condition == nullptr);
 	}
 
@@ -53,10 +53,10 @@ TEST_CASE("ConditionLoader")
 				{ "glob", "*.txt" },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<FilenameLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<GlobComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Filesize condition")
@@ -66,10 +66,10 @@ TEST_CASE("ConditionLoader")
 				{ "min", 1234 },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<FilesizeLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<RangeComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<FilesizeLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Directory condition")
@@ -105,10 +105,10 @@ TEST_CASE("ConditionLoader")
 				{ "min", "2017-07-24T15:46:29" },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<CreatedLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<RangeComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<CreatedLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Last modified condition")
@@ -118,10 +118,10 @@ TEST_CASE("ConditionLoader")
 				{ "max", "2017-07-24T15:46:29" },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<LastModifiedLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<RangeComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<LastModifiedLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("And condition")
@@ -134,10 +134,10 @@ TEST_CASE("ConditionLoader")
 				} },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<FilenameLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<AndComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<AndComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Or condition")
@@ -150,10 +150,10 @@ TEST_CASE("ConditionLoader")
 				} },
 			};
 
-			QSharedPointer<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
 			REQUIRE(condition != nullptr);
-			REQUIRE(condition->loader().dynamicCast<FilenameLoader>() != nullptr);
-			REQUIRE(condition->comparator().dynamicCast<OrComparator>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<OrComparator>(condition->comparator()) != nullptr);
 		}
 	}
 }

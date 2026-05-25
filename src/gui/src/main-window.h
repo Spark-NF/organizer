@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QDir>
-#include <QSharedPointer>
+#include <memory>
 #include <QStack>
 
 
@@ -30,7 +30,7 @@ class MainWindow : public QMainWindow
 		void closeEvent(QCloseEvent *event) override;
 
 	public slots:
-		void executeAction(const QSharedPointer<Rule> &rule);
+		void executeAction(const std::shared_ptr<Rule> &rule);
 		void undo();
 		void generateButtons(QString file);
 		void openDirectory(QString path);
@@ -60,7 +60,7 @@ class MainWindow : public QMainWindow
 	private:
 		Ui::MainWindow *ui;
 		QSettings *m_settings;
-		QSharedPointer<Profile> m_profile = nullptr;
+		std::shared_ptr<Profile> m_profile = nullptr;
 		QStringList m_files;
 		int m_currentFile;
 		QStack<QPair<int, QString>> m_lastActions;

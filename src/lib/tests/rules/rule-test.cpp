@@ -9,12 +9,12 @@
 #include "rules/rule.h"
 
 
-static QSharedPointer<Condition> makeFilenameCondition(const QString &globPattern)
+static std::shared_ptr<Condition> makeFilenameCondition(const QString &globPattern)
 {
-	return QSharedPointer<Condition>::create(
+	return std::make_shared<Condition>(
 		"filename",
-		QSharedPointer<FilenameLoader>::create(),
-		QSharedPointer<GlobComparator>::create(globPattern)
+		std::make_shared<FilenameLoader>(),
+		std::make_shared<GlobComparator>(globPattern)
 	);
 }
 
@@ -22,11 +22,11 @@ TEST_CASE("Rule")
 {
 	const auto imgCondition = makeFilenameCondition("*.jpg; *.png");
 	const auto jpgCondition = makeFilenameCondition("*.jpg");
-	const QList<QSharedPointer<Condition>> conditions { imgCondition, jpgCondition };
+	const QList<std::shared_ptr<Condition>> conditions { imgCondition, jpgCondition };
 
-	const QList<QSharedPointer<Action>> actions {
-		QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
-		QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "second_\\1", false),
+	const QList<std::shared_ptr<Action>> actions {
+		std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+		std::make_shared<RenameAction>(QRegularExpression("(.+)"), "second_\\1", false),
 	};
 
 	Rule rule("Test rule", QKeySequence("A"), true, 1, conditions, actions);
@@ -93,9 +93,9 @@ TEST_CASE("Rule")
 
 		SECTION("Fail if any action fails")
 		{
-			const QList<QSharedPointer<Action>> actions {
-				QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
-				QSharedPointer<MoveAction>::create("unknown_dir/", false, false),
+			const QList<std::shared_ptr<Action>> actions {
+				std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+				std::make_shared<MoveAction>("unknown_dir/", false, false),
 			};
 
 			Rule failingRule("Test rule", QKeySequence("A"), true, 1, conditions, actions);

@@ -19,7 +19,7 @@ TEST_CASE("ActionLoader")
 {
 	SECTION("Invalid")
 	{
-		QSharedPointer<Action> action = ActionLoader::load(QJsonObject());
+		std::shared_ptr<Action> action = ActionLoader::load(QJsonObject());
 		REQUIRE(action == nullptr);
 	}
 
@@ -29,7 +29,7 @@ TEST_CASE("ActionLoader")
 			{ "type", "unknown" },
 		};
 
-		QSharedPointer<Action> action = ActionLoader::load(data);
+		std::shared_ptr<Action> action = ActionLoader::load(data);
 		REQUIRE(action == nullptr);
 	}
 
@@ -43,9 +43,9 @@ TEST_CASE("ActionLoader")
 				{ "to", "b" },
 			};
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
+			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<RenameAction>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<RenameAction>(action) != nullptr);
 		}
 
 		SECTION("Move action")
@@ -55,9 +55,9 @@ TEST_CASE("ActionLoader")
 				{ "dest", "dir/" },
 			};
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
+			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<MoveAction>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<MoveAction>(action) != nullptr);
 		}
 
 		SECTION("Hard link action")
@@ -102,9 +102,9 @@ TEST_CASE("ActionLoader")
 				{ "type", "delete" },
 			};
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
+			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<DeleteAction>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<DeleteAction>(action) != nullptr);
 		}
 
 		SECTION("Trash action")
@@ -113,9 +113,9 @@ TEST_CASE("ActionLoader")
 				{ "type", "trash" },
 			};
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
+			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<TrashAction>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<TrashAction>(action) != nullptr);
 		}
 
 		SECTION("Process action")
@@ -130,9 +130,9 @@ TEST_CASE("ActionLoader")
 					{ "args", (args ? QJsonArray { "{path}" } : QJsonArray {}) },
 				};
 
-				QSharedPointer<Action> action = ActionLoader::load(data);
+				std::shared_ptr<Action> action = ActionLoader::load(data);
 				REQUIRE(action != nullptr);
-				REQUIRE(action.dynamicCast<ProcessAction>() != nullptr);
+				REQUIRE(std::dynamic_pointer_cast<ProcessAction>(action) != nullptr);
 			}
 		}
 
@@ -143,9 +143,9 @@ TEST_CASE("ActionLoader")
 				{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
 			};
 
-			QSharedPointer<Action> action = ActionLoader::load(data);
+			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
-			REQUIRE(action.dynamicCast<MultipleAction>() != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<MultipleAction>(action) != nullptr);
 		}
 	}
 }

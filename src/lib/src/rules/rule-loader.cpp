@@ -7,14 +7,14 @@
 #include "rule.h"
 
 
-QSharedPointer<Rule> RuleLoader::load(const QJsonObject &obj)
+std::shared_ptr<Rule> RuleLoader::load(const QJsonObject &obj)
 {
 	const QString name = obj["name"].toString();
 	const QString shortcut = obj["shortcut"].toString();
 	const bool final = obj["final"].toBool(false);
 	const int priority = obj["priority"].toInt(0);
-	QList<QSharedPointer<Condition>> conditions;
-	QList<QSharedPointer<Action>> actions;
+	QList<std::shared_ptr<Condition>> conditions;
+	QList<std::shared_ptr<Action>> actions;
 
 	for (const auto &conditionObj : obj["conditions"].toArray()) {
 		auto condition = ConditionLoader::load(conditionObj.toObject());
@@ -34,5 +34,5 @@ QSharedPointer<Rule> RuleLoader::load(const QJsonObject &obj)
 		return nullptr;
 	}
 
-	return QSharedPointer<Rule>::create(name, shortcut, final, priority, conditions, actions);
+	return std::make_shared<Rule>(name, shortcut, final, priority, conditions, actions);
 }

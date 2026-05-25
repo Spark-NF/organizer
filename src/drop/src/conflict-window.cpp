@@ -6,7 +6,7 @@
 #include "rules/rule.h"
 
 
-ConflictWindow::ConflictWindow(const Media &media, const QList<QSharedPointer<Rule>> &rules, QWidget *parent)
+ConflictWindow::ConflictWindow(const Media &media, const QList<std::shared_ptr<Rule>> &rules, QWidget *parent)
 	: QDialog(parent), ui(new Ui::ConflictWindow)
 {
 	ui->setupUi(this);
@@ -34,7 +34,7 @@ void ConflictWindow::closeEvent(QCloseEvent *event)
 }
 
 
-void ConflictWindow::generateButtons(const QList<QSharedPointer<Rule>> &rules)
+void ConflictWindow::generateButtons(const QList<std::shared_ptr<Rule>> &rules)
 {
 	for (const auto &rule : rules) {
 		auto button = new QPushButton(this);

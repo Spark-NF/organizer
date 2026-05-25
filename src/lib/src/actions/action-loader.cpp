@@ -22,7 +22,7 @@ static QStringList jsonArrayToStringList(const QJsonArray &array)
 	return ret;
 }
 
-QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
+std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 {
 	const QString type = obj["type"].toString();
 
@@ -30,50 +30,50 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 		const QString regexp = obj["from"].toString();
 		const QString replace = obj["to"].toString();
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<RenameAction>::create(QRegularExpression(regexp), replace, overwrite);
+		return std::make_shared<RenameAction>(QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move") {
 		const QString destination = obj["dest"].toString();
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<MoveAction>::create(destination, create, overwrite);
+		return std::make_shared<MoveAction>(destination, create, overwrite);
 	}
 
 	if (type == "hardlink") {
 		const QString dest = obj["dest"].toString();
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<HardLinkAction>::create(dest, overwrite);
+		return std::make_shared<HardLinkAction>(dest, overwrite);
 	}
 
 	if (type == "symlink") {
 		const QString dest = obj["dest"].toString();
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<SymbolicLinkAction>::create(dest, overwrite);
+		return std::make_shared<SymbolicLinkAction>(dest, overwrite);
 	}
 
 	if (type == "shortcut") {
 		const QString dest = obj["dest"].toString();
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return QSharedPointer<ShortcutAction>::create(dest, overwrite);
+		return std::make_shared<ShortcutAction>(dest, overwrite);
 	}
 
 	if (type == "delete") {
-		return QSharedPointer<DeleteAction>::create();
+		return std::make_shared<DeleteAction>();
 	}
 
 	if (type == "trash") {
-		return QSharedPointer<TrashAction>::create();
+		return std::make_shared<TrashAction>();
 	}
 
 	if (type == "process") {
 		const QString command = obj["cmd"].toString();
 		const QStringList args = jsonArrayToStringList(obj["args"].toArray());
-		return QSharedPointer<ProcessAction>::create(command, args);
+		return std::make_shared<ProcessAction>(command, args);
 	}
 
 	if (type == "multiple") {
-		QList<QSharedPointer<Action>> actions;
+		QList<std::shared_ptr<Action>> actions;
 		const QJsonArray jsonActions = obj["actions"].toArray();
 		for (const auto &actionObj : jsonActions) {
 			auto action = load(actionObj.toObject());
@@ -81,7 +81,7 @@ QSharedPointer<Action> ActionLoader::load(const QJsonObject &obj)
 				actions.append(action);
 		}
 
-		return QSharedPointer<MultipleAction>::create(actions);
+		return std::make_shared<MultipleAction>(actions);
 	}
 
 	qWarning() << "Unknown action type" << type;

@@ -3,7 +3,7 @@
 #include "../conditions/condition.h"
 
 
-Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<QSharedPointer<Condition>> conditions, QList<QSharedPointer<Action>> actions)
+Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<std::shared_ptr<Condition>> conditions, QList<std::shared_ptr<Action>> actions)
 	: m_name(std::move(name)), m_shortcut(shortcut), m_terminal(terminal), m_priority(priority), m_conditions(std::move(conditions)), m_actions(std::move(actions))
 {}
 
@@ -28,12 +28,12 @@ int Rule::priority() const
 	return m_priority;
 }
 
-const QList<QSharedPointer<Condition>> &Rule::conditions() const
+const QList<std::shared_ptr<Condition>> &Rule::conditions() const
 {
 	return m_conditions;
 }
 
-const QList<QSharedPointer<Action>> &Rule::actions() const
+const QList<std::shared_ptr<Action>> &Rule::actions() const
 {
 	return m_actions;
 }

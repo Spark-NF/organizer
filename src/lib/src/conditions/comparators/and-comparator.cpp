@@ -2,7 +2,7 @@
 #include <utility>
 
 
-AndComparator::AndComparator(QList<QSharedPointer<Comparator>> comparators)
+AndComparator::AndComparator(QList<std::shared_ptr<Comparator>> comparators)
 	: m_comparators(std::move(comparators))
 {}
 

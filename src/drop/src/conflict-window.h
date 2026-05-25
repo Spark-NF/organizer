@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QSettings>
-#include <QSharedPointer>
+#include <memory>
 
 
 namespace Ui
@@ -20,16 +20,16 @@ class ConflictWindow : public QDialog
 	Q_OBJECT
 
 	public:
-		explicit ConflictWindow(const Media &media, const QList<QSharedPointer<Rule>> &rules, QWidget *parent = Q_NULLPTR);
+		explicit ConflictWindow(const Media &media, const QList<std::shared_ptr<Rule>> &rules, QWidget *parent = Q_NULLPTR);
 		~ConflictWindow();
 		void closeEvent(QCloseEvent *event) override;
 
 	protected:
-		void generateButtons(const QList<QSharedPointer<Rule>> &rules);
+		void generateButtons(const QList<std::shared_ptr<Rule>> &rules);
 		void previewFile(const QString &file);
 
 	signals:
-		void choseRule(const QSharedPointer<Rule> &rule);
+		void choseRule(const std::shared_ptr<Rule> &rule);
 		void closed();
 
 	private:

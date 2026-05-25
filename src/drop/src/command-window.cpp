@@ -10,7 +10,7 @@
 #include "conflict-window.h"
 
 
-CommandWindow::CommandWindow(QSharedPointer<Profile> profile, const QStringList &paths, QWidget *parent)
+CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList &paths, QWidget *parent)
 	: QDialog(parent), ui(new Ui::CommandWindow)
 {
 	ui->setupUi(this);
@@ -23,7 +23,7 @@ CommandWindow::CommandWindow(QSharedPointer<Profile> profile, const QStringList 
 
 	for (int i = 0; i < m_files.count(); ++i) {
 		Media media(m_files[i]);
-		QList<QSharedPointer<Rule>> rules = profile->match(media);
+		QList<std::shared_ptr<Rule>> rules = profile->match(media);
 
 		// Skip file if there are no rule matching it
 		if (rules.isEmpty()) {
@@ -39,7 +39,7 @@ CommandWindow::CommandWindow(QSharedPointer<Profile> profile, const QStringList 
 
 		// If there are multiple rules to apply, we prompt the user to choose one
 		ConflictWindow conflictWindow(media, rules, this);
-		connect(&conflictWindow, &ConflictWindow::choseRule, [=](const QSharedPointer<Rule> &rule) {
+		connect(&conflictWindow, &ConflictWindow::choseRule, [=](const std::shared_ptr<Rule> &rule) {
 			m_results.append({ m_files[i], rule });
 		});
 		conflictWindow.exec();

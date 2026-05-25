@@ -33,7 +33,7 @@ TEST_CASE("ProfileLoader")
 	{
 		SECTION("File not found")
 		{
-			QSharedPointer<Profile> profile = ProfileLoader::loadFile("does_not_exists.json");
+			std::shared_ptr<Profile> profile = ProfileLoader::loadFile("does_not_exists.json");
 			REQUIRE(profile == nullptr);
 		}
 
@@ -44,7 +44,7 @@ TEST_CASE("ProfileLoader")
 			file.write("invalid_file");
 			file.close();
 
-			QSharedPointer<Profile> profile = ProfileLoader::loadFile(file.fileName());
+			std::shared_ptr<Profile> profile = ProfileLoader::loadFile(file.fileName());
 			REQUIRE(profile == nullptr);
 		}
 
@@ -55,7 +55,7 @@ TEST_CASE("ProfileLoader")
 			file.write(QJsonDocument(jsonProfile).toJson());
 			file.close();
 
-			QSharedPointer<Profile> profile = ProfileLoader::loadFile(file.fileName());
+			std::shared_ptr<Profile> profile = ProfileLoader::loadFile(file.fileName());
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
@@ -68,7 +68,7 @@ TEST_CASE("ProfileLoader")
 	{
 		SECTION("Valid")
 		{
-			QSharedPointer<Profile> profile = ProfileLoader::load(jsonProfile);
+			std::shared_ptr<Profile> profile = ProfileLoader::load(jsonProfile);
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
@@ -83,7 +83,7 @@ TEST_CASE("ProfileLoader")
 				{ "rules", QJsonArray { jsonProfile["rules"] } }
 			};
 
-			QSharedPointer<Profile> profile = ProfileLoader::load(arrayOfArrayProfile);
+			std::shared_ptr<Profile> profile = ProfileLoader::load(arrayOfArrayProfile);
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->rules().count() == 1);
@@ -103,7 +103,7 @@ TEST_CASE("ProfileLoader")
 			});
 			jsonProfile["rules"] = rules;
 
-			QSharedPointer<Profile> profile = ProfileLoader::load(jsonProfile);
+			std::shared_ptr<Profile> profile = ProfileLoader::load(jsonProfile);
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
@@ -131,7 +131,7 @@ TEST_CASE("ProfileLoader")
 			});
 			jsonProfile["rules"] = rules;
 
-			QSharedPointer<Profile> profile = ProfileLoader::load(jsonProfile);
+			std::shared_ptr<Profile> profile = ProfileLoader::load(jsonProfile);
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");

@@ -28,8 +28,8 @@ TEST_CASE("MultipleAction")
 		Media media(file);
 
 		MultipleAction action({
-			QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
-			QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "second_\\1", false),
+			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "second_\\1", false),
 		});
 		REQUIRE(action.execute(media) == true);
 		REQUIRE(QFileInfo(media.path()).fileName() == "second_first_file.bin");
@@ -44,8 +44,8 @@ TEST_CASE("MultipleAction")
 		Media media(file);
 
 		MultipleAction action({
-			QSharedPointer<RenameAction>::create(QRegularExpression("(.+)"), "first_\\1", false),
-			QSharedPointer<MoveAction>::create("unknown_dir/", false, false),
+			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+			std::make_shared<MoveAction>("unknown_dir/", false, false),
 		});
 		REQUIRE(action.execute(media) == false);
 		REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed

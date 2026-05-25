@@ -16,7 +16,7 @@
 #include "loaders/path-loader.h"
 
 
-QSharedPointer<Condition> ConditionLoader::load(const QJsonObject &obj)
+std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj)
 {
 	const QString data = obj["data"].toString();
 
@@ -28,31 +28,31 @@ QSharedPointer<Condition> ConditionLoader::load(const QJsonObject &obj)
 	if (comparator == nullptr)
 		return nullptr;
 
-	return QSharedPointer<Condition>::create(data, loader, comparator);
+	return std::make_shared<Condition>(data, loader, comparator);
 }
 
-QSharedPointer<Comparator> ConditionLoader::loadComparator(const QJsonObject &obj)
+std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &obj)
 {
 	if (obj.contains("and")) {
-		QList<QSharedPointer<Comparator>> comparators;
+		QList<std::shared_ptr<Comparator>> comparators;
 		for (const auto &cond : obj["and"].toArray())
 			comparators.append(loadComparator(cond.toObject()));
-		return QSharedPointer<AndComparator>::create(comparators);
+		return std::make_shared<AndComparator>(comparators);
 	}
 
 	if (obj.contains("glob")) {
-		return QSharedPointer<GlobComparator>::create(obj["glob"].toString());
+		return std::make_shared<GlobComparator>(obj["glob"].toString());
 	}
 
 	if (obj.contains("or")) {
-		QList<QSharedPointer<Comparator>> comparators;
+		QList<std::shared_ptr<Comparator>> comparators;
 		for (const auto &cond : obj["or"].toArray())
 			comparators.append(loadComparator(cond.toObject()));
-		return QSharedPointer<OrComparator>::create(comparators);
+		return std::make_shared<OrComparator>(comparators);
 	}
 
 	if (obj.contains("regex")) {
-		return QSharedPointer<RegexComparator>::create(obj["regex"].toString());
+		return std::make_shared<RegexComparator>(obj["regex"].toString());
 	}
 
 	if (obj.contains("min") || obj.contains("max")) {
@@ -62,27 +62,27 @@ QSharedPointer<Comparator> ConditionLoader::loadComparator(const QJsonObject &ob
 		const QVariant max = obj["max"].isDouble()
 			? QVariant(obj["max"].toDouble(-1))
 			: QDateTime::fromString(obj["max"].toString(), Qt::ISODate);
-		return QSharedPointer<RangeComparator>::create(min, max);
+		return std::make_shared<RangeComparator>(min, max);
 	}
 
 	qWarning() << "No comparator found" << obj.keys();
 	return nullptr;
 }
 
-QSharedPointer<Loader> ConditionLoader::loadLoader(const QString &key)
+std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key)
 {
 	if (key == "directory")
-		return QSharedPointer<DirectoryLoader>::create();
+		return std::make_shared<DirectoryLoader>();
 	if (key == "filename")
-		return QSharedPointer<FilenameLoader>::create();
+		return std::make_shared<FilenameLoader>();
 	if (key == "filesize")
-		return QSharedPointer<FilesizeLoader>::create();
+		return std::make_shared<FilesizeLoader>();
 	if (key == "created")
-		return QSharedPointer<CreatedLoader>::create();
+		return std::make_shared<CreatedLoader>();
 	if (key == "last_modified")
-		return QSharedPointer<LastModifiedLoader>::create();
+		return std::make_shared<LastModifiedLoader>();
 	if (key == "path")
-		return QSharedPointer<PathLoader>::create();
+		return std::make_shared<PathLoader>();
 
 	qWarning() << "Unknown data type" << key;
 	return nullptr;

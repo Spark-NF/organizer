@@ -9,7 +9,7 @@
 #include "rules/rule.h"
 
 
-QSharedPointer<Profile> ProfileLoader::loadFile(const QString &file)
+std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file)
 {
 	QFile f(file);
 	if (!f.open(QFile::ReadOnly)) {
@@ -29,10 +29,10 @@ QSharedPointer<Profile> ProfileLoader::loadFile(const QString &file)
 	return load(loadDoc.object());
 }
 
-QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
+std::shared_ptr<Profile> ProfileLoader::load(const QJsonObject &obj)
 {
 	const QString name = obj["name"].toString();
-	QList<QList<QSharedPointer<Rule>>> rules;
+	QList<QList<std::shared_ptr<Rule>>> rules;
 
 	// Handle both array and array of arrays for rules
 	const QJsonArray rulesRoot = obj["rules"].toArray();
@@ -47,7 +47,7 @@ QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
 
 	QSet<QKeySequence> shortcuts;
 	for (const auto &rulesArr : rulesList) {
-		QList<QSharedPointer<Rule>> res;
+		QList<std::shared_ptr<Rule>> res;
 
 		for (const auto &ruleObj : rulesArr) {
 			auto rule = RuleLoader::load(ruleObj.toObject());
@@ -71,5 +71,5 @@ QSharedPointer<Profile> ProfileLoader::load(const QJsonObject &obj)
 		rules.append(res);
 	}
 
-	return QSharedPointer<Profile>::create(name, rules);
+	return std::make_shared<Profile>(name, rules);
 }

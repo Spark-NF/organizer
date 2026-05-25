@@ -3,17 +3,17 @@
 
 #include "action.h"
 #include <QList>
-#include <QSharedPointer>
+#include <memory>
 
 
 class MultipleAction : public Action
 {
 	public:
-		explicit MultipleAction(QList<QSharedPointer<Action>> actions);
+		explicit MultipleAction(QList<std::shared_ptr<Action>> actions);
 		bool execute(Media &media) const override;
 
 	private:
-		QList<QSharedPointer<Action>> m_actions;
+		QList<std::shared_ptr<Action>> m_actions;
 };
 
 #endif // MULTIPLE_ACTION_H

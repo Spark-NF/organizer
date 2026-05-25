@@ -3,7 +3,7 @@
 
 #include <QList>
 #include <QString>
-#include <QSharedPointer>
+#include <memory>
 
 
 class Media;
@@ -12,16 +12,16 @@ class Rule;
 class Profile
 {
 	public:
-		explicit Profile(QString name, QList<QList<QSharedPointer<Rule>>> rules);
+		explicit Profile(QString name, QList<QList<std::shared_ptr<Rule>>> rules);
 
 		const QString &name() const;
-		const QList<QList<QSharedPointer<Rule>>> &rules() const;
+		const QList<QList<std::shared_ptr<Rule>>> &rules() const;
 
-		QList<QSharedPointer<Rule>> match(Media &media) const;
+		QList<std::shared_ptr<Rule>> match(Media &media) const;
 
 	private:
 		QString m_name;
-		QList<QList<QSharedPointer<Rule>>> m_rules;
+		QList<QList<std::shared_ptr<Rule>>> m_rules;
 };
 
 #endif // PROFILE_H

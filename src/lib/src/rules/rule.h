@@ -3,7 +3,7 @@
 
 #include <QKeySequence>
 #include <QList>
-#include <QSharedPointer>
+#include <memory>
 #include <QString>
 
 
@@ -14,14 +14,14 @@ class Media;
 class Rule
 {
 	public:
-		explicit Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<QSharedPointer<Condition>> conditions, QList<QSharedPointer<Action>> actions);
+		explicit Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<std::shared_ptr<Condition>> conditions, QList<std::shared_ptr<Action>> actions);
 
 		const QString &name() const;
 		const QKeySequence &shortcut() const;
 		bool terminal() const;
 		int priority() const;
-		const QList<QSharedPointer<Condition>> &conditions() const;
-		const QList<QSharedPointer<Action>> &actions() const;
+		const QList<std::shared_ptr<Condition>> &conditions() const;
+		const QList<std::shared_ptr<Action>> &actions() const;
 
 		bool match(Media &media) const;
 		bool execute(Media &media) const;
@@ -31,8 +31,8 @@ class Rule
 		QKeySequence m_shortcut;
 		bool m_terminal;
 		int m_priority;
-		QList<QSharedPointer<Condition>> m_conditions;
-		QList<QSharedPointer<Action>> m_actions;
+		QList<std::shared_ptr<Condition>> m_conditions;
+		QList<std::shared_ptr<Action>> m_actions;
 };
 
 #endif // RULE_H

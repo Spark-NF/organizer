@@ -39,7 +39,7 @@ int runCli(const QStringList &arguments)
 		return 0;
 	}
 
-	QSharedPointer<Profile> profile = ProfileLoader::loadFile(profilePath);
+	std::shared_ptr<Profile> profile = ProfileLoader::loadFile(profilePath);
 	if (profile == nullptr) {
 		stdErr << "Error loading profile file " << profilePath << Qt::endl;
 		return 1;
@@ -64,10 +64,10 @@ int runCli(const QStringList &arguments)
 }
 
 
-void processFile(const QSharedPointer<Profile> &profile, const QString &fileName)
+void processFile(const std::shared_ptr<Profile> &profile, const QString &fileName)
 {
 	Media media(fileName);
-	QList<QSharedPointer<Rule>> matches = profile->match(media);
+	QList<std::shared_ptr<Rule>> matches = profile->match(media);
 
 	// No matching rule found
 	if (matches.isEmpty()) {
@@ -78,14 +78,14 @@ void processFile(const QSharedPointer<Profile> &profile, const QString &fileName
 	// Conflicting rules found
 	if (matches.count() > 1) {
 		stdErr << "Conflicting rules for " << fileName << ":" << Qt::endl;
-		for (const QSharedPointer<Rule> &rule : matches) {
+		for (const std::shared_ptr<Rule> &rule : matches) {
 			stdErr << "- " << rule->name() << Qt::endl;
 		}
 		return;
 	}
 
 	// Execute rule on the file
-	const QSharedPointer<Rule> rule = matches.first();
+	const std::shared_ptr<Rule> rule = matches.first();
 	const bool result = rule->execute(media);
 	if (!result) {
 		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
@@ -96,7 +96,7 @@ void processFile(const QSharedPointer<Profile> &profile, const QString &fileName
 }
 
 
-void processDir(const QSharedPointer<Profile> &profile, const QDir &dir)
+void processDir(const std::shared_ptr<Profile> &profile, const QDir &dir)
 {
 	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 	for (const QFileInfo &info : infoList) {

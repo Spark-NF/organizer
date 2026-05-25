@@ -16,12 +16,12 @@
 #include "test-utils.h"
 
 
-static QSharedPointer<Condition> makeFilenameCondition(const QString &globPattern)
+static std::shared_ptr<Condition> makeFilenameCondition(const QString &globPattern)
 {
-	return QSharedPointer<Condition>::create(
+	return std::make_shared<Condition>(
 		"filename",
-		QSharedPointer<FilenameLoader>::create(),
-		QSharedPointer<GlobComparator>::create(globPattern)
+		std::make_shared<FilenameLoader>(),
+		std::make_shared<GlobComparator>(globPattern)
 	);
 }
 
@@ -36,9 +36,9 @@ TEST_CASE("ConflictWindow")
 
 	const auto jpgCondition = makeFilenameCondition("*.jpg");
 	const auto imgCondition = makeFilenameCondition("*.jpg; *.png");
-	QList<QSharedPointer<Rule>> rules = {
-		QSharedPointer<Rule>::create("JPG", QKeySequence("A"), true, 3, QList<QSharedPointer<Condition>> { jpgCondition }, QList<QSharedPointer<Action>>()),
-		QSharedPointer<Rule>::create("Image", QKeySequence("C"), true, 3, QList<QSharedPointer<Condition>> { imgCondition }, QList<QSharedPointer<Action>>()),
+	QList<std::shared_ptr<Rule>> rules = {
+		std::make_shared<Rule>("JPG", QKeySequence("A"), true, 3, QList<std::shared_ptr<Condition>> { jpgCondition }, QList<std::shared_ptr<Action>>()),
+		std::make_shared<Rule>("Image", QKeySequence("C"), true, 3, QList<std::shared_ptr<Condition>> { imgCondition }, QList<std::shared_ptr<Action>>()),
 	};
 
 	SECTION("Should show one button for each rule")
@@ -54,14 +54,14 @@ TEST_CASE("ConflictWindow")
 			buttons[1]->click();
 		});
 
-		qRegisterMetaType<QSharedPointer<Rule>>();
+		qRegisterMetaType<std::shared_ptr<Rule>>();
 		ConflictWindow conflictWindow(file, rules);
 		QSignalSpy spy(&conflictWindow, &ConflictWindow::choseRule);
 		conflictWindow.show();
 		spy.wait();
 
 		REQUIRE(spy.count() == 1);
-		REQUIRE(spy[0][0].value<QSharedPointer<Rule>>() == rules[1]);
+		REQUIRE(spy[0][0].value<std::shared_ptr<Rule>>() == rules[1]);
 		REQUIRE(!conflictWindow.isVisible());
 	}
 }

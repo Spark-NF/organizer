@@ -6,7 +6,7 @@
 #include <utility>
 
 
-Condition::Condition(QString key, QSharedPointer<Loader> loader, QSharedPointer<Comparator> comparator)
+Condition::Condition(QString key, std::shared_ptr<Loader> loader, std::shared_ptr<Comparator> comparator)
 	: m_key(std::move(key)), m_loader(std::move(loader)), m_comparator(std::move(comparator))
 {}
 

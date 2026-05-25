@@ -3,14 +3,14 @@
 
 #include <QDir>
 #include <QFile>
-#include <QSharedPointer>
+#include <memory>
 #include <QStringList>
 
 
 class Profile;
 
 int runCli(const QStringList &arguments);
-void processFile(const QSharedPointer<Profile> &profile, const QString &fileName);
-void processDir(const QSharedPointer<Profile> &profile, const QDir &dir);
+void processFile(const std::shared_ptr<Profile> &profile, const QString &fileName);
+void processDir(const std::shared_ptr<Profile> &profile, const QDir &dir);
 
 #endif // COMMAND_WINDOW_H

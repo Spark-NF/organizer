@@ -18,7 +18,7 @@ class CommandWindow : public QDialog
 	Q_OBJECT
 
 	public:
-		CommandWindow(QSharedPointer<Profile> profile, const QStringList &paths, QWidget *parent = nullptr);
+		CommandWindow(std::shared_ptr<Profile> profile, const QStringList &paths, QWidget *parent = nullptr);
 		~CommandWindow() override;
 
 	public slots:
@@ -30,9 +30,9 @@ class CommandWindow : public QDialog
 
 	private:
 		Ui::CommandWindow *ui;
-		QSharedPointer<Profile> m_profile;
+		std::shared_ptr<Profile> m_profile;
 		QStringList m_files;
-		QList<QPair<QString, QSharedPointer<Rule>>> m_results;
+		QList<QPair<QString, std::shared_ptr<Rule>>> m_results;
 };
 
 
