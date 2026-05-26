@@ -64,7 +64,7 @@ class MainWindow : public QMainWindow
 		std::shared_ptr<Profile> m_profile = nullptr;
 		QStringList m_files;
 		int m_currentFile;
-		QStack<QPair<int, QString>> m_lastActions;
+		QStack<std::pair<int, QString>> m_lastActions;
 };
 
 #endif // MAIN_WINDOW_H

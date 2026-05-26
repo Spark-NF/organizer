@@ -131,7 +131,7 @@ void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 
 	Media media(m_files[m_currentFile]);
 	if (rule->execute(media)) {
-		m_lastActions.append(QPair<int, QString>(m_currentFile, m_files[m_currentFile]));
+		m_lastActions.append(std::pair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = media.path();
 
 		if (rule->terminal()) {

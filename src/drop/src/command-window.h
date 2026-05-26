@@ -33,7 +33,7 @@ class CommandWindow : public QDialog
 		Ui::CommandWindow *ui;
 		std::shared_ptr<Profile> m_profile;
 		QStringList m_files;
-		QList<QPair<QString, std::shared_ptr<Rule>>> m_results;
+		QList<std::pair<QString, std::shared_ptr<Rule>>> m_results;
 };
 
 
