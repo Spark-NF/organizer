@@ -31,7 +31,7 @@ VideoPlayer::VideoPlayer(QSettings *settings, QWidget *parent)
 	connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayer::positionChanged);
 	connect(ui->sliderPosition, &QSlider::valueChanged, this, &VideoPlayer::seek);
 	connect(ui->sliderVolume, &QSlider::valueChanged, m_audioOutput, &QAudioOutput::setVolume);
-	connect(ui->spinPlaybackRate, SIGNAL(valueChanged(double)), m_mediaPlayer, SLOT(setPlaybackRate(qreal)));
+	connect(ui->spinPlaybackRate, &QDoubleSpinBox::valueChanged, m_mediaPlayer, &QMediaPlayer::setPlaybackRate);
 
 	// Restore previous state
 	ui->sliderVolume->setValue(m_settings->value("Players/Video/Volume", 100).toInt());

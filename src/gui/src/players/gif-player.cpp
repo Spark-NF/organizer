@@ -19,7 +19,7 @@ GifPlayer::GifPlayer(QSettings *settings, QWidget *parent)
 	ui->buttonPlayPause->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
 	connect(ui->buttonPlayPause, &QToolButton::clicked, this, &GifPlayer::playPause);
 	connect(ui->sliderPosition, &QSlider::valueChanged, this, &GifPlayer::seek);
-	connect(ui->spinSpeed, SIGNAL(valueChanged(double)), this, SLOT(setSpeed(double)));
+	connect(ui->spinSpeed, &QDoubleSpinBox::valueChanged, this, &GifPlayer::setSpeed);
 
 	// Restore previous state
 	ui->spinSpeed->setValue(m_settings->value("Players/Gif/Speed", 1).toDouble());
