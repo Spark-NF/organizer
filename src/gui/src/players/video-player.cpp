@@ -92,12 +92,12 @@ void VideoPlayer::playPause()
 	}
 }
 
-#define SLIDER_DIVIDER 10
+static constexpr int SliderDivider = 10;
 void VideoPlayer::durationChanged(qint64 duration)
 {
-	ui->sliderPosition->setMaximum(duration / SLIDER_DIVIDER);
-	ui->sliderPosition->setSingleStep(duration / (SLIDER_DIVIDER * 100)); // 1 %
-	ui->sliderPosition->setPageStep(duration / (SLIDER_DIVIDER * 10)); // 10 %
+	ui->sliderPosition->setMaximum(duration / SliderDivider);
+	ui->sliderPosition->setSingleStep(duration / (SliderDivider * 100)); // 1 %
+	ui->sliderPosition->setPageStep(duration / (SliderDivider * 10)); // 10 %
 }
 
 void VideoPlayer::positionChanged(qint64 pos)
@@ -109,7 +109,7 @@ void VideoPlayer::positionChanged(qint64 pos)
 
 	if (!ui->sliderPosition->isSliderDown()) {
 		m_noSeek = true;
-		ui->sliderPosition->setValue(pos / SLIDER_DIVIDER);
+		ui->sliderPosition->setValue(pos / SliderDivider);
 		m_noSeek = false;
 	}
 
@@ -131,5 +131,5 @@ void VideoPlayer::seek(int position)
 	if (m_noSeek)
 		return;
 
-	m_mediaPlayer->setPosition(position * SLIDER_DIVIDER);
+	m_mediaPlayer->setPosition(position * SliderDivider);
 }
