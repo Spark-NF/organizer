@@ -8,7 +8,7 @@ class DeleteAction : public Action
 {
 	public:
 		DeleteAction();
-		bool execute(Media &media) const override;
+		bool execute(Media &media, IFilesystem &fs) const override;
 };
 
 #endif // DELETE_ACTION_H

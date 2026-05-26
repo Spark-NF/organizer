@@ -3,6 +3,7 @@
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/symbolic-link-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 
 #if defined(Q_OS_WINDOWS)
@@ -33,13 +34,14 @@ TEST_CASE("SymbolicLinkAction")
 	file.open();
 	file.close();
 	Media media(file);
+	RealFilesystem fs;
 
 	const QString targetFile = QDir::temp().absoluteFilePath("symlink_shortcut");
 
 	SECTION("Execute")
 	{
 		SymbolicLinkAction action(targetFile, false, false);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::exists(targetFile));
 		REQUIRE(QFile::remove(targetFile));
@@ -56,7 +58,7 @@ TEST_CASE("SymbolicLinkAction")
 		Media media(file);
 
 		SymbolicLinkAction action("../symlink_target.bin", false, false);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::remove(media.path()));
 	}
@@ -68,7 +70,7 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.close();
 
 		SymbolicLinkAction action(targetFile, false, false);
-		REQUIRE(action.execute(media) == false);
+		REQUIRE(action.execute(media, fs) == false);
 
 		REQUIRE(QFile::remove(targetFile));
 	}
@@ -80,7 +82,7 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.close();
 
 		SymbolicLinkAction action(targetFile, false, true);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::remove(targetFile));
 	}
@@ -97,7 +99,7 @@ TEST_CASE("SymbolicLinkAction")
 		{
 			SymbolicLinkAction action(targetFile, false, false);
 
-			REQUIRE(action.execute(media) == false);
+			REQUIRE(action.execute(media, fs) == false);
 			REQUIRE(file.remove());
 			REQUIRE(dir.exists() == false);
 		}
@@ -106,7 +108,7 @@ TEST_CASE("SymbolicLinkAction")
 		{
 			SymbolicLinkAction action(targetFile, true, false);
 
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
 			REQUIRE(QFile::remove(targetFile));
 			REQUIRE(dir.exists() == true);
 		}

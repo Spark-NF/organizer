@@ -9,7 +9,7 @@ class MoveAction : public Action
 {
 	public:
 		explicit MoveAction(const QString &destination, bool create, bool overwrite);
-		bool execute(Media &media) const override;
+		bool execute(Media &media, IFilesystem &fs) const override;
 
 	private:
 		QString m_destination;

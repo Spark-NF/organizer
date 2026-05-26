@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 #include "profile-loader.h"
 #include "profile.h"
@@ -77,6 +78,7 @@ int runCli(const QStringList &arguments)
 bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName)
 {
 	Media media(fileName);
+	RealFilesystem fs;
 	QList<std::shared_ptr<Rule>> matches = profile->match(media);
 
 	// No matching rule found
@@ -96,7 +98,7 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 
 	// Execute rule on the file
 	const std::shared_ptr<Rule> rule = matches.first();
-	const bool result = rule->execute(media);
+	const bool result = rule->execute(media, fs);
 	if (!result) {
 		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
 		return false;

@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <utility>
+#include "filesystem/filesystem.h"
 #include "media.h"
 
 
@@ -10,8 +11,10 @@ ProcessAction::ProcessAction(QString command, QStringList args, int timeout)
 	: Action(), m_command(std::move(command)), m_args(std::move(args)), m_timeout(timeout)
 {}
 
-bool ProcessAction::execute(Media &media) const
+bool ProcessAction::execute(Media &media, IFilesystem &fs) const
 {
+	Q_UNUSED(fs)
+
 	const QFileInfo &info = media.fileInfo();
 
 	QStringList args;

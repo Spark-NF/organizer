@@ -1,6 +1,6 @@
 #include "shortcut-action.h"
-#include <QFileInfo>
 #include <utility>
+#include "filesystem/filesystem.h"
 #include "media.h"
 
 
@@ -8,24 +8,26 @@ ShortcutAction::ShortcutAction(QString destination, bool overwrite)
 	: Action(), m_destination(std::move(destination)), m_overwrite(overwrite)
 {}
 
-bool ShortcutAction::execute(Media &media) const
+bool ShortcutAction::execute(Media &media, IFilesystem &fs) const
 {
-	#if !defined(Q_OS_WINDOWS)
-		return false;
-	#else
-		QString dest = m_destination;
-		if (!dest.endsWith(".lnk")) {
-			dest += ".lnk";
-		}
+	QString dest = m_destination;
+	if (!dest.endsWith(".lnk")) {
+		dest += ".lnk";
+	}
 
-		// Delete the destination if "overwrite" is enabled and the destination already exists
-		if (QFile::exists(dest)) {
-			if (!m_overwrite) {
-				return false;
-			}
-			QFile::remove(dest);
+	// Delete the destination if "overwrite" is enabled and the destination already exists
+	if (fs.exists(dest)) {
+		if (!m_overwrite) {
+			return false;
 		}
+		if (!fs.remove(dest)) {
+			return false;
+		}
+	}
 
-		return QFile::link(media.path(), dest);
-	#endif
+	const bool ok = fs.shortcut(media.path(), dest);
+	if (!ok) {
+		qCritical() << "Error creating shortcut" << media.path() << fs.errorString();
+	}
+	return ok;
 }

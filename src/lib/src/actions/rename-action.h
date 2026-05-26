@@ -10,7 +10,7 @@ class RenameAction : public Action
 {
 	public:
 		explicit RenameAction(const QRegularExpression &regexp, QString replace, bool overwrite);
-		bool execute(Media &media) const override;
+		bool execute(Media &media, IFilesystem &fs) const override;
 
 	private:
 		QRegularExpression m_regexp;

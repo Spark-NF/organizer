@@ -9,6 +9,7 @@
 
 class Action;
 class Condition;
+class IFilesystem;
 class Media;
 
 class Rule
@@ -24,7 +25,7 @@ class Rule
 		const QList<std::shared_ptr<Action>> &actions() const;
 
 		bool match(Media &media) const;
-		bool execute(Media &media) const;
+		bool execute(Media &media, IFilesystem &fs) const;
 
 	private:
 		QString m_name;

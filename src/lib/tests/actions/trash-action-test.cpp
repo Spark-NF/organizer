@@ -1,12 +1,14 @@
 #include <QFile>
 #include <catch.h>
 #include "actions/trash-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 
 
 TEST_CASE("TrashAction")
 {
 	TrashAction action;
+	RealFilesystem fs;
 
 	SECTION("Execute")
 	{
@@ -16,7 +18,7 @@ TEST_CASE("TrashAction")
 		Media media(file);
 
 		const QString filenameBefore = media.path();
-		const bool result = action.execute(media);
+		const bool result = action.execute(media, fs);
 		const QString filenameAfter = media.path();
 
 		if (QFile::supportsMoveToTrash()) {

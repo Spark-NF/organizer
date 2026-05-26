@@ -3,6 +3,7 @@
 #include <QTemporaryDir>
 #include <catch.h>
 #include "actions/move-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 #include <catch2/generators/catch_generators.hpp>
 
@@ -11,6 +12,7 @@ TEST_CASE("MoveAction")
 {
 	QTemporaryDir temporaryDir;
 	QDir dir(temporaryDir.path());
+	RealFilesystem fs;
 
 	SECTION("Execute")
 	{
@@ -21,7 +23,7 @@ TEST_CASE("MoveAction")
 		file.close();
 		Media media(file);
 
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 		REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
 		REQUIRE(QFile::remove(media.path()));
 	}
@@ -36,7 +38,7 @@ TEST_CASE("MoveAction")
 		file.close();
 		Media media(file);
 
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 		REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
 		REQUIRE(QFile::remove(media.path()));
 	}
@@ -55,7 +57,7 @@ TEST_CASE("MoveAction")
 			file.copy(dir.path() + QDir::separator() + "file.bin");
 			Media media(file);
 
-			REQUIRE(action.execute(media) == overwrite);
+			REQUIRE(action.execute(media, fs) == overwrite);
 			if (overwrite) {
 				REQUIRE(!file.exists());
 			} else {
@@ -78,7 +80,7 @@ TEST_CASE("MoveAction")
 			file.close();
 			Media media(file);
 
-			REQUIRE(action.execute(media) == false);
+			REQUIRE(action.execute(media, fs) == false);
 			REQUIRE(file.remove());
 			REQUIRE(dir.exists() == false);
 		}
@@ -92,7 +94,7 @@ TEST_CASE("MoveAction")
 			file.close();
 			Media media(file);
 
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
 			REQUIRE(QFile::remove(media.path()));
 			REQUIRE(dir.exists() == true);
 			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());

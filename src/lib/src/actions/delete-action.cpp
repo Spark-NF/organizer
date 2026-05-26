@@ -1,4 +1,5 @@
 #include "delete-action.h"
+#include "filesystem/filesystem.h"
 #include "media.h"
 
 
@@ -6,12 +7,11 @@ DeleteAction::DeleteAction()
 	: Action()
 {}
 
-bool DeleteAction::execute(Media &media) const
+bool DeleteAction::execute(Media &media, IFilesystem &fs) const
 {
-	QFile file(media.path());
-	const bool ok = file.remove();
+	const bool ok = fs.remove(media.path());
 	if (!ok) {
-		qCritical() << "Error deleting file" << file.error() << file.errorString();
+		qCritical() << "Error deleting file" << media.path() << fs.errorString();
 	}
 	return ok;
 }

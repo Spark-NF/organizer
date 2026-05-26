@@ -1,6 +1,7 @@
 #include "rule.h"
 #include "../actions/action.h"
 #include "../conditions/condition.h"
+#include "../filesystem/filesystem.h"
 
 
 Rule::Rule(QString name, const QKeySequence &shortcut, bool terminal, int priority, QList<std::shared_ptr<Condition>> conditions, QList<std::shared_ptr<Action>> actions)
@@ -49,10 +50,10 @@ bool Rule::match(Media &media) const
 	return true;
 }
 
-bool Rule::execute(Media &media) const
+bool Rule::execute(Media &media, IFilesystem &fs) const
 {
 	for (const auto &action : m_actions) {
-		if (!action->execute(media)) {
+		if (!action->execute(media, fs)) {
 			return false;
 		}
 	}

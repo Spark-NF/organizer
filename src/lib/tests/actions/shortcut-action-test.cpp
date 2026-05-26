@@ -2,6 +2,7 @@
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/shortcut-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 
 
@@ -11,12 +12,13 @@ TEST_CASE("ShortcutAction")
 	file.open();
 	file.close();
 	Media media(file);
+	RealFilesystem fs;
 
 	#if defined(Q_OS_WINDOWS)
 		SECTION("Execute")
 		{
 			ShortcutAction action("shortcut.lnk", false);
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
 
 			REQUIRE(QFile::exists("shortcut.lnk"));
 			REQUIRE(QFile::remove("shortcut.lnk"));
@@ -25,7 +27,7 @@ TEST_CASE("ShortcutAction")
 		SECTION("Without extension")
 		{
 			ShortcutAction action("shortcut", false);
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
 
 			REQUIRE(QFile::exists("shortcut.lnk"));
 			REQUIRE(QFile::remove("shortcut.lnk"));
@@ -34,8 +36,8 @@ TEST_CASE("ShortcutAction")
 		SECTION("Already exists")
 		{
 			ShortcutAction action("shortcut.lnk", false);
-			REQUIRE(action.execute(media) == true);
-			REQUIRE(action.execute(media) == false);
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(action.execute(media, fs) == false);
 
 			REQUIRE(QFile::remove("shortcut.lnk"));
 		}
@@ -43,8 +45,8 @@ TEST_CASE("ShortcutAction")
 		SECTION("Overwrite")
 		{
 			ShortcutAction action("shortcut.lnk", true);
-			REQUIRE(action.execute(media) == true);
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(action.execute(media, fs) == true);
 
 			REQUIRE(QFile::remove("shortcut.lnk"));
 		}
@@ -52,7 +54,7 @@ TEST_CASE("ShortcutAction")
 		SECTION("Always fails")
 		{
 			ShortcutAction action("shortcut.lnk", true);
-			REQUIRE(action.execute(media) == false);
+			REQUIRE(action.execute(media, fs) == false);
 		}
 	#endif
 }

@@ -1,51 +1,42 @@
 #include "symbolic-link-action.h"
+#include <QFileInfo>
 #include <utility>
+#include "filesystem/filesystem.h"
 #include "media.h"
-
-#if defined(Q_OS_WINDOWS)
-	#include <windows.h>
-#endif
 
 
 SymbolicLinkAction::SymbolicLinkAction(QString destination, bool create, bool overwrite)
 	: Action(), m_destination(std::move(destination)), m_create(create), m_overwrite(overwrite)
 {}
 
-bool SymbolicLinkAction::execute(Media &media) const
+bool SymbolicLinkAction::execute(Media &media, IFilesystem &fs) const
 {
 	const QString dest = media.fileInfo().dir().absoluteFilePath(m_destination);
-	const QDir destination = QFileInfo(dest).dir();
+	const QString destination = QFileInfo(dest).dir().absolutePath();
 
 	// Create the destination directory if necessary
-	if (!destination.exists()) {
+	if (!fs.exists(destination)) {
 		if (!m_create) {
 			return false;
 		}
-		if (!destination.mkpath(".")) {
+		if (!fs.mkpath(destination)) {
 			return false;
 		}
 	}
 
 	// Delete the destination if "overwrite" is enabled and the destination already exists
-	if (QFile::exists(dest)) {
+	if (fs.exists(dest)) {
 		if (!m_overwrite) {
 			return false;
 		}
-		QFile::remove(dest);
+		if (!fs.remove(dest)) {
+			return false;
+		}
 	}
 
-	#if defined(Q_OS_WINDOWS)
-		const bool ok = CreateSymbolicLinkW(dest.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
-		if (!ok) {
-			const DWORD err = GetLastError();
-			if (err == ERROR_PRIVILEGE_NOT_HELD) {
-				qCritical() << "Error creating symbolic link: Developer Mode must be enabled or run as administrator";
-			} else {
-				qCritical() << "Error creating symbolic link" << err;
-			}
-		}
-		return ok;
-	#else
-		return QFile::link(media.path(), dest);
-	#endif
+	const bool ok = fs.symbolicLink(media.path(), dest);
+	if (!ok) {
+		qCritical() << "Error creating symbolic link" << media.path() << fs.errorString();
+	}
+	return ok;
 }

@@ -13,6 +13,7 @@
 #include <QStyle>
 #include <QUrl>
 #include <algorithm>
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
@@ -130,7 +131,8 @@ void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 	bool fullPreview = beforeAction();
 
 	Media media(m_files[m_currentFile]);
-	if (rule->execute(media)) {
+	RealFilesystem fs;
+	if (rule->execute(media, fs)) {
 		m_lastActions.append(std::pair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = media.path();
 

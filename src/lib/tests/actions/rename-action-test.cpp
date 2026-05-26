@@ -2,11 +2,14 @@
 #include <QFileInfo>
 #include <catch.h>
 #include "actions/rename-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 
 
 TEST_CASE("RenameAction")
 {
+	RealFilesystem fs;
+
 	SECTION("Execute")
 	{
 		RenameAction action(QRegularExpression("(.+)"), "test_\\1", false);
@@ -16,7 +19,7 @@ TEST_CASE("RenameAction")
 		file.close();
 		Media media(file);
 
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 		REQUIRE(QFileInfo(media.path()).fileName() == "test_file.bin");
 		REQUIRE(QFile::remove(media.path()));
 	}
@@ -30,7 +33,7 @@ TEST_CASE("RenameAction")
 		file.close();
 		Media media(file);
 
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 		REQUIRE(QFile::remove(media.path()));
 	}
 
@@ -44,7 +47,7 @@ TEST_CASE("RenameAction")
 		file.copy("test_file.bin");
 		Media media(file);
 
-		REQUIRE(action.execute(media) == false);
+		REQUIRE(action.execute(media, fs) == false);
 		REQUIRE(file.remove());
 		REQUIRE(QFile::remove("test_file.bin"));
 	}
@@ -63,7 +66,7 @@ TEST_CASE("RenameAction")
 		newFile.open(QFile::WriteOnly);
 		newFile.close();
 
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		newFile.open(QFile::ReadOnly);
 		REQUIRE(newFile.readAll() == "data");

@@ -1,5 +1,7 @@
 #include "move-action.h"
+#include <QDir>
 #include <utility>
+#include "filesystem/filesystem.h"
 #include "media.h"
 
 
@@ -7,36 +9,37 @@ MoveAction::MoveAction(const QString &destination, bool create, bool overwrite)
 	: Action(), m_destination(destination), m_create(create), m_overwrite(overwrite)
 {}
 
-bool MoveAction::execute(Media &media) const
+bool MoveAction::execute(Media &media, IFilesystem &fs) const
 {
-	const QDir destination(media.fileInfo().dir().absoluteFilePath(m_destination));
+	const QString destination = media.fileInfo().dir().absoluteFilePath(m_destination);
 
 	// Create the destination directory if necessary
-	if (!destination.exists()) {
+	if (!fs.exists(destination)) {
 		if (!m_create) {
 			return false;
 		}
-		if (!destination.mkpath(".")) {
+		if (!fs.mkpath(destination)) {
 			return false;
 		}
 	}
 
-	const QString dest = destination.absoluteFilePath(media.fileInfo().fileName());
+	const QString dest = QDir(destination).absoluteFilePath(media.fileInfo().fileName());
 
 	// Delete the destination if "overwrite" is enabled and the destination already exists
-	if (QFile::exists(dest)) {
+	if (fs.exists(dest)) {
 		if (!m_overwrite) {
 			return false;
 		}
-		QFile::remove(dest);
+		if (!fs.remove(dest)) {
+			return false;
+		}
 	}
 
-	QFile file(media.path());
-	const bool ok = file.rename(dest);
+	const bool ok = fs.move(media.path(), dest);
 	if (ok) {
 		media.setPath(dest);
 	} else {
-		qCritical() << "Error moving file" << file.error() << file.errorString();
+		qCritical() << "Error moving file" << media.path() << fs.errorString();
 	}
 	return ok;
 }

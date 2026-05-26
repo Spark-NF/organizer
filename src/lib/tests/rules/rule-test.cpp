@@ -5,6 +5,7 @@
 #include "conditions/condition.h"
 #include "conditions/comparators/glob-comparator.h"
 #include "conditions/loaders/filename-loader.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 #include "rules/rule.h"
 
@@ -66,6 +67,8 @@ TEST_CASE("Rule")
 
 	SECTION("Execute")
 	{
+		RealFilesystem fs;
+
 		SECTION("Empty")
 		{
 			Rule emptyRule("Test rule", QKeySequence("A"), true, 1, conditions, {});
@@ -75,7 +78,7 @@ TEST_CASE("Rule")
 			file.close();
 			Media media(file);
 
-			REQUIRE(emptyRule.execute(media) == true);
+			REQUIRE(emptyRule.execute(media, fs) == true);
 			REQUIRE(file.remove());
 		}
 
@@ -86,7 +89,7 @@ TEST_CASE("Rule")
 			file.close();
 			Media media(file);
 
-			REQUIRE(rule.execute(media) == true);
+			REQUIRE(rule.execute(media, fs) == true);
 			REQUIRE(QFileInfo(media.path()).fileName() == "second_first_file.bin");
 			REQUIRE(QFile::remove(media.path()));
 		}
@@ -105,7 +108,7 @@ TEST_CASE("Rule")
 			file.close();
 			Media media(file);
 
-			REQUIRE(failingRule.execute(media) == false);
+			REQUIRE(failingRule.execute(media, fs) == false);
 			REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
 			REQUIRE(QFile::remove(media.path()));
 		}

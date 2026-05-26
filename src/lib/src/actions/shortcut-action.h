@@ -9,7 +9,7 @@ class ShortcutAction : public Action
 {
 	public:
 		explicit ShortcutAction(QString destination, bool overwrite);
-		bool execute(Media &media) const override;
+		bool execute(Media &media, IFilesystem &fs) const override;
 
 	private:
 		QString m_destination;

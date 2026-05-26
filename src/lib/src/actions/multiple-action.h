@@ -10,7 +10,7 @@ class MultipleAction : public Action
 {
 	public:
 		explicit MultipleAction(QList<std::shared_ptr<Action>> actions);
-		bool execute(Media &media) const override;
+		bool execute(Media &media, IFilesystem &fs) const override;
 
 	private:
 		QList<std::shared_ptr<Action>> m_actions;

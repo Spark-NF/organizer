@@ -3,6 +3,7 @@
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/hard-link-action.h"
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 
 #if defined(Q_OS_WINDOWS)
@@ -25,6 +26,7 @@ TEST_CASE("HardLinkAction")
 	file.open();
 	file.close();
 	Media media(file);
+	RealFilesystem fs;
 
 	// The target of the hard link must be on the same device, so we have it in TMP as well
 	const QString targetFile = QDir::temp().absoluteFilePath("hardlink_shortcut");
@@ -32,7 +34,7 @@ TEST_CASE("HardLinkAction")
 	SECTION("Execute")
 	{
 		HardLinkAction action(targetFile, false, false);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::exists(targetFile));
 		REQUIRE(QFile::remove(targetFile));
@@ -49,7 +51,7 @@ TEST_CASE("HardLinkAction")
 		Media media(file);
 
 		HardLinkAction action("../hardlink_target.bin", false, false);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::remove(media.path()));
 	}
@@ -61,7 +63,7 @@ TEST_CASE("HardLinkAction")
 		duplicate.close();
 
 		HardLinkAction action(targetFile, false, false);
-		REQUIRE(action.execute(media) == false);
+		REQUIRE(action.execute(media, fs) == false);
 
 		REQUIRE(QFile::remove(targetFile));
 	}
@@ -73,7 +75,7 @@ TEST_CASE("HardLinkAction")
 		duplicate.close();
 
 		HardLinkAction action(targetFile, false, true);
-		REQUIRE(action.execute(media) == true);
+		REQUIRE(action.execute(media, fs) == true);
 
 		REQUIRE(QFile::remove(targetFile));
 	}
@@ -90,7 +92,7 @@ TEST_CASE("HardLinkAction")
 		{
 			HardLinkAction action(targetFile, false, false);
 
-			REQUIRE(action.execute(media) == false);
+			REQUIRE(action.execute(media, fs) == false);
 			REQUIRE(file.remove());
 			REQUIRE(dir.exists() == false);
 		}
@@ -99,7 +101,7 @@ TEST_CASE("HardLinkAction")
 		{
 			HardLinkAction action(targetFile, true, false);
 
-			REQUIRE(action.execute(media) == true);
+			REQUIRE(action.execute(media, fs) == true);
 			REQUIRE(QFile::remove(targetFile));
 			REQUIRE(dir.exists() == true);
 		}

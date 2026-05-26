@@ -1,54 +1,42 @@
 #include "hard-link-action.h"
+#include <QFileInfo>
 #include <utility>
+#include "filesystem/filesystem.h"
 #include "media.h"
-
-#if defined(Q_OS_WINDOWS)
-	#include <windows.h>
-#else
-	#include <cerrno>
-	#include <cstring>
-	#include <unistd.h>
-#endif
 
 
 HardLinkAction::HardLinkAction(QString destination, bool create, bool overwrite)
 	: Action(), m_destination(std::move(destination)), m_create(create), m_overwrite(overwrite)
 {}
 
-bool HardLinkAction::execute(Media &media) const
+bool HardLinkAction::execute(Media &media, IFilesystem &fs) const
 {
 	const QString dest = media.fileInfo().dir().absoluteFilePath(m_destination);
-	const QDir destination = QFileInfo(dest).dir();
+	const QString destination = QFileInfo(dest).dir().absolutePath();
 
 	// Create the destination directory if necessary
-	if (!destination.exists()) {
+	if (!fs.exists(destination)) {
 		if (!m_create) {
 			return false;
 		}
-		if (!destination.mkpath(".")) {
+		if (!fs.mkpath(destination)) {
 			return false;
 		}
 	}
 
 	// Delete the destination if "overwrite" is enabled and the destination already exists
-	if (QFile::exists(dest)) {
+	if (fs.exists(dest)) {
 		if (!m_overwrite) {
 			return false;
 		}
-		QFile::remove(dest);
+		if (!fs.remove(dest)) {
+			return false;
+		}
 	}
 
-	#if defined(Q_OS_WINDOWS)
-		const bool ok = CreateHardLinkW(dest.toStdWString().c_str(), media.path().toStdWString().c_str(), NULL);
-		if (!ok) {
-			qCritical() << "Error creating hard link" << GetLastError();
-		}
-		return ok;
-	#else
-		const int result = link(media.path().toStdString().c_str(), dest.toStdString().c_str());
-		if (result != 0) {
-			qCritical() << "Error creating hard link:" << strerror(errno);
-		}
-		return result == 0;
-	#endif
+	const bool ok = fs.hardLink(media.path(), dest);
+	if (!ok) {
+		qCritical() << "Error creating hard link" << media.path() << fs.errorString();
+	}
+	return ok;
 }

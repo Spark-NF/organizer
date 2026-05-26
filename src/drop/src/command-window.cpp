@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QMessageBox>
+#include "filesystem/real-filesystem.h"
 #include "media.h"
 #include "profile.h"
 #include "rules/rule.h"
@@ -72,7 +73,8 @@ void CommandWindow::apply()
 		}
 
 		Media media(result.first);
-		const bool ok = result.second->execute(media);
+		RealFilesystem fs;
+		const bool ok = result.second->execute(media, fs);
 		if (!ok) {
 			QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 			allOk = false;
