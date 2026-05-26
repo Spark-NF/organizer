@@ -71,7 +71,8 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 	if (type == "process") {
 		const QString command = obj["cmd"].toString();
 		const QStringList args = jsonArrayToStringList(obj["args"].toArray());
-		return std::make_shared<ProcessAction>(command, args);
+		const int timeout = obj["timeout"].isNull() ? -1 : obj["timeout"].toInt(30000);
+		return std::make_shared<ProcessAction>(command, args, timeout);
 	}
 
 	if (type == "multiple") {

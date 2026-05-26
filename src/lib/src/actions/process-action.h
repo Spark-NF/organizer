@@ -9,12 +9,13 @@
 class ProcessAction : public Action
 {
 	public:
-		explicit ProcessAction(QString command, QStringList args);
+		explicit ProcessAction(QString command, QStringList args, int timeout);
 		bool execute(Media &media) const override;
 
 	private:
 		QString m_command;
 		QStringList m_args;
+		int m_timeout;
 };
 
 #endif // PROCESS_ACTION_H

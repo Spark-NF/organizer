@@ -8,7 +8,7 @@ TEST_CASE("ProcessAction")
 {
 	SECTION("Not found")
 	{
-		ProcessAction action("this_program_does_not_exist", {});
+		ProcessAction action("this_program_does_not_exist", {}, 30000);
 
 		Media media("test.jpg");
 		REQUIRE(action.execute(media) == false);
@@ -24,7 +24,7 @@ TEST_CASE("ProcessAction")
 			const QStringList args { "-c", "echo test" };
 		#endif
 
-		ProcessAction action(command, args);
+		ProcessAction action(command, args, 30000);
 
 		Media media("test.jpg");
 		REQUIRE(action.execute(media) == true);

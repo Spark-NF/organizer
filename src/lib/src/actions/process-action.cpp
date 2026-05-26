@@ -6,8 +6,8 @@
 #include "media.h"
 
 
-ProcessAction::ProcessAction(QString command, QStringList args)
-	: Action(), m_command(std::move(command)), m_args(std::move(args))
+ProcessAction::ProcessAction(QString command, QStringList args, int timeout)
+	: Action(), m_command(std::move(command)), m_args(std::move(args)), m_timeout(timeout)
 {}
 
 bool ProcessAction::execute(Media &media) const
@@ -26,9 +26,11 @@ bool ProcessAction::execute(Media &media) const
 		args.append(arg);
 	}
 
-	int code = QProcess::execute(m_command, args);
-	if (code != 0)
+	QProcess process;
+	process.start(m_command, args);
+	if (!process.waitForFinished(m_timeout)) {
+		process.kill();
 		return false;
-
-	return true;
+	}
+	return process.exitCode() == 0;
 }

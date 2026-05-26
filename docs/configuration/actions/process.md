@@ -7,6 +7,7 @@ Run a custom command.
 
 * **cmd**: the binary to call
 * **args**: the list of arguments to pass to the binary, `{var}` in either will be replaced by the variables below
+* **timeout**: maximum time in milliseconds to wait for the process to finish (default: `30000`); use `null` to wait indefinitely
 
 
 ### Available variables
