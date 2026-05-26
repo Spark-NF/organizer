@@ -8,11 +8,12 @@
 class HardLinkAction : public Action
 {
 	public:
-		explicit HardLinkAction(QString name, bool overwrite);
+		explicit HardLinkAction(QString name, bool create, bool overwrite);
 		bool execute(Media &media) const override;
 
 	private:
 		QString m_name;
+		bool m_create;
 		bool m_overwrite;
 };
 

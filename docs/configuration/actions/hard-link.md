@@ -6,6 +6,7 @@ Create a [hard link](https://en.wikipedia.org/wiki/Hard_link) to the file.
 ## Options
 
 * **name**: what to name the hard link
+* **create**: whether to create the destination directory if it doesn't exist (default: `true`)
 * **overwrite**: set to true to will overwrite any already existing file (default: `false`)
 
 

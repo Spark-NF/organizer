@@ -9,13 +9,24 @@
 #endif
 
 
-HardLinkAction::HardLinkAction(QString name, bool overwrite)
-	: Action(), m_name(std::move(name)), m_overwrite(overwrite)
+HardLinkAction::HardLinkAction(QString name, bool create, bool overwrite)
+	: Action(), m_name(std::move(name)), m_create(create), m_overwrite(overwrite)
 {}
 
 bool HardLinkAction::execute(Media &media) const
 {
 	const QString dest = media.fileInfo().dir().absoluteFilePath(m_name);
+	const QDir destination = QFileInfo(dest).dir();
+
+	// Create the destination directory if necessary
+	if (!destination.exists()) {
+		if (!m_create) {
+			return false;
+		}
+		if (!destination.mkpath(".")) {
+			return false;
+		}
+	}
 
 	// Delete the destination if "overwrite" is enabled and the destination already exists
 	if (QFile::exists(dest)) {

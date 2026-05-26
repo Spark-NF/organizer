@@ -17,7 +17,7 @@ TEST_CASE("SymbolicLinkAction")
 
 	SECTION("Execute")
 	{
-		SymbolicLinkAction action(targetFile, false);
+		SymbolicLinkAction action(targetFile, false, false);
 		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::exists(targetFile));
@@ -34,7 +34,7 @@ TEST_CASE("SymbolicLinkAction")
 		file.close();
 		Media media(file);
 
-		SymbolicLinkAction action("../symlink_target.bin", false);
+		SymbolicLinkAction action("../symlink_target.bin", false, false);
 		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::remove(media.path()));
@@ -46,7 +46,7 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.open(QFile::WriteOnly);
 		duplicate.close();
 
-		SymbolicLinkAction action(targetFile, false);
+		SymbolicLinkAction action(targetFile, false, false);
 		REQUIRE(action.execute(media) == false);
 
 		REQUIRE(QFile::remove(targetFile));
@@ -58,9 +58,36 @@ TEST_CASE("SymbolicLinkAction")
 		duplicate.open(QFile::WriteOnly);
 		duplicate.close();
 
-		SymbolicLinkAction action(targetFile, true);
+		SymbolicLinkAction action(targetFile, false, true);
 		REQUIRE(action.execute(media) == true);
 
 		REQUIRE(QFile::remove(targetFile));
+	}
+
+	SECTION("New directory")
+	{
+		QTemporaryDir temporaryDir;
+		QDir dir(temporaryDir.path());
+		temporaryDir.remove();
+
+		const QString targetFile = dir.absoluteFilePath("test.bin");
+
+		SECTION("Don't create")
+		{
+			SymbolicLinkAction action(targetFile, false, false);
+
+			REQUIRE(action.execute(media) == false);
+			REQUIRE(file.remove());
+			REQUIRE(dir.exists() == false);
+		}
+
+		SECTION("Create")
+		{
+			SymbolicLinkAction action(targetFile, true, false);
+
+			REQUIRE(action.execute(media) == true);
+			REQUIRE(QFile::remove(targetFile));
+			REQUIRE(dir.exists() == true);
+		}
 	}
 }

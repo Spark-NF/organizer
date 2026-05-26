@@ -42,14 +42,16 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 
 	if (type == "hardlink") {
 		const QString dest = obj["dest"].toString();
+		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return std::make_shared<HardLinkAction>(dest, overwrite);
+		return std::make_shared<HardLinkAction>(dest, create, overwrite);
 	}
 
 	if (type == "symlink") {
 		const QString dest = obj["dest"].toString();
+		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return std::make_shared<SymbolicLinkAction>(dest, overwrite);
+		return std::make_shared<SymbolicLinkAction>(dest, create, overwrite);
 	}
 
 	if (type == "shortcut") {
