@@ -8,6 +8,7 @@
 #include "rules/rule-loader.h"
 #include "rules/rule.h"
 
+static constexpr int SUPPORTED_VERSION = 1;
 
 std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file)
 {
@@ -31,6 +32,12 @@ std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file)
 
 std::shared_ptr<Profile> ProfileLoader::load(const QJsonObject &obj)
 {
+	const int version = obj["version"].toInt(1);
+	if (version != SUPPORTED_VERSION) {
+		qCritical() << "Unsupported profile version" << version;
+		return nullptr;
+	}
+
 	const QString name = obj["name"].toString();
 	QList<QList<std::shared_ptr<Rule>>> rules;
 

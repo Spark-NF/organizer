@@ -6,6 +6,7 @@ A profile is a JSON object with a few options:
 
 * **name**: the name of the profile to show in the interface
 * **rules**: an array or an array of arrays of rules (see [Rules](rule.md))
+* **version**: the format version (optional, defaults to `1`)
 
 The first array represents the columns of actions, and the second each row of those columns. When using a single depth of arrays, there will be a single column. This is mainly useful for manual rules.
 
