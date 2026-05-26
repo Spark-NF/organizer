@@ -9,7 +9,7 @@ Create a Windows shortcut (LNK file) to the file.
 
 ## Options
 
-* **name**: what to name the shortcut (the ".lnk" will automatically be added if not already present)
+* **dest**: where to create the shortcut (the ".lnk" will automatically be added if not already present)
 * **overwrite**: set to true to will overwrite any already existing shortcut file (default: `false`)
 
 
@@ -18,6 +18,6 @@ Create a Windows shortcut (LNK file) to the file.
 ```json
 {
     "type": "shortcut",
-    "name": "Shortcut to this file"
+    "dest": "Shortcut to this file"
 }
 ```

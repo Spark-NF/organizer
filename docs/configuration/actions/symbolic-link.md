@@ -9,7 +9,7 @@ Create a [symbolic link](https://en.wikipedia.org/wiki/Symbolic_link) to the fil
 
 ## Options
 
-* **name**: what to name the symbolic link
+* **dest**: where to create the symbolic link (absolute, or relative to the source file's directory)
 * **create**: whether to create the destination directory if it doesn't exist (default: `true`)
 * **overwrite**: set to true to will overwrite any already existing file (default: `false`)
 
@@ -19,6 +19,6 @@ Create a [symbolic link](https://en.wikipedia.org/wiki/Symbolic_link) to the fil
 ```json
 {
     "type": "symlink",
-    "name": "Link to this file"
+    "dest": "Link to this file"
 }
 ```

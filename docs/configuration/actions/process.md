@@ -16,7 +16,7 @@ Run a custom command.
 * **filename**: the full file name (including the extension)
 * **basename**: the file name without the extension (until the last dot)
 * **ext**: the file extension (starting from the last dot)
-* **/**: the native separator of your platform (`/` on Windows, `\` on UNIX)
+* **/**: the native separator of your platform (`\` on Windows, `/` on UNIX)
 
 
 ## Examples
