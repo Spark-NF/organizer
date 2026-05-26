@@ -7,7 +7,7 @@
 class DeleteAction : public Action
 {
 	public:
-		explicit DeleteAction();
+		DeleteAction();
 		bool execute(Media &media) const override;
 };
 
