@@ -4,8 +4,8 @@
 #include "media.h"
 
 
-ShortcutAction::ShortcutAction(QString name, bool overwrite)
-	: Action(), m_name(std::move(name)), m_overwrite(overwrite)
+ShortcutAction::ShortcutAction(QString destination, bool overwrite)
+	: Action(), m_destination(std::move(destination)), m_overwrite(overwrite)
 {}
 
 bool ShortcutAction::execute(Media &media) const
@@ -13,7 +13,7 @@ bool ShortcutAction::execute(Media &media) const
 	#if !defined(Q_OS_WINDOWS)
 		return false;
 	#else
-		QString dest = m_name;
+		QString dest = m_destination;
 		if (!dest.endsWith(".lnk")) {
 			dest += ".lnk";
 		}

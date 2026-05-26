@@ -8,11 +8,11 @@
 class ShortcutAction : public Action
 {
 	public:
-		explicit ShortcutAction(QString name, bool overwrite);
+		explicit ShortcutAction(QString destination, bool overwrite);
 		bool execute(Media &media) const override;
 
 	private:
-		QString m_name;
+		QString m_destination;
 		bool m_overwrite;
 };
 

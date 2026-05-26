@@ -8,11 +8,11 @@
 class SymbolicLinkAction : public Action
 {
 	public:
-		explicit SymbolicLinkAction(QString name, bool create, bool overwrite);
+		explicit SymbolicLinkAction(QString destination, bool create, bool overwrite);
 		bool execute(Media &media) const override;
 
 	private:
-		QString m_name;
+		QString m_destination;
 		bool m_create;
 		bool m_overwrite;
 };

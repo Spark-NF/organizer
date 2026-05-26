@@ -7,13 +7,13 @@
 #endif
 
 
-SymbolicLinkAction::SymbolicLinkAction(QString name, bool create, bool overwrite)
-	: Action(), m_name(std::move(name)), m_create(create), m_overwrite(overwrite)
+SymbolicLinkAction::SymbolicLinkAction(QString destination, bool create, bool overwrite)
+	: Action(), m_destination(std::move(destination)), m_create(create), m_overwrite(overwrite)
 {}
 
 bool SymbolicLinkAction::execute(Media &media) const
 {
-	const QString dest = media.fileInfo().dir().absoluteFilePath(m_name);
+	const QString dest = media.fileInfo().dir().absoluteFilePath(m_destination);
 	const QDir destination = QFileInfo(dest).dir();
 
 	// Create the destination directory if necessary
