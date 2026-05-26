@@ -269,5 +269,88 @@ TEST_CASE("CLI")
 			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
 			REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
 		}
+
+		SECTION("Dry run")
+		{
+			const QString flag = GENERATE(QString("--dry-run"), QString("-n"));
+
+			DYNAMIC_SECTION(flag.toStdString())
+			{
+				SECTION("File input")
+				{
+					QTemporaryDir dir;
+
+					QFile file(dir.filePath("a.txt"));
+					file.open(QFile::WriteOnly);
+					file.close();
+
+					QProcess process;
+					process.start(program, { "-p", profileFile.fileName(), flag, file.fileName() });
+					REQUIRE(process.waitForStarted());
+					REQUIRE(process.waitForFinished());
+
+					REQUIRE(process.exitCode() == 0);
+					const QString expectedDest = QDir(dir.path()).absoluteFilePath("txt_a.txt");
+					REQUIRE(QString(process.readAllStandardOutput()) ==
+						"[dry-run] Would run rule TXT on file " + file.fileName() + br +
+						"[dry-run] - Move '" + file.fileName() + "' to '" + expectedDest + "'" + br);
+					REQUIRE(QString(process.readAllStandardError()) == "");
+
+					// File must be unchanged on disk
+					const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+					REQUIRE(files == QStringList{ "a.txt" });
+				}
+
+				SECTION("Directory input")
+				{
+					QTemporaryDir dir;
+
+					QFile fileA(dir.filePath("a.txt"));
+					fileA.open(QFile::WriteOnly);
+					fileA.close();
+					QFile fileB(dir.filePath("b.png"));
+					fileB.open(QFile::WriteOnly);
+					fileB.close();
+
+					QProcess process;
+					process.start(program, { "-p", profileFile.fileName(), flag, dir.path() });
+					REQUIRE(process.waitForStarted());
+					REQUIRE(process.waitForFinished());
+
+					REQUIRE(process.exitCode() == 0);
+					const QString out = QString(process.readAllStandardOutput());
+					REQUIRE(out.contains("[dry-run] Would run rule TXT on file " + fileA.fileName()));
+					REQUIRE(out.contains("[dry-run] Would run rule Image on file " + fileB.fileName()));
+					REQUIRE(QString(process.readAllStandardError()) == "");
+
+					// Files must be unchanged on disk
+					const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+					REQUIRE(files == QStringList{ "a.txt", "b.png" });
+				}
+
+				SECTION("Would fail")
+				{
+					QTemporaryDir dir;
+
+					QFile file(dir.filePath("c.jpg"));
+					file.open(QFile::WriteOnly);
+					file.close();
+					file.copy(dir.filePath("jpg_c.jpg"));
+
+					QProcess process;
+					process.start(program, { "-p", profileFile.fileName(), flag, file.fileName() });
+					REQUIRE(process.waitForStarted());
+					REQUIRE(process.waitForFinished());
+
+					REQUIRE(process.exitCode() == 1);
+					REQUIRE(QString(process.readAllStandardOutput()) == "");
+					REQUIRE(QString(process.readAllStandardError()) == "[dry-run] Rule JPG would fail on file " + file.fileName() + br);
+
+					// Files must be unchanged on disk
+					const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
+					REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
+				}
+			}
+		}
 	}
 }

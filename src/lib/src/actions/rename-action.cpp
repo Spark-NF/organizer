@@ -20,7 +20,7 @@ bool RenameAction::execute(Media &media, IFilesystem &fs) const
 	}
 
 	// Create the destination directory if necessary
-	const QString dest = info.dir().absolutePath() + QDir::separator() + newName;
+	const QString dest = info.dir().absoluteFilePath(newName);
 	const QString destDir = QFileInfo(dest).dir().absolutePath();
 	if (!fs.exists(destDir) && !fs.mkpath(destDir)) {
 		return false;

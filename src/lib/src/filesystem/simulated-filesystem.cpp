@@ -71,3 +71,8 @@ const QStringList &SimulatedFilesystem::log() const
 {
 	return m_log;
 }
+
+void SimulatedFilesystem::clearLog()
+{
+	m_log.clear();
+}

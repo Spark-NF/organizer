@@ -1,9 +1,12 @@
 #include "cli.h"
+#include <memory>
 #include <QCommandLineParser>
 #include <QDir>
 #include <QFileInfo>
 #include <QTextStream>
+#include "filesystem/filesystem.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/simulated-filesystem.h"
 #include "media.h"
 #include "profile-loader.h"
 #include "profile.h"
@@ -26,6 +29,8 @@ int runCli(const QStringList &arguments)
 	parser.addVersionOption();
 	QCommandLineOption profileOption({ "p", "profile" }, "The rule profile file to use (required).", "profile");
 	parser.addOption(profileOption);
+	QCommandLineOption dryRunOption({ "n", "dry-run" }, "Preview actions without modifying any files.");
+	parser.addOption(dryRunOption);
 
 	// Positional arguments
 	parser.addPositionalArgument("files", "The files to organize.", "files...");
@@ -34,6 +39,7 @@ int runCli(const QStringList &arguments)
 
 	const QString profilePath = parser.value(profileOption);
 	const QStringList files = parser.positionalArguments();
+	const bool dryRun = parser.isSet(dryRunOption);
 
 	if (parser.isSet(helpOption) || files.isEmpty()) {
 		parser.showHelp(0);
@@ -52,6 +58,13 @@ int runCli(const QStringList &arguments)
 		return 1;
 	}
 
+	std::unique_ptr<IFilesystem> fs;
+	if (dryRun) {
+		fs = std::make_unique<SimulatedFilesystem>();
+	} else {
+		fs = std::make_unique<RealFilesystem>();
+	}
+
 	bool success = true;
 	for (const QString &filePath : files) {
 		QFileInfo fileInfo(filePath);
@@ -61,11 +74,11 @@ int runCli(const QStringList &arguments)
 		}
 
 		if (fileInfo.isDir()) {
-			if (!processDir(profile, QDir(filePath))) {
+			if (!processDir(profile, QDir(filePath), *fs, dryRun)) {
 				success = false;
 			}
 		} else {
-			if (!processFile(profile, filePath)) {
+			if (!processFile(profile, filePath, *fs, dryRun)) {
 				success = false;
 			}
 		}
@@ -75,10 +88,9 @@ int runCli(const QStringList &arguments)
 }
 
 
-bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName)
+bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName, IFilesystem &fs, bool dryRun)
 {
 	Media media(fileName);
-	RealFilesystem fs;
 	QList<std::shared_ptr<Rule>> matches = profile->match(media);
 
 	// No matching rule found
@@ -98,23 +110,38 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 
 	// Execute rule on the file
 	const std::shared_ptr<Rule> rule = matches.first();
+
+	if (dryRun) {
+		auto &simFs = static_cast<SimulatedFilesystem&>(fs);
+		const bool result = rule->execute(media, simFs);
+		if (!result) {
+			stdErr << "[dry-run] Rule " << rule->name() << " would fail on file " << fileName << Qt::endl;
+		} else {
+			stdOut << "[dry-run] Would run rule " << rule->name() << " on file " << fileName << Qt::endl;
+			for (const QString &entry : simFs.log()) {
+				stdOut << "[dry-run] - " << entry << Qt::endl;
+			}
+		}
+		simFs.clearLog();
+		return result;
+	}
+
 	const bool result = rule->execute(media, fs);
 	if (!result) {
 		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
-		return false;
+	} else {
+		stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
 	}
-
-	stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
-	return true;
+	return result;
 }
 
 
-bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir)
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun)
 {
 	bool success = true;
 	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 	for (const QFileInfo &info : infoList) {
-		if (!processFile(profile, info.absoluteFilePath())) {
+		if (!processFile(profile, info.absoluteFilePath(), fs, dryRun)) {
 			success = false;
 		}
 	}

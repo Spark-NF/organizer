@@ -19,6 +19,7 @@ class SimulatedFilesystem : public IFilesystem
 		bool shortcut(const QString &from, const QString &to) override;
 
 		const QStringList &log() const;
+		void clearLog();
 
 	private:
 		QSet<QString> m_removed;
