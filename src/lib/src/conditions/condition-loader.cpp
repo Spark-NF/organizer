@@ -36,7 +36,8 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 	if (obj.contains("and")) {
 		QList<std::shared_ptr<Comparator>> comparators;
 		for (const auto &cond : obj["and"].toArray())
-			comparators.append(loadComparator(cond.toObject()));
+			if (auto comparator = loadComparator(cond.toObject()))
+				comparators.append(std::move(comparator));
 		return std::make_shared<AndComparator>(comparators);
 	}
 
@@ -47,7 +48,8 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 	if (obj.contains("or")) {
 		QList<std::shared_ptr<Comparator>> comparators;
 		for (const auto &cond : obj["or"].toArray())
-			comparators.append(loadComparator(cond.toObject()));
+			if (auto comparator = loadComparator(cond.toObject()))
+				comparators.append(std::move(comparator));
 		return std::make_shared<OrComparator>(comparators);
 	}
 
