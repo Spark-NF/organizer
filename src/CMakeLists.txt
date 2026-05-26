@@ -53,6 +53,7 @@ endif()
 
 # Targets
 add_subdirectory(lib)
+add_subdirectory(widgets)
 add_subdirectory(gui)
 add_subdirectory(drop)
 add_subdirectory(cli)

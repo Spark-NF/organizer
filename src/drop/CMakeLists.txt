@@ -8,11 +8,9 @@ set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Multimedia Qt6::MultimediaWidgets Qt6::
 file(GLOB_RECURSE SOURCES
 	"src/*.cpp"
 	"src/*.ui"
-	"../gui/src/players/*.cpp"
-	"../gui/src/players/*.ui"
 	"../gui/resources/*.rc"
 	"resources/*.qrc")
-include_directories("src/" "../lib/src" "../gui/src")
+include_directories("src/" "../lib/src")
 
 # Apple bundle information
 if(APPLE)
@@ -30,7 +28,7 @@ elseif(APPLE)
 else()
 	add_executable(${PROJECT_NAME} ${SOURCES})
 endif()
-target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} lib)
+target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES} lib widgets)
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "Organizer-drop")
 
 # Install
@@ -46,4 +44,4 @@ include_directories("src/" "../tests/src/" "../vendor" "../vendor/catch/src")
 add_executable(${PROJECT_NAME}-tests ${SOURCES_TESTS})
 add_test(${PROJECT_NAME}-tests ${PROJECT_NAME}-tests)
 find_package(Qt6 COMPONENTS Test REQUIRED)
-target_link_libraries(${PROJECT_NAME}-tests ${QT_LIBRARIES} tests Qt6::Test lib Catch2::Catch2)
+target_link_libraries(${PROJECT_NAME}-tests ${QT_LIBRARIES} tests Qt6::Test lib widgets Catch2::Catch2)
