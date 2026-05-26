@@ -21,7 +21,7 @@ class ConflictWindow : public QDialog
 	Q_DISABLE_COPY_MOVE(ConflictWindow)
 
 	public:
-		explicit ConflictWindow(const Media &media, const QList<std::shared_ptr<Rule>> &rules, QWidget *parent = Q_NULLPTR);
+		explicit ConflictWindow(const Media &media, const QList<std::shared_ptr<Rule>> &rules, QWidget *parent = nullptr);
 		~ConflictWindow();
 		void closeEvent(QCloseEvent *event) override;
 
