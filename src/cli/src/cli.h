@@ -10,7 +10,7 @@
 class Profile;
 
 int runCli(const QStringList &arguments);
-void processFile(const std::shared_ptr<Profile> &profile, const QString &fileName);
-void processDir(const std::shared_ptr<Profile> &profile, const QDir &dir);
+bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName);
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir);
 
 #endif // COMMAND_WINDOW_H

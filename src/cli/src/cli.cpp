@@ -45,7 +45,7 @@ int runCli(const QStringList &arguments)
 		return 1;
 	}
 
-	// Find matching rules of the highest priority
+	bool success = true;
 	for (const QString &filePath : files) {
 		QFileInfo fileInfo(filePath);
 		if (!fileInfo.exists()) {
@@ -54,17 +54,21 @@ int runCli(const QStringList &arguments)
 		}
 
 		if (fileInfo.isDir()) {
-			processDir(profile, QDir(filePath));
+			if (!processDir(profile, QDir(filePath))) {
+				success = false;
+			}
 		} else {
-			processFile(profile, filePath);
+			if (!processFile(profile, filePath)) {
+				success = false;
+			}
 		}
 	}
 
-	return 0;
+	return success ? 0 : 1;
 }
 
 
-void processFile(const std::shared_ptr<Profile> &profile, const QString &fileName)
+bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName)
 {
 	Media media(fileName);
 	QList<std::shared_ptr<Rule>> matches = profile->match(media);
@@ -72,7 +76,7 @@ void processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 	// No matching rule found
 	if (matches.isEmpty()) {
 		stdOut << "No matching rule for " << fileName << ", ignoring" << Qt::endl;
-		return;
+		return false;
 	}
 
 	// Conflicting rules found
@@ -81,7 +85,7 @@ void processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 		for (const std::shared_ptr<Rule> &rule : matches) {
 			stdErr << "- " << rule->name() << Qt::endl;
 		}
-		return;
+		return false;
 	}
 
 	// Execute rule on the file
@@ -89,17 +93,22 @@ void processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 	const bool result = rule->execute(media);
 	if (!result) {
 		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
-		return;
+		return false;
 	}
 
 	stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
+	return true;
 }
 
 
-void processDir(const std::shared_ptr<Profile> &profile, const QDir &dir)
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir)
 {
+	bool success = true;
 	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 	for (const QFileInfo &info : infoList) {
-		processFile(profile, info.absoluteFilePath());
+		if (!processFile(profile, info.absoluteFilePath())) {
+			success = false;
+		}
 	}
+	return success;
 }

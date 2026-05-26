@@ -219,7 +219,7 @@ TEST_CASE("CLI")
 			REQUIRE(process.waitForStarted());
 			REQUIRE(process.waitForFinished());
 
-			REQUIRE(process.exitCode() == 0);
+			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "No matching rule for " + file.fileName() + ", ignoring" + br);
 			REQUIRE(QString(process.readAllStandardError()) == "");
 
@@ -240,7 +240,7 @@ TEST_CASE("CLI")
 			REQUIRE(process.waitForStarted());
 			REQUIRE(process.waitForFinished());
 
-			REQUIRE(process.exitCode() == 0);
+			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "");
 			REQUIRE(QString(process.readAllStandardError()) == "Conflicting rules for " + file.fileName() + ":" + br + "- TXT" + br + "- TEXT" + br);
 
@@ -262,7 +262,7 @@ TEST_CASE("CLI")
 			REQUIRE(process.waitForStarted());
 			REQUIRE(process.waitForFinished());
 
-			REQUIRE(process.exitCode() == 0);
+			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "");
 			REQUIRE(QString(process.readAllStandardError()) == "Error executing rule JPG on file " + file.fileName() + br);
 
