@@ -5,6 +5,8 @@
 #if defined(Q_OS_WINDOWS)
 	#include <windows.h>
 #else
+	#include <cerrno>
+	#include <cstring>
 	#include <unistd.h>
 #endif
 
@@ -43,6 +45,10 @@ bool HardLinkAction::execute(Media &media) const
 		}
 		return ok;
 	#else
-		return link(media.path().toStdString().c_str(), dest.toStdString().c_str()) == 0;
+		const int result = link(media.path().toStdString().c_str(), dest.toStdString().c_str());
+		if (result != 0) {
+			qCritical() << "Error creating hard link:" << strerror(errno);
+		}
+		return result == 0;
 	#endif
 }
