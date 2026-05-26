@@ -21,7 +21,7 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 
 	loadPaths(paths);
 
-	for (int i = 0; i < m_files.count(); ++i) {
+	for (int i = 0; i < m_files.size(); ++i) {
 		Media media(m_files[i]);
 		QList<std::shared_ptr<Rule>> rules = profile->match(media);
 
@@ -32,7 +32,7 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 		}
 
 		// If there's only one match, we can directly apply it
-		if (rules.count() == 1) {
+		if (rules.size() == 1) {
 			m_results.append({ m_files[i], rules.first() });
 			continue;
 		}
@@ -46,8 +46,8 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 	}
 
 	// TODO: migrate to QTableModel
-	ui->resultsTable->setRowCount(m_results.count());
-	for (int i = 0; i < m_results.count(); ++i) {
+	ui->resultsTable->setRowCount(m_results.size());
+	for (int i = 0; i < m_results.size(); ++i) {
 		const auto &result = m_results[i];
 		ui->resultsTable->setItem(i, 0, new QTableWidgetItem(result.first));
 		ui->resultsTable->setItem(i, 1, new QTableWidgetItem(result.second ? result.second->name() : ""));
@@ -64,7 +64,7 @@ void CommandWindow::apply()
 {
 	bool allOk = true;
 
-	for (int i = 0; i < m_results.count(); ++i) {
+	for (int i = 0; i < m_results.size(); ++i) {
 		const auto &result = m_results[i];
 		if (!result.second) {
 			ui->resultsTable->setItem(i, 2, new QTableWidgetItem("Skipped"));

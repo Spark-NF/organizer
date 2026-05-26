@@ -107,7 +107,7 @@ void DropWindow::dropEvent(QDropEvent *event)
 	// Convert urls to files
 	const auto urls = mimeData->urls();
 	QStringList paths;
-	paths.reserve(urls.count());
+	paths.reserve(urls.size());
 	for (const QUrl &url : urls) {
 		paths.append(url.toLocalFile());
 	}

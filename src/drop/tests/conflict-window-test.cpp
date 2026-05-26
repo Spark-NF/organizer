@@ -46,7 +46,7 @@ TEST_CASE("ConflictWindow")
 		waitForWindow<ConflictWindow>([&rules](ConflictWindow *mainWindow) {
 			// There should be only two buttons, one for each action
 			auto buttons = mainWindow->findChildren<QPushButton*>();
-			REQUIRE(buttons.count() == 2);
+			REQUIRE(buttons.size() == 2);
 			REQUIRE(buttons[0]->text().contains(rules[0]->name()));
 			REQUIRE(buttons[1]->text().contains(rules[1]->name()));
 
@@ -60,7 +60,7 @@ TEST_CASE("ConflictWindow")
 		conflictWindow.show();
 		spy.wait();
 
-		REQUIRE(spy.count() == 1);
+		REQUIRE(spy.size() == 1);
 		REQUIRE(spy[0][0].value<std::shared_ptr<Rule>>() == rules[1]);
 		REQUIRE(!conflictWindow.isVisible());
 	}

@@ -59,7 +59,7 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
-			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules().size() == 1);
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 	}
@@ -72,7 +72,7 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
-			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules().size() == 1);
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
@@ -86,7 +86,7 @@ TEST_CASE("ProfileLoader")
 			std::shared_ptr<Profile> profile = ProfileLoader::load(arrayOfArrayProfile);
 			REQUIRE(profile != nullptr);
 
-			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules().size() == 1);
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
@@ -107,7 +107,7 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
-			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules().size() == 1);
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
@@ -135,7 +135,7 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile != nullptr);
 
 			REQUIRE(profile->name() == "Test profile");
-			REQUIRE(profile->rules().count() == 1);
+			REQUIRE(profile->rules().size() == 1);
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 	}

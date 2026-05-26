@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	MainWindow mainWindow;
 
 	QStringList arguments = app.arguments();
-	if (arguments.count() > 1) {
+	if (arguments.size() > 1) {
 		mainWindow.openDirectory(arguments[1]);
 	}
 

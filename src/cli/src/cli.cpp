@@ -76,7 +76,7 @@ void processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 	}
 
 	// Conflicting rules found
-	if (matches.count() > 1) {
+	if (matches.size() > 1) {
 		stdErr << "Conflicting rules for " << fileName << ":" << Qt::endl;
 		for (const std::shared_ptr<Rule> &rule : matches) {
 			stdErr << "- " << rule->name() << Qt::endl;

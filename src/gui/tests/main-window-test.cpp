@@ -34,7 +34,7 @@ TEST_CASE("Main window")
 					waitForWindow<MainWindow>([](MainWindow *mainWindow) {
 						// There should be only two buttons: "Previous" and "Next"
 						auto buttons = mainWindow->findChildren<QPushButton*>();
-						REQUIRE(buttons.count() == 2);
+						REQUIRE(buttons.size() == 2);
 						REQUIRE(buttons[0]->text() == "Previous");
 						REQUIRE(buttons[1]->text() == "Next");
 
@@ -83,7 +83,7 @@ TEST_CASE("Main window")
 			openAndWaitForWindow<MainWindow>([](MainWindow *mainWindow) {
 				// There should be only two buttons: "Previous" and "Next"
 				auto buttons = mainWindow->findChildren<QPushButton*>();
-				REQUIRE(buttons.count() == 4);
+				REQUIRE(buttons.size() == 4);
 				REQUIRE(buttons[2]->text().contains("Before"));
 				REQUIRE(buttons[3]->text().contains("After"));
 
@@ -126,7 +126,7 @@ TEST_CASE("Main window")
 					QAction *aboutMenu = getMenuAction(mainWindow, {"Help", "View on Github"});
 					aboutMenu->trigger();
 
-					REQUIRE(handler.urls.count() == 1);
+					REQUIRE(handler.urls.size() == 1);
 					REQUIRE(handler.urls[0].toString() == "https://github.com/Spark-NF/organizer");
 
 					mainWindow->close();
@@ -142,7 +142,7 @@ TEST_CASE("Main window")
 					QAction *aboutMenu = getMenuAction(mainWindow, {"Help", "Report an issue"});
 					aboutMenu->trigger();
 
-					REQUIRE(handler.urls.count() == 1);
+					REQUIRE(handler.urls.size() == 1);
 					REQUIRE(handler.urls[0].toString() == "https://github.com/Spark-NF/organizer/issues/new");
 
 					mainWindow->close();

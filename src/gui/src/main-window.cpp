@@ -124,7 +124,7 @@ void MainWindow::openDirectory(QString path)
 
 void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 {
-	if (m_currentFile < 0 || m_currentFile >= m_files.count())
+	if (m_currentFile < 0 || m_currentFile >= m_files.size())
 		return;
 
 	bool fullPreview = beforeAction();
@@ -180,7 +180,7 @@ void MainWindow::previousFile()
 		return;
 
 	ui->playerWidget->stop();
-	m_currentFile = (m_currentFile - 1 + m_files.count()) % m_files.count();
+	m_currentFile = (m_currentFile - 1 + m_files.size()) % m_files.size();
 	previewFile();
 }
 
@@ -190,7 +190,7 @@ void MainWindow::nextFile()
 		return;
 
 	ui->playerWidget->stop();
-	m_currentFile = (m_currentFile + 1) % m_files.count();
+	m_currentFile = (m_currentFile + 1) % m_files.size();
 	previewFile();
 }
 
@@ -213,7 +213,7 @@ void MainWindow::loadFiles(const QDir &dir)
 
 void MainWindow::previewFile()
 {
-	if (m_currentFile < 0 || m_currentFile >= m_files.count())
+	if (m_currentFile < 0 || m_currentFile >= m_files.size())
 		return;
 
 	const QString fileName = m_files[m_currentFile];
@@ -227,7 +227,7 @@ void MainWindow::refreshPreview()
 	const QString fileName = fileInfo.fileName();
 	const QString directory = fileInfo.dir().absolutePath();
 
-	setWindowTitle(QString("%1 - %2 / %3 - %4").arg(fileName).arg(m_currentFile + 1).arg(m_files.count()).arg(directory));
+	setWindowTitle(QString("%1 - %2 / %3 - %4").arg(fileName).arg(m_currentFile + 1).arg(m_files.size()).arg(directory));
 }
 
 void MainWindow::fileOpenDirectory()

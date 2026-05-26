@@ -29,7 +29,7 @@ void PlayerWidget::load(const QString &file)
 {
 	const QString ext = QFileInfo(file).suffix().toLower();
 
-	for (int i = 0; i < m_players.count(); ++i) {
+	for (int i = 0; i < m_players.size(); ++i) {
 		Player *player = m_players[i];
 		if (!player->supports(file)) {
 			continue;

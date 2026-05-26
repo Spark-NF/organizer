@@ -34,7 +34,7 @@ TEST_CASE("RuleLoader")
 
 		REQUIRE(rule->name() == "Test rule");
 		REQUIRE(rule->shortcut() == QKeySequence("A"));
-		REQUIRE(rule->conditions().count() == 1);
-		REQUIRE(rule->actions().count() == 1);
+		REQUIRE(rule->conditions().size() == 1);
+		REQUIRE(rule->actions().size() == 1);
 	}
 }
