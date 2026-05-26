@@ -34,5 +34,5 @@ std::shared_ptr<Rule> RuleLoader::load(const QJsonObject &obj)
 		return nullptr;
 	}
 
-	return std::make_shared<Rule>(name, shortcut, final, priority, conditions, actions);
+	return std::make_shared<Rule>(name, shortcut, final, priority, std::move(conditions), std::move(actions));
 }

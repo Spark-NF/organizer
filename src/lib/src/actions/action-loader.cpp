@@ -83,7 +83,7 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 				actions.append(action);
 		}
 
-		return std::make_shared<MultipleAction>(actions);
+		return std::make_shared<MultipleAction>(std::move(actions));
 	}
 
 	qWarning() << "Unknown action type" << type;

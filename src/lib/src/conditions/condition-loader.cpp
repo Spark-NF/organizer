@@ -38,7 +38,7 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 		for (const auto &cond : obj["and"].toArray())
 			if (auto comparator = loadComparator(cond.toObject()))
 				comparators.append(std::move(comparator));
-		return std::make_shared<AndComparator>(comparators);
+		return std::make_shared<AndComparator>(std::move(comparators));
 	}
 
 	if (obj.contains("glob")) {
@@ -50,7 +50,7 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 		for (const auto &cond : obj["or"].toArray())
 			if (auto comparator = loadComparator(cond.toObject()))
 				comparators.append(std::move(comparator));
-		return std::make_shared<OrComparator>(comparators);
+		return std::make_shared<OrComparator>(std::move(comparators));
 	}
 
 	if (obj.contains("regex")) {
