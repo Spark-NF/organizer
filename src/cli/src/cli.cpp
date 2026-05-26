@@ -23,7 +23,7 @@ int runCli(const QStringList &arguments)
 	QCommandLineOption helpOption({ "h", "help" }, "Displays help on commandline options.");
 	parser.addOption(helpOption);
 	parser.addVersionOption();
-	QCommandLineOption profileOption({ "p", "profile" }, "The rule profile file to use.", "profile");
+	QCommandLineOption profileOption({ "p", "profile" }, "The rule profile file to use (required).", "profile");
 	parser.addOption(profileOption);
 
 	// Positional arguments
@@ -37,6 +37,12 @@ int runCli(const QStringList &arguments)
 	if (parser.isSet(helpOption) || files.isEmpty()) {
 		parser.showHelp(0);
 		return 0;
+	}
+
+	if (!parser.isSet(profileOption)) {
+		stdErr << "Missing required option: --profile" << Qt::endl;
+		parser.showHelp(1);
+		return 1;
 	}
 
 	std::shared_ptr<Profile> profile = ProfileLoader::loadFile(profilePath);
