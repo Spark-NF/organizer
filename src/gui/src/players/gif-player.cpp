@@ -42,6 +42,7 @@ bool GifPlayer::supports(const QString &file)
 
 void GifPlayer::load(const QString &file)
 {
+	unload();
 	m_movie = new QMovie(file);
 
 	// Treat single-frame GIF files as images
