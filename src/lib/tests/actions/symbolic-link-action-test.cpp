@@ -5,9 +5,30 @@
 #include "actions/symbolic-link-action.h"
 #include "media.h"
 
+#if defined(Q_OS_WINDOWS)
+	#include <QDir>
+	#include <windows.h>
+#endif
+
 
 TEST_CASE("SymbolicLinkAction")
 {
+	#if defined(Q_OS_WINDOWS)
+		// Probe whether symbolic link creation is allowed (requires Developer Mode or admin)
+		const QString probeLink = QDir::temp().absoluteFilePath("symlink_probe_test");
+		QFile::remove(probeLink);
+		const bool probeOk = CreateSymbolicLinkW(
+			probeLink.toStdWString().c_str(),
+			probeLink.toStdWString().c_str(),
+			SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE
+		);
+		const DWORD probeError = GetLastError();
+		QFile::remove(probeLink);
+		if (!probeOk && probeError == ERROR_PRIVILEGE_NOT_HELD) {
+			SKIP("SymbolicLinkAction requires Developer Mode to be enabled or running as administrator");
+		}
+	#endif
+
 	QTemporaryFile file;
 	file.open();
 	file.close();

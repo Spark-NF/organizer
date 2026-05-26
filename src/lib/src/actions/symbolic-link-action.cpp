@@ -37,7 +37,12 @@ bool SymbolicLinkAction::execute(Media &media) const
 	#if defined(Q_OS_WINDOWS)
 		const bool ok = CreateSymbolicLinkW(dest.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
 		if (!ok) {
-			qCritical() << "Error creating symbolic link" << GetLastError();
+			const DWORD err = GetLastError();
+			if (err == ERROR_PRIVILEGE_NOT_HELD) {
+				qCritical() << "Error creating symbolic link: Developer Mode must be enabled or run as administrator";
+			} else {
+				qCritical() << "Error creating symbolic link" << err;
+			}
 		}
 		return ok;
 	#else
