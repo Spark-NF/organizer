@@ -15,21 +15,23 @@ HardLinkAction::HardLinkAction(QString name, bool overwrite)
 
 bool HardLinkAction::execute(Media &media) const
 {
+	const QString dest = media.fileInfo().dir().absoluteFilePath(m_name);
+
 	// Delete the destination if "overwrite" is enabled and the destination already exists
-	if (QFile::exists(m_name)) {
+	if (QFile::exists(dest)) {
 		if (!m_overwrite) {
 			return false;
 		}
-		QFile::remove(m_name);
+		QFile::remove(dest);
 	}
 
 	#if defined(Q_OS_WINDOWS)
-		const bool ok = CreateHardLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), NULL);
+		const bool ok = CreateHardLinkW(dest.toStdWString().c_str(), media.path().toStdWString().c_str(), NULL);
 		if (!ok) {
 			qCritical() << "Error creating hard link" << GetLastError();
 		}
 		return ok;
 	#else
-		return link(media.path().toStdString().c_str(), m_name.toStdString().c_str()) == 0;
+		return link(media.path().toStdString().c_str(), dest.toStdString().c_str()) == 0;
 	#endif
 }

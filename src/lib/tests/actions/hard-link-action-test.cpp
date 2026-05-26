@@ -1,4 +1,5 @@
 #include <QFile>
+#include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <catch.h>
 #include "actions/hard-link-action.h"
@@ -35,6 +36,22 @@ TEST_CASE("HardLinkAction")
 
 		REQUIRE(QFile::exists(targetFile));
 		REQUIRE(QFile::remove(targetFile));
+	}
+
+	SECTION("Relative path")
+	{
+		QTemporaryDir tmpDir;
+		QDir dir(tmpDir.path());
+		dir.mkdir("test_dir/");
+		QFile file(dir.absoluteFilePath("test_dir/hardlink_test.bin"));
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		HardLinkAction action("../hardlink_target.bin", false);
+		REQUIRE(action.execute(media) == true);
+
+		REQUIRE(QFile::remove(media.path()));
 	}
 
 	SECTION("Already exists")

@@ -13,21 +13,23 @@ SymbolicLinkAction::SymbolicLinkAction(QString name, bool overwrite)
 
 bool SymbolicLinkAction::execute(Media &media) const
 {
+	const QString dest = media.fileInfo().dir().absoluteFilePath(m_name);
+
 	// Delete the destination if "overwrite" is enabled and the destination already exists
-	if (QFile::exists(m_name)) {
+	if (QFile::exists(dest)) {
 		if (!m_overwrite) {
 			return false;
 		}
-		QFile::remove(m_name);
+		QFile::remove(dest);
 	}
 
 	#if defined(Q_OS_WINDOWS)
-		const bool ok = CreateSymbolicLinkW(m_name.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
+		const bool ok = CreateSymbolicLinkW(dest.toStdWString().c_str(), media.path().toStdWString().c_str(), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
 		if (!ok) {
 			qCritical() << "Error creating symbolic link" << GetLastError();
 		}
 		return ok;
 	#else
-		return QFile::link(media.path(), m_name);
+		return QFile::link(media.path(), dest);
 	#endif
 }
