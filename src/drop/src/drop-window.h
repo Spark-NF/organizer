@@ -21,6 +21,7 @@ class QSettings;
 class DropWindow : public QDialog
 {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(DropWindow)
 
 	public:
 		explicit DropWindow(QWidget *parent = nullptr);

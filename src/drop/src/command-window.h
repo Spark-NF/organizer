@@ -16,6 +16,7 @@ class Rule;
 class CommandWindow : public QDialog
 {
 	Q_OBJECT
+	Q_DISABLE_COPY_MOVE(CommandWindow)
 
 	public:
 		CommandWindow(std::shared_ptr<Profile> profile, const QStringList &paths, QWidget *parent = nullptr);
