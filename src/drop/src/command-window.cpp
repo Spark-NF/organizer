@@ -28,20 +28,20 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 
 		// Skip file if there are no rule matching it
 		if (rules.isEmpty()) {
-			m_results.append({ m_files[i], nullptr });
+			m_results.append({ media, nullptr });
 			continue;
 		}
 
 		// If there's only one match, we can directly apply it
 		if (rules.size() == 1) {
-			m_results.append({ m_files[i], rules.first() });
+			m_results.append({ media, rules.first() });
 			continue;
 		}
 
 		// If there are multiple rules to apply, we prompt the user to choose one
 		ConflictWindow conflictWindow(media, rules, this);
-		connect(&conflictWindow, &ConflictWindow::choseRule, [=](const std::shared_ptr<Rule> &rule) {
-			m_results.append({ m_files[i], rule });
+		connect(&conflictWindow, &ConflictWindow::choseRule, [this, media](const std::shared_ptr<Rule> &rule) {
+			m_results.append({ media, rule });
 		});
 		conflictWindow.exec();
 	}
@@ -50,7 +50,7 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 	ui->resultsTable->setRowCount(m_results.size());
 	for (int i = 0; i < m_results.size(); ++i) {
 		const auto &result = m_results[i];
-		ui->resultsTable->setItem(i, 0, new QTableWidgetItem(result.first));
+		ui->resultsTable->setItem(i, 0, new QTableWidgetItem(result.first.path()));
 		ui->resultsTable->setItem(i, 1, new QTableWidgetItem(result.second ? result.second->name() : ""));
 	}
 }
@@ -72,7 +72,7 @@ void CommandWindow::apply()
 			continue;
 		}
 
-		Media media(result.first);
+		Media media = result.first;
 		RealFilesystem fs;
 		const bool ok = result.second->execute(media, fs);
 		if (!ok) {

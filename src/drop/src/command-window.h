@@ -2,6 +2,7 @@
 #define COMMAND_WINDOW_H
 
 #include <QDialog>
+#include "media.h"
 
 
 namespace Ui
@@ -33,7 +34,7 @@ class CommandWindow : public QDialog
 		Ui::CommandWindow *ui;
 		std::shared_ptr<Profile> m_profile;
 		QStringList m_files;
-		QList<std::pair<QString, std::shared_ptr<Rule>>> m_results;
+		QList<std::pair<Media, std::shared_ptr<Rule>>> m_results;
 };
 
 
