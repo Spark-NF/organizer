@@ -1,4 +1,5 @@
 #include <QFileInfo>
+#include <QTemporaryDir>
 #include <catch.h>
 #include "actions/move-action.h"
 #include "actions/multiple-action.h"
@@ -51,7 +52,26 @@ TEST_CASE("MultipleAction")
 			std::make_shared<MoveAction>("unknown_dir/", false, false),
 		});
 		REQUIRE(action.execute(media, fs) == false);
-		REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
+		REQUIRE(QFileInfo(media.path()).fileName() == "file.bin");
 		REQUIRE(QFile::remove(media.path()));
+	}
+
+	SECTION("Leave file unchanged if later action fails")
+	{
+		QTemporaryDir temporaryDir;
+		QDir dir(temporaryDir.path());
+
+		QFile file("file.bin");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		MultipleAction action({
+			std::make_shared<MoveAction>(dir.absolutePath(), false, false),
+			std::make_shared<MoveAction>(dir.absoluteFilePath("nonexistent/"), false, false),
+		});
+		REQUIRE(action.execute(media, fs) == false);
+		REQUIRE(QFile::exists("file.bin"));
+		REQUIRE(QFile::remove("file.bin"));
 	}
 }
