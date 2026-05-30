@@ -18,10 +18,9 @@ bool OrComparator::accepts(QMetaType type) const
 
 bool OrComparator::match(const QVariant &data) const
 {
-	for (const auto &comparator : m_comparators) {
-		if (comparator->match(data)) {
-			return true;
-		}
-	}
-	return false;
+	return std::any_of(
+		m_comparators.begin(),
+		m_comparators.end(),
+		[&data](const auto &cmp) { return cmp->match(data); }
+	);
 }

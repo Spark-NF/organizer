@@ -16,11 +16,10 @@ bool GlobComparator::accepts(QMetaType type) const
 
 bool GlobComparator::match(const QVariant &data) const
 {
-	const QString &str = data.toString();
-	for (const auto &pattern : m_patterns) {
-		if (pattern.match(str).hasMatch()) {
-			return true;
-		}
-	}
-	return false;
+	const QString str = data.toString();
+	return std::any_of(
+		m_patterns.begin(),
+		m_patterns.end(),
+		[&str](const auto &pattern) { return pattern.match(str).hasMatch(); }
+	);
 }
