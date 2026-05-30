@@ -39,11 +39,13 @@ CommandWindow::CommandWindow(std::shared_ptr<Profile> profile, const QStringList
 		}
 
 		// If there are multiple rules to apply, we prompt the user to choose one
+		std::shared_ptr<Rule> chosenRule;
 		ConflictWindow conflictWindow(media, rules, this);
-		connect(&conflictWindow, &ConflictWindow::choseRule, [this, media](const std::shared_ptr<Rule> &rule) {
-			m_results.append({ media, rule });
+		connect(&conflictWindow, &ConflictWindow::choseRule, [&chosenRule](const std::shared_ptr<Rule> &rule) {
+			chosenRule = rule;
 		});
 		conflictWindow.exec();
+		m_results.append({ media, chosenRule });
 	}
 
 	// TODO: migrate to QTableModel
