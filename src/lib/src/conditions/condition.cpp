@@ -2,6 +2,7 @@
 #include "comparators/comparator.h"
 #include "loaders/loader.h"
 #include "media.h"
+#include <QDebug>
 #include <QVariant>
 #include <utility>
 
@@ -13,6 +14,10 @@ Condition::Condition(QString key, std::shared_ptr<Loader> loader, std::shared_pt
 bool Condition::match(Media &media) const
 {
 	const QVariant data = getOrLoad(media);
+	if (!m_comparator->accepts(data.metaType())) {
+		qWarning() << "Incompatible types for condition" << m_key;
+		return false;
+	}
 	return m_comparator->match(data);
 }
 

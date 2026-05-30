@@ -7,6 +7,12 @@ RangeComparator::RangeComparator(QVariant min, QVariant max)
 	: m_min(std::move(min)), m_max(std::move(max))
 {}
 
+bool RangeComparator::accepts(QMetaType type) const
+{
+	return type == QMetaType::fromType<QDateTime>()
+		|| QMetaType::canConvert(type, QMetaType::fromType<double>());
+}
+
 bool RangeComparator::match(const QVariant &data) const
 {
 	if (data.typeId() == QMetaType::QDateTime)

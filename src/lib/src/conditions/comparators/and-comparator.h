@@ -11,6 +11,7 @@ class AndComparator : public Comparator
 	public:
 		explicit AndComparator(QList<std::shared_ptr<Comparator>> comparators);
 		bool match(const QVariant &data) const override;
+		bool accepts(QMetaType type) const override;
 
 	private:
 		QList<std::shared_ptr<Comparator>> m_comparators;

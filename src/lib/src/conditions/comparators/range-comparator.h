@@ -10,6 +10,7 @@ class RangeComparator : public Comparator
 	public:
 		explicit RangeComparator(QVariant min, QVariant max);
 		bool match(const QVariant &data) const override;
+		bool accepts(QMetaType type) const override;
 
 	private:
 		QVariant m_min;

@@ -10,6 +10,7 @@ class RegexComparator : public Comparator
 	public:
 		explicit RegexComparator(const QString &regex);
 		bool match(const QVariant &data) const override;
+		bool accepts(QMetaType type) const override;
 
 	private:
 		QRegularExpression m_regex;

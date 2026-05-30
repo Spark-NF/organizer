@@ -9,6 +9,11 @@ GlobComparator::GlobComparator(const QString &pattern)
 	}
 }
 
+bool GlobComparator::accepts(QMetaType type) const
+{
+	return type == QMetaType::fromType<QString>();
+}
+
 bool GlobComparator::match(const QVariant &data) const
 {
 	const QString &str = data.toString();

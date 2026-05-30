@@ -11,6 +11,7 @@ class GlobComparator : public Comparator
 	public:
 		explicit GlobComparator(const QString &pattern);
 		bool match(const QVariant &data) const override;
+		bool accepts(QMetaType type) const override;
 
 	private:
 		QList<QRegularExpression> m_patterns;
