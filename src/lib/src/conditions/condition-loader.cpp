@@ -10,6 +10,7 @@
 #include "comparators/regex-comparator.h"
 #include "loaders/created-loader.h"
 #include "loaders/directory-loader.h"
+#include "loaders/extension-loader.h"
 #include "loaders/filename-loader.h"
 #include "loaders/filesize-loader.h"
 #include "loaders/last-modified-loader.h"
@@ -20,7 +21,7 @@ std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj)
 {
 	const QString data = obj["data"].toString();
 
-	const auto &loader = loadLoader(data);
+	const auto &loader = loadLoader(data, obj);
 	if (loader == nullptr)
 		return nullptr;
 
@@ -71,16 +72,18 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 	return nullptr;
 }
 
-std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key)
+std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key, const QJsonObject &obj)
 {
+	if (key == "created")
+		return std::make_shared<CreatedLoader>();
 	if (key == "directory")
 		return std::make_shared<DirectoryLoader>();
+	if (key == "extension")
+		return std::make_shared<ExtensionLoader>(obj["complete"].toBool(false));
 	if (key == "filename")
 		return std::make_shared<FilenameLoader>();
 	if (key == "filesize")
 		return std::make_shared<FilesizeLoader>();
-	if (key == "created")
-		return std::make_shared<CreatedLoader>();
 	if (key == "last_modified")
 		return std::make_shared<LastModifiedLoader>();
 	if (key == "path")
