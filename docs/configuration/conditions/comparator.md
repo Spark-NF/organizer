@@ -31,6 +31,17 @@ Example:
 }
 ```
 
+### Not
+
+Will match if the wrapped comparator does not match.
+
+Example:
+```json5
+{
+    "not": {"glob": "*.tmp"}
+}
+```
+
 ### Or
 
 Will match if one of the comparators contained match. Comparators are evaluated in order.
