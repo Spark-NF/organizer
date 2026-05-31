@@ -12,6 +12,7 @@ class IFilesystem
 		virtual bool exists(const QString &path) const = 0;
 		virtual bool mkpath(const QString &path) = 0;
 		virtual bool remove(const QString &path) = 0;
+		virtual bool copy(const QString &from, const QString &to) = 0;
 		virtual bool move(const QString &from, const QString &to) = 0;
 		virtual bool trash(const QString &path, QString &newPath) = 0;
 		virtual bool hardLink(const QString &from, const QString &to) = 0;

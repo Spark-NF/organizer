@@ -3,6 +3,7 @@
 #include <QJsonDocument>
 #include <QSet>
 #include <QtGlobal>
+#include "actions/copy-action.h"
 #include "actions/delete-action.h"
 #include "actions/hard-link-action.h"
 #include "actions/move-action.h"
@@ -25,6 +26,13 @@ static QStringList jsonArrayToStringList(const QJsonArray &array)
 std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 {
 	const QString type = obj["type"].toString();
+
+	if (type == "copy") {
+		const QString destination = obj["dest"].toString();
+		const bool create = obj["create"].toBool(true);
+		const bool overwrite = obj["overwrite"].toBool(false);
+		return std::make_shared<CopyAction>(destination, create, overwrite);
+	}
 
 	if (type == "rename") {
 		const QString regexp = obj["from"].toString();

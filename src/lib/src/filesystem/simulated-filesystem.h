@@ -12,6 +12,7 @@ class SimulatedFilesystem : public IFilesystem
 		bool exists(const QString &path) const override;
 		bool mkpath(const QString &path) override;
 		bool remove(const QString &path) override;
+		bool copy(const QString &from, const QString &to) override;
 		bool move(const QString &from, const QString &to) override;
 		bool trash(const QString &path, QString &newPath) override;
 		bool hardLink(const QString &from, const QString &to) override;

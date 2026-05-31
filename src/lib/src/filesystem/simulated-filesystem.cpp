@@ -25,6 +25,14 @@ bool SimulatedFilesystem::remove(const QString &path)
 	return true;
 }
 
+bool SimulatedFilesystem::copy(const QString &from, const QString &to)
+{
+	if (!exists(from)) return false;
+	m_created.insert(to);
+	m_log.append(QString("Copy '%1' to '%2'").arg(from, to));
+	return true;
+}
+
 bool SimulatedFilesystem::move(const QString &from, const QString &to)
 {
 	if (!exists(from)) return false;

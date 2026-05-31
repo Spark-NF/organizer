@@ -31,6 +31,16 @@ bool RealFilesystem::remove(const QString &path)
 	return true;
 }
 
+bool RealFilesystem::copy(const QString &from, const QString &to)
+{
+	QFile file(from);
+	if (!file.copy(to)) {
+		m_errorString = file.errorString();
+		return false;
+	}
+	return true;
+}
+
 bool RealFilesystem::move(const QString &from, const QString &to)
 {
 	QFile file(from);
