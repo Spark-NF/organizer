@@ -5,6 +5,7 @@
 #include "condition.h"
 #include "comparators/and-comparator.h"
 #include "comparators/glob-comparator.h"
+#include "comparators/in-comparator.h"
 #include "comparators/not-comparator.h"
 #include "comparators/or-comparator.h"
 #include "comparators/range-comparator.h"
@@ -46,6 +47,13 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 
 	if (obj.contains("glob")) {
 		return std::make_shared<GlobComparator>(obj["glob"].toString());
+	}
+
+	if (obj.contains("in")) {
+		QStringList values;
+		for (const auto &val : obj["in"].toArray())
+			values.append(val.toString());
+		return std::make_shared<InComparator>(std::move(values));
 	}
 
 	if (obj.contains("not")) {

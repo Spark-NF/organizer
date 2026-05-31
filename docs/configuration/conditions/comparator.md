@@ -31,6 +31,27 @@ Example:
 }
 ```
 
+### In
+
+Will match if the data is one of the values in the list. Comparison is case-insensitive by default.
+
+Supports both string and numeric values.
+
+Example:
+```json5
+{
+    "in": ["jpg", "jpeg", "png"]
+}
+```
+
+With case-sensitive matching:
+```json5
+{
+    "in": ["image/jpeg", "image/png"],
+    "case_sensitive": true
+}
+```
+
 ### Not
 
 Will match if the wrapped comparator does not match.
