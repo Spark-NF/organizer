@@ -12,6 +12,7 @@
 #include "comparators/regex-comparator.h"
 #include "loaders/created-loader.h"
 #include "loaders/directory-loader.h"
+#include "loaders/directory-name-loader.h"
 #include "loaders/extension-loader.h"
 #include "loaders/filename-loader.h"
 #include "loaders/filesize-loader.h"
@@ -95,6 +96,8 @@ std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key, const QJ
 		return std::make_shared<CreatedLoader>();
 	if (key == "directory")
 		return std::make_shared<DirectoryLoader>();
+	if (key == "directory_name")
+		return std::make_shared<DirectoryNameLoader>();
 	if (key == "extension")
 		return std::make_shared<ExtensionLoader>(obj["complete"].toBool(false));
 	if (key == "filename")

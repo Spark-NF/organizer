@@ -8,6 +8,7 @@ A loader is a string that tells the condition what data to use.
 
 * `created`: the creation time of the file
 * `directory`: the canonical absolute path of the directory containing the file
+* `directory_name`: the name of the directory containing the file (last path component only)
 * `extension`: the file extension, without the leading dot (e.g. `gz`)
 * `filename`: the filename including extension
 * `filesize`: the size of the file on disk, in bytes
