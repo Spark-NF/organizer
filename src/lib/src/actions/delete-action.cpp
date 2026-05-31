@@ -7,11 +7,11 @@ DeleteAction::DeleteAction()
 	: Action()
 {}
 
-bool DeleteAction::execute(Media &media, IFilesystem &fs) const
+bool DeleteAction::execute(Media &media, IFilesystem &fs, QString *error) const
 {
 	const bool ok = fs.remove(media.path());
-	if (!ok) {
-		qCritical() << "Error deleting file" << media.path() << fs.errorString();
+	if (!ok && error) {
+		*error = "Could not delete file: " + fs.errorString();
 	}
 	return ok;
 }

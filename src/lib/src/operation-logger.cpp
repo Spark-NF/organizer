@@ -30,12 +30,12 @@ void OperationLogger::logSkipped(const QString &source)
 	appendEntry(source, QString(), "skipped", QString());
 }
 
-void OperationLogger::logExecuted(const QString &source, const QString &ruleName, bool ok, const QString &destination)
+void OperationLogger::logExecuted(const QString &source, const QString &ruleName, bool ok, const QString &destination, const QString &error)
 {
-	appendEntry(source, ruleName, ok ? "ok" : "error", ok ? destination : QString());
+	appendEntry(source, ruleName, ok ? "ok" : "error", ok ? destination : QString(), ok ? QString() : error);
 }
 
-void OperationLogger::appendEntry(const QString &source, const QString &ruleName, const QString &result, const QString &destination)
+void OperationLogger::appendEntry(const QString &source, const QString &ruleName, const QString &result, const QString &destination, const QString &error)
 {
 	if (!m_stream.device())
 		return;
@@ -46,6 +46,7 @@ void OperationLogger::appendEntry(const QString &source, const QString &ruleName
 		<< "\t" << source
 		<< "\t" << ruleName
 		<< "\t" << destination
+		<< "\t" << error
 		<< "\n";
 	m_stream.flush();
 }

@@ -80,12 +80,13 @@ void CommandWindow::apply()
 
 		Media media = result.first;
 		RealFilesystem fs;
-		const bool ok = result.second->execute(media, fs);
-		OperationLogger::instance().logExecuted(source, result.second->name(), ok, media.path());
+		QString actionError;
+		const bool ok = result.second->execute(media, fs, &actionError);
+		OperationLogger::instance().logExecuted(source, result.second->name(), ok, media.path(), actionError);
 		if (!ok) {
-			QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
+			QMessageBox::critical(this, tr("Error"), tr("Error executing action: %1").arg(actionError));
 			allOk = false;
-			ui->resultsTable->setItem(i, 2, new QTableWidgetItem("Error"));
+			ui->resultsTable->setItem(i, 2, new QTableWidgetItem(actionError));
 		} else {
 			ui->resultsTable->setItem(i, 2, new QTableWidgetItem(media.path()));
 		}

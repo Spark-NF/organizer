@@ -10,11 +10,11 @@
 
 static constexpr int SUPPORTED_VERSION = 1;
 
-std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file)
+std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file, QString *error)
 {
 	QFile f(file);
 	if (!f.open(QFile::ReadOnly)) {
-		qCritical() << "Could not open profile file" << file;
+		if (error) *error = "Could not open profile file: " + file;
 		return nullptr;
 	}
 
@@ -23,18 +23,18 @@ std::shared_ptr<Profile> ProfileLoader::loadFile(const QString &file)
 
 	QJsonDocument loadDoc = QJsonDocument::fromJson(dta);
 	if (loadDoc.isNull()) {
-		qCritical() << "Invalid profile file";
+		if (error) *error = "Invalid profile file";
 		return nullptr;
 	}
 
-	return load(loadDoc.object());
+	return load(loadDoc.object(), error);
 }
 
-std::shared_ptr<Profile> ProfileLoader::load(const QJsonObject &obj)
+std::shared_ptr<Profile> ProfileLoader::load(const QJsonObject &obj, QString *error)
 {
 	const int version = obj["version"].toInt(1);
 	if (version != SUPPORTED_VERSION) {
-		qCritical() << "Unsupported profile version" << version;
+		if (error) *error = QString("Unsupported profile version: %1").arg(version);
 		return nullptr;
 	}
 

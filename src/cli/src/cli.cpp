@@ -53,9 +53,10 @@ int runCli(const QStringList &arguments)
 		return 1;
 	}
 
-	std::shared_ptr<Profile> profile = ProfileLoader::loadFile(profilePath);
+	QString profileError;
+	std::shared_ptr<Profile> profile = ProfileLoader::loadFile(profilePath, &profileError);
 	if (profile == nullptr) {
-		stdErr << "Error loading profile file " << profilePath << Qt::endl;
+		stdErr << "Error loading profile file " << profilePath << ": " << profileError << Qt::endl;
 		return 1;
 	}
 
@@ -117,9 +118,10 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 
 	if (dryRun) {
 		auto &simFs = static_cast<SimulatedFilesystem&>(fs);
-		const bool result = rule->execute(media, simFs);
+		QString dryRunError;
+		const bool result = rule->execute(media, simFs, &dryRunError);
 		if (!result) {
-			stdErr << "[dry-run] Rule " << rule->name() << " would fail on file " << fileName << Qt::endl;
+			stdErr << "[dry-run] Rule " << rule->name() << " would fail on file " << fileName << ": " << dryRunError << Qt::endl;
 		} else {
 			stdOut << "[dry-run] Would run rule " << rule->name() << " on file " << fileName << Qt::endl;
 			for (const QString &entry : simFs.log()) {
@@ -130,13 +132,14 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 		return result;
 	}
 
-	const bool result = rule->execute(media, fs);
+	QString executeError;
+	const bool result = rule->execute(media, fs, &executeError);
 	if (!result) {
-		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << Qt::endl;
+		stdErr << "Error executing rule " << rule->name() << " on file " << fileName << ": " << executeError << Qt::endl;
 	} else {
 		stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
 	}
-	OperationLogger::instance().logExecuted(fileName, rule->name(), result, media.path());
+	OperationLogger::instance().logExecuted(fileName, rule->name(), result, media.path(), executeError);
 	return result;
 }
 

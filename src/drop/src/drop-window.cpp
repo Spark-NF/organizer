@@ -4,6 +4,7 @@
 #include <QDropEvent>
 #include <QFileDialog>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QSettings>
@@ -40,7 +41,11 @@ DropWindow::DropWindow(QWidget *parent)
 
 	const QString actionsFile = m_settings->value("LastActionsFile", "actions.json").toString();
 	if (QFile::exists(actionsFile)) {
-		m_profile = ProfileLoader::loadFile(actionsFile);
+		QString profileError;
+		m_profile = ProfileLoader::loadFile(actionsFile, &profileError);
+		if (!m_profile) {
+			qWarning() << "Error loading profile:" << profileError;
+		}
 	}
 }
 
@@ -141,5 +146,9 @@ void DropWindow::chooseProfile()
 		return;
 
 	m_settings->setValue("LastActionsFile", path);
-	m_profile = ProfileLoader::loadFile(path);
+	QString profileError;
+	m_profile = ProfileLoader::loadFile(path, &profileError);
+	if (!m_profile) {
+		QMessageBox::critical(this, tr("Error"), tr("Error loading profile: %1").arg(profileError));
+	}
 }

@@ -15,10 +15,10 @@ class OperationLogger
 		static QString defaultPath();
 
 		void logSkipped(const QString &source);
-		void logExecuted(const QString &source, const QString &ruleName, bool ok, const QString &destination);
+		void logExecuted(const QString &source, const QString &ruleName, bool ok, const QString &destination, const QString &error = QString());
 
 	protected:
-		void appendEntry(const QString &source, const QString &ruleName, const QString &result, const QString &destination);
+		void appendEntry(const QString &source, const QString &ruleName, const QString &result, const QString &destination, const QString &error = QString());
 
 	private:
 		QFile m_file;

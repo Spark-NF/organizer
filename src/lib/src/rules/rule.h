@@ -25,7 +25,7 @@ class Rule
 		const QList<std::shared_ptr<Action>> &actions() const;
 
 		bool match(Media &media) const;
-		bool execute(Media &media, IFilesystem &fs) const;
+		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const;
 
 	private:
 		QString m_name;

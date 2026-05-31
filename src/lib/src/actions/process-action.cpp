@@ -11,7 +11,7 @@ ProcessAction::ProcessAction(QString command, QStringList args, int timeout)
 	: Action(), m_command(std::move(command)), m_args(std::move(args)), m_timeout(timeout)
 {}
 
-bool ProcessAction::execute(Media &media, IFilesystem &fs) const
+bool ProcessAction::execute(Media &media, IFilesystem &fs, QString *error) const
 {
 	Q_UNUSED(fs)
 
@@ -33,7 +33,13 @@ bool ProcessAction::execute(Media &media, IFilesystem &fs) const
 	process.start(m_command, args);
 	if (!process.waitForFinished(m_timeout)) {
 		process.kill();
+		if (error) *error = "Process timed out";
 		return false;
 	}
-	return process.exitCode() == 0;
+	const int exitCode = process.exitCode();
+	const bool ok = exitCode == 0;
+	if (!ok && error) {
+		*error = QString("Process exited with code %1").arg(exitCode);
+	}
+	return ok;
 }

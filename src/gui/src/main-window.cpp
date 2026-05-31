@@ -93,7 +93,12 @@ void MainWindow::generateButtons(QString file)
 {
 	clearLayout(ui->layoutActions);
 
-	m_profile = ProfileLoader::loadFile(file);
+	QString profileError;
+	m_profile = ProfileLoader::loadFile(file, &profileError);
+	if (!m_profile) {
+		QMessageBox::critical(this, tr("Error"), tr("Error loading profile: %1").arg(profileError));
+		return;
+	}
 
 	for (const auto &rules : m_profile->rules()) {
 		auto layout = new QVBoxLayout();
@@ -133,8 +138,9 @@ void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 
 	Media media(m_files[m_currentFile]);
 	RealFilesystem fs;
-	const bool ok = rule->execute(media, fs);
-	OperationLogger::instance().logExecuted(m_files[m_currentFile], rule->name(), ok, media.path());
+	QString actionError;
+	const bool ok = rule->execute(media, fs, &actionError);
+	OperationLogger::instance().logExecuted(m_files[m_currentFile], rule->name(), ok, media.path(), actionError);
 	if (ok) {
 		m_lastActions.append(std::pair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = media.path();
@@ -144,7 +150,7 @@ void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 			return;
 		}
 	} else {
-		QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
+		QMessageBox::critical(this, tr("Error"), tr("Error executing action: %1").arg(actionError));
 	}
 
 	afterAction(fullPreview);

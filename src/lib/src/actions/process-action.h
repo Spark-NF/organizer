@@ -10,7 +10,7 @@ class ProcessAction : public Action
 {
 	public:
 		explicit ProcessAction(QString command, QStringList args, int timeout);
-		bool execute(Media &media, IFilesystem &fs) const override;
+		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
 
 	private:
 		QString m_command;

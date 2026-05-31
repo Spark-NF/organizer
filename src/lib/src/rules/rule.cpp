@@ -50,11 +50,11 @@ bool Rule::match(Media &media) const
 	);
 }
 
-bool Rule::execute(Media &media, IFilesystem &fs) const
+bool Rule::execute(Media &media, IFilesystem &fs, QString *error) const
 {
 	return std::all_of(
 		m_actions.begin(),
 		m_actions.end(),
-		[&media, &fs](const auto &action) { return action->execute(media, fs); }
+		[&media, &fs, error](const auto &action) { return action->execute(media, fs, error); }
 	);
 }
