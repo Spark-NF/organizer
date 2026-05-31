@@ -8,6 +8,7 @@
 #include "filesystem/real-filesystem.h"
 #include "filesystem/simulated-filesystem.h"
 #include "media.h"
+#include "operation-logger.h"
 #include "profile-loader.h"
 #include "profile.h"
 #include "rules/rule.h"
@@ -96,6 +97,9 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 	// No matching rule found
 	if (matches.isEmpty()) {
 		stdOut << "No matching rule for " << fileName << ", ignoring" << Qt::endl;
+		if (!dryRun) {
+			OperationLogger::instance().logSkipped(fileName);
+		}
 		return false;
 	}
 
@@ -132,6 +136,7 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 	} else {
 		stdOut << "Ran rule " << rule->name() << " on file " << fileName << Qt::endl;
 	}
+	OperationLogger::instance().logExecuted(fileName, rule->name(), result, media.path());
 	return result;
 }
 

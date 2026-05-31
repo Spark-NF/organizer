@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include "filesystem/real-filesystem.h"
 #include "media.h"
+#include "operation-logger.h"
 #include "profile.h"
 #include "rules/rule.h"
 #include "conflict-window.h"
@@ -69,14 +70,18 @@ void CommandWindow::apply()
 
 	for (int i = 0; i < m_results.size(); ++i) {
 		const auto &result = m_results[i];
+		const QString source = result.first.path();
+
 		if (!result.second) {
 			ui->resultsTable->setItem(i, 2, new QTableWidgetItem("Skipped"));
+			OperationLogger::instance().logSkipped(source);
 			continue;
 		}
 
 		Media media = result.first;
 		RealFilesystem fs;
 		const bool ok = result.second->execute(media, fs);
+		OperationLogger::instance().logExecuted(source, result.second->name(), ok, media.path());
 		if (!ok) {
 			QMessageBox::critical(this, tr("Error"), tr("Error executing action"));
 			allOk = false;

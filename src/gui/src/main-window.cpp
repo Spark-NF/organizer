@@ -15,6 +15,7 @@
 #include <algorithm>
 #include "filesystem/real-filesystem.h"
 #include "media.h"
+#include "operation-logger.h"
 #include "players/gif-player.h"
 #include "players/image-player.h"
 #include "players/player.h"
@@ -132,7 +133,9 @@ void MainWindow::executeAction(const std::shared_ptr<Rule> &rule)
 
 	Media media(m_files[m_currentFile]);
 	RealFilesystem fs;
-	if (rule->execute(media, fs)) {
+	const bool ok = rule->execute(media, fs);
+	OperationLogger::instance().logExecuted(m_files[m_currentFile], rule->name(), ok, media.path());
+	if (ok) {
 		m_lastActions.append(std::pair<int, QString>(m_currentFile, m_files[m_currentFile]));
 		m_files[m_currentFile] = media.path();
 
