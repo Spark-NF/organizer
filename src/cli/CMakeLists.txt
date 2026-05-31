@@ -1,8 +1,8 @@
 project(cli)
 
 # Qt libraries
-find_package(Qt6 COMPONENTS Core Network REQUIRED)
-set(QT_LIBRARIES Qt6::Core Qt6::Network)
+find_package(Qt6 COMPONENTS Core REQUIRED)
+set(QT_LIBRARIES Qt6::Core)
 
 # Input
 file(GLOB_RECURSE SOURCES "src/*.cpp")
