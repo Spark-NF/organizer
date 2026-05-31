@@ -14,10 +14,11 @@
 #include "loaders/directory-loader.h"
 #include "loaders/extension-loader.h"
 #include "loaders/filename-loader.h"
-#include "loaders/mime-type-loader.h"
 #include "loaders/filesize-loader.h"
 #include "loaders/last-modified-loader.h"
+#include "loaders/mime-type-loader.h"
 #include "loaders/path-loader.h"
+#include "loaders/stem-loader.h"
 
 
 std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj)
@@ -106,6 +107,8 @@ std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key, const QJ
 		return std::make_shared<LastModifiedLoader>();
 	if (key == "path")
 		return std::make_shared<PathLoader>();
+	if (key == "stem")
+		return std::make_shared<StemLoader>(obj["base"].toBool(false));
 
 	qWarning() << "Unknown data type" << key;
 	return nullptr;
