@@ -2,7 +2,7 @@
 
 
 Media::Media(const QString &path)
-	: m_path(path), m_fileInfo(path)
+	: m_path(QFileInfo(path).absoluteFilePath()), m_fileInfo(m_path)
 {}
 
 Media::Media(const QFile &file)
@@ -21,8 +21,8 @@ const QString &Media::path() const
 
 void Media::setPath(const QString &path)
 {
-	m_path = path;
-	m_fileInfo.setFile(path);
+	m_path = QFileInfo(path).absoluteFilePath();
+	m_fileInfo.setFile(m_path);
 }
 
 const QFileInfo &Media::fileInfo() const
