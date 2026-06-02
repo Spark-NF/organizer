@@ -17,6 +17,32 @@ A loader is a string that identifies what data to extract from a file. It is use
 * `path`: the canonical absolute path of the file
 * `stem`: the filename without its last extension (e.g. `archive.tar` from `archive.tar.gz`)
 
+## Template filters
+
+When used as `{key}` placeholders in action parameters, a pipe-separated filter chain can be appended to transform the value before substitution.
+
+A few examples:
+
+* `{extension|upper}`: "JPG"
+* `{stem|lower}`: "photo"
+* `{stem|trim}`: strips leading/trailing whitespace
+* `{created|year}/{created|month}`: "2024/06"
+* `{stem|trim|upper}`: filters are applied left to right
+
+### String filters
+
+* `upper`: convert to uppercase
+* `lower`: convert to lowercase
+* `trim`: strip leading and trailing whitespace
+
+### Date filters
+
+* `year`: four-digit year (e.g. `2024`)
+* `month`: zero-padded month (e.g. `06`)
+* `day`: zero-padded day of month (e.g. `03`)
+* `hour`: zero-padded hour, 24-hour clock (e.g. `14`)
+* `minute`: zero-padded minute (e.g. `05`)
+
 ## Options
 
 ### extension

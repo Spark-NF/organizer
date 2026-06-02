@@ -44,6 +44,17 @@ TEST_CASE("ActionLoader")
 		REQUIRE(action == nullptr);
 	}
 
+	SECTION("Unknown filter")
+	{
+		QJsonObject data {
+			{ "type", "move" },
+			{ "dest", "{extension|invalid_filter}/dir/" },
+		};
+
+		std::shared_ptr<Action> action = ActionLoader::load(data);
+		REQUIRE(action == nullptr);
+	}
+
 	SECTION("Valid")
 	{
 		SECTION("Rename action")

@@ -28,10 +28,18 @@ Relative destination:
 }
 ```
 
-Template destination (sorts files into subdirectories by extension):
+Template destination (sorts files by year and month of creation):
 ```json
 {
     "type": "move",
-    "dest": "D:\\Photos\\{extension}"
+    "dest": "D:\\Photos\\{created|year}\\{created|month}"
+}
+```
+
+Filters can also transform string values (see [Loader](../conditions/loader.md#template-filters)):
+```json
+{
+    "type": "move",
+    "dest": "D:\\Photos\\{extension|upper}"
 }
 ```

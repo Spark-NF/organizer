@@ -23,6 +23,10 @@ static bool hasUnknownKey(const TemplateString &tmpl)
 			return true;
 		}
 	}
+	if (tmpl.hasUnknownFilters()) {
+		qWarning() << "Unknown filter in template:" << tmpl.pattern();
+		return true;
+	}
 	return false;
 }
 

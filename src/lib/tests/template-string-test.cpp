@@ -1,4 +1,5 @@
 #include <catch.h>
+#include <QDateTime>
 #include "template-string.h"
 
 
@@ -54,6 +55,46 @@ TEST_CASE("TemplateString")
 		SECTION("Static string")
 		{
 			REQUIRE(TemplateString("Photos/2023").requiredKeys().isEmpty());
+		}
+	}
+
+	SECTION("Filters")
+	{
+		SECTION("Upper")
+		{
+			REQUIRE(TemplateString("{extension|upper}").resolve({{"extension", "jpg"}}) == QString("JPG"));
+		}
+
+		SECTION("Lower")
+		{
+			REQUIRE(TemplateString("{stem|lower}").resolve({{"stem", "PHOTO"}}) == QString("photo"));
+		}
+
+		SECTION("Trim")
+		{
+			REQUIRE(TemplateString("{stem|trim}").resolve({{"stem", "  photo  "}}) == QString("photo"));
+		}
+
+		SECTION("Chained filters")
+		{
+			REQUIRE(TemplateString("{stem|trim|upper}").resolve({{"stem", "  photo  "}}) == QString("PHOTO"));
+		}
+
+		SECTION("hasUnknownFilters")
+		{
+			REQUIRE(TemplateString("{stem|upper|trim}/{extension|lower}").hasUnknownFilters() == false);
+			REQUIRE(TemplateString("{stem|unknown_filter}").hasUnknownFilters() == true);
+		}
+
+		SECTION("Date component filters")
+		{
+			const QDateTime dt(QDate(2024, 6, 3), QTime(10, 5, 0));
+			const QVariantMap data{{"date", QVariant(dt)}};
+			REQUIRE(TemplateString("{date|year}").resolve(data) == QString("2024"));
+			REQUIRE(TemplateString("{date|month}").resolve(data) == QString("06"));
+			REQUIRE(TemplateString("{date|day}").resolve(data) == QString("03"));
+			REQUIRE(TemplateString("{date|hour}").resolve(data) == QString("10"));
+			REQUIRE(TemplateString("{date|minute}").resolve(data) == QString("05"));
 		}
 	}
 }

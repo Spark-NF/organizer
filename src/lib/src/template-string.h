@@ -14,6 +14,7 @@ struct Placeholder
 	int end;
 	QString key;
 	QStringList fields;
+	QList<QString> filters;
 };
 
 
@@ -25,6 +26,11 @@ class TemplateString
 
 		QString resolve(const QVariantMap &data, QString *error = nullptr) const;
 		QList<std::pair<QString, QStringList>> requiredKeys() const;
+		bool hasUnknownFilters() const;
+		QString pattern() const;
+
+	protected:
+		static QVariant applyFilter(const QVariant &value, const QString &filter);
 
 	private:
 		QString m_template;
