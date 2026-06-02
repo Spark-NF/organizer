@@ -7,7 +7,6 @@
 
 class Comparator;
 class Condition;
-class Loader;
 
 class ConditionLoader
 {
@@ -16,7 +15,6 @@ class ConditionLoader
 
 	private:
 		static std::shared_ptr<Comparator> loadComparator(const QJsonObject &obj);
-		static std::shared_ptr<Loader> loadLoader(const QString &key, const QJsonObject &obj);
 };
 
 #endif // CONDITION_LOADER_H

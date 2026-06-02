@@ -10,23 +10,14 @@
 #include "comparators/or-comparator.h"
 #include "comparators/range-comparator.h"
 #include "comparators/regex-comparator.h"
-#include "loaders/created-loader.h"
-#include "loaders/directory-loader.h"
-#include "loaders/directory-name-loader.h"
-#include "loaders/extension-loader.h"
-#include "loaders/filename-loader.h"
-#include "loaders/filesize-loader.h"
-#include "loaders/last-modified-loader.h"
-#include "loaders/mime-type-loader.h"
-#include "loaders/path-loader.h"
-#include "loaders/stem-loader.h"
+#include "loader-loader.h"
 
 
 std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj)
 {
 	const QString data = obj["data"].toString();
 
-	const auto &loader = loadLoader(data, obj);
+	const auto &loader = LoaderLoader::load(data, obj);
 	if (loader == nullptr)
 		return nullptr;
 
@@ -87,32 +78,5 @@ std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &o
 	}
 
 	qWarning() << "No comparator found" << obj.keys();
-	return nullptr;
-}
-
-std::shared_ptr<Loader> ConditionLoader::loadLoader(const QString &key, const QJsonObject &obj)
-{
-	if (key == "created")
-		return std::make_shared<CreatedLoader>();
-	if (key == "directory")
-		return std::make_shared<DirectoryLoader>();
-	if (key == "directory_name")
-		return std::make_shared<DirectoryNameLoader>();
-	if (key == "extension")
-		return std::make_shared<ExtensionLoader>(obj["complete"].toBool(false));
-	if (key == "filename")
-		return std::make_shared<FilenameLoader>();
-	if (key == "mime_type")
-		return std::make_shared<MimeTypeLoader>();
-	if (key == "filesize")
-		return std::make_shared<FilesizeLoader>();
-	if (key == "last_modified")
-		return std::make_shared<LastModifiedLoader>();
-	if (key == "path")
-		return std::make_shared<PathLoader>();
-	if (key == "stem")
-		return std::make_shared<StemLoader>(obj["base"].toBool(false));
-
-	qWarning() << "Unknown data type" << key;
 	return nullptr;
 }

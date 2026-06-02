@@ -1,7 +1,5 @@
 #include "action-loader.h"
 #include <QJsonArray>
-#include <QJsonDocument>
-#include <QSet>
 #include <QtGlobal>
 #include "actions/copy-action.h"
 #include "actions/delete-action.h"
