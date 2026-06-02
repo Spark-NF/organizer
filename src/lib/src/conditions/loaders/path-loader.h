@@ -7,7 +7,7 @@
 class PathLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // PATH_LOADER_H

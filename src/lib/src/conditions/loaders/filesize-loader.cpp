@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant FilesizeLoader::load(Media &media) const
+QVariant FilesizeLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().size();
 }

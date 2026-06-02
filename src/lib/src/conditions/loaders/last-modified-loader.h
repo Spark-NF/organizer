@@ -7,7 +7,7 @@
 class LastModifiedLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // LAST_MODIFIED_LOADER_H

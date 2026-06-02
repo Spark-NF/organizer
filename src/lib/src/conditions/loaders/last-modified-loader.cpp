@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant LastModifiedLoader::load(Media &media) const
+QVariant LastModifiedLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().lastModified();
 }

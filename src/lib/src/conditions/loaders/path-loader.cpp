@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant PathLoader::load(Media &media) const
+QVariant PathLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().canonicalPath();
 }

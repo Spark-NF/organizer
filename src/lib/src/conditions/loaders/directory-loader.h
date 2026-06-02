@@ -7,7 +7,7 @@
 class DirectoryLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // DIRECTORY_LOADER_H

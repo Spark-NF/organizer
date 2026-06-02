@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant CreatedLoader::load(Media &media) const
+QVariant CreatedLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().birthTime();
 }

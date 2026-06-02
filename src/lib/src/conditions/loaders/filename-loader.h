@@ -7,7 +7,7 @@
 class FilenameLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // FILENAME_LOADER_H

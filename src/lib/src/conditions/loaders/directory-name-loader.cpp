@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant DirectoryNameLoader::load(Media &media) const
+QVariant DirectoryNameLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().dir().dirName();
 }

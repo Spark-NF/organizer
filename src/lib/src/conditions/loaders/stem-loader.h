@@ -8,7 +8,7 @@ class StemLoader : public Loader
 {
 	public:
 		explicit StemLoader(bool base = false);
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 
 	private:
 		bool m_base;

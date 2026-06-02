@@ -4,7 +4,7 @@
 #include "media.h"
 
 
-QVariant DirectoryLoader::load(Media &media) const
+QVariant DirectoryLoader::load(Media &media, const QStringList &fields) const
 {
 	return media.fileInfo().absoluteDir().canonicalPath();
 }

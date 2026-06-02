@@ -7,7 +7,7 @@ ExtensionLoader::ExtensionLoader(bool complete)
 	: m_complete(complete)
 {}
 
-QVariant ExtensionLoader::load(Media &media) const
+QVariant ExtensionLoader::load(Media &media, const QStringList &fields) const
 {
 	return m_complete
 		? media.fileInfo().completeSuffix()

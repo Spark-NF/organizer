@@ -7,7 +7,7 @@
 class CreatedLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // CREATED_LOADER_H

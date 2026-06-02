@@ -7,7 +7,7 @@
 class FilesizeLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // FILESIZE_LOADER_H

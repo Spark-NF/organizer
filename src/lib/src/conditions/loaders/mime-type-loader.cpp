@@ -3,7 +3,7 @@
 #include "media.h"
 
 
-QVariant MimeTypeLoader::load(Media &media) const
+QVariant MimeTypeLoader::load(Media &media, const QStringList &fields) const
 {
 	return QMimeDatabase().mimeTypeForFile(media.path(), QMimeDatabase::MatchDefault).name();
 }

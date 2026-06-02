@@ -7,7 +7,7 @@
 class MimeTypeLoader : public Loader
 {
 	public:
-		QVariant load(Media &media) const override;
+		QVariant load(Media &media, const QStringList &fields = {}) const override;
 };
 
 #endif // MIME_TYPE_LOADER_H

@@ -7,7 +7,7 @@ StemLoader::StemLoader(bool base)
 	: m_base(base)
 {}
 
-QVariant StemLoader::load(Media &media) const
+QVariant StemLoader::load(Media &media, const QStringList &fields) const
 {
 	return m_base
 		? media.fileInfo().baseName()
