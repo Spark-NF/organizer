@@ -9,7 +9,7 @@ Create a Windows shortcut (LNK file) to the file.
 
 ## Options
 
-* **dest**: where to create the shortcut (the ".lnk" will automatically be added if not already present)
+* **dest**: where to create the shortcut (the ".lnk" will automatically be added if not already present). Supports `{key}` placeholders (see [Loader](../conditions/loader.md)) resolved at execution time.
 * **overwrite**: set to true to will overwrite any already existing shortcut file (default: `false`)
 
 

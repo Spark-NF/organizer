@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A loader is a string that tells the condition what data to use.
+A loader is a string that identifies what data to extract from a file. It is used in conditions to specify what to compare against, and in action parameters as `{key}` placeholders for template substitution (e.g. `"dest": "D:\\Photos\\{extension}"`).
 
 ## Possible values
 
