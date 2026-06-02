@@ -129,7 +129,7 @@ TEST_CASE("CLI")
 
 			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "");
-			REQUIRE(QString(process.readAllStandardError()) == "Could not open profile file \"file_does_not_exists\"" + br + "Error loading profile file file_does_not_exists" + br);
+			REQUIRE(QString(process.readAllStandardError()) == "Error loading profile file file_does_not_exists: Could not open profile file: file_does_not_exists" + br);
 		}
 
 		SECTION("Invalid profile file")
@@ -146,7 +146,7 @@ TEST_CASE("CLI")
 
 			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "");
-			REQUIRE(QString(process.readAllStandardError()) == "Invalid profile file" + br + "Error loading profile file " + invalidProfileFile.fileName() + br);
+			REQUIRE(QString(process.readAllStandardError()) == "Error loading profile file " + invalidProfileFile.fileName() + ": Invalid profile file" + br);
 		}
 
 		SECTION("Input file not found")
@@ -264,7 +264,7 @@ TEST_CASE("CLI")
 
 			REQUIRE(process.exitCode() == 1);
 			REQUIRE(QString(process.readAllStandardOutput()) == "");
-			REQUIRE(QString(process.readAllStandardError()) == "Error executing rule JPG on file " + file.fileName() + br);
+			REQUIRE(QString(process.readAllStandardError()) == "Error executing rule JPG on file " + file.fileName() + ": Destination already exists: " + dir.filePath("jpg_c.jpg") + br);
 
 			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
 			REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
@@ -344,7 +344,7 @@ TEST_CASE("CLI")
 
 					REQUIRE(process.exitCode() == 1);
 					REQUIRE(QString(process.readAllStandardOutput()) == "");
-					REQUIRE(QString(process.readAllStandardError()) == "[dry-run] Rule JPG would fail on file " + file.fileName() + br);
+					REQUIRE(QString(process.readAllStandardError()) == "[dry-run] Rule JPG would fail on file " + file.fileName() + ": Destination already exists: " + dir.filePath("jpg_c.jpg") + br);
 
 					// Files must be unchanged on disk
 					const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
