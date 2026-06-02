@@ -84,4 +84,33 @@ TEST_CASE("CopyAction")
 			REQUIRE(QFile::remove(dir.absoluteFilePath("file.bin")));
 		}
 	}
+
+	SECTION("Template destination")
+	{
+		CopyAction action(TemplateString(dir.absolutePath() + "/{extension}"), true, false);
+
+		QFile file("photo.jpg");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		SECTION("Valid")
+		{
+			media.data()["extension"] = "jpg";
+
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(media.path() == QFileInfo(file).absoluteFilePath());
+			REQUIRE(file.exists());
+			REQUIRE(QFile::remove(file.fileName()));
+			REQUIRE(QFile::remove(dir.absoluteFilePath("jpg/photo.jpg")));
+		}
+
+		SECTION("Missing data")
+		{
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(!error.isEmpty());
+			REQUIRE(file.remove());
+		}
+	}
 }

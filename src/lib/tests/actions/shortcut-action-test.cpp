@@ -57,4 +57,19 @@ TEST_CASE("ShortcutAction")
 			REQUIRE(action.execute(media, fs) == false);
 		}
 	#endif
+
+	SECTION("Missing template data")
+	{
+		ShortcutAction action("{invalid_key}/link", false);
+
+		QFile file("photo.jpg");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		QString error;
+		REQUIRE(action.execute(media, fs, &error) == false);
+		REQUIRE(!error.isEmpty());
+		REQUIRE(file.remove());
+	}
 }

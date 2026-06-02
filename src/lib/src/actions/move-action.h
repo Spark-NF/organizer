@@ -2,17 +2,18 @@
 #define MOVE_ACTION_H
 
 #include "action.h"
-#include <QDir>
+#include "template-string.h"
 
 
 class MoveAction : public Action
 {
 	public:
-		explicit MoveAction(const QString &destination, bool create, bool overwrite);
+		explicit MoveAction(const TemplateString &destination, bool create, bool overwrite);
 		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
+		QList<std::pair<QString, QStringList>> requiredKeys() const override;
 
 	private:
-		QString m_destination;
+		TemplateString m_destination;
 		bool m_create;
 		bool m_overwrite;
 };

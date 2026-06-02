@@ -1,17 +1,23 @@
 #include "copy-action.h"
 #include <QDir>
-#include <utility>
 #include "filesystem/filesystem.h"
 #include "media.h"
 
 
-CopyAction::CopyAction(const QString &destination, bool create, bool overwrite)
+CopyAction::CopyAction(const TemplateString &destination, bool create, bool overwrite)
 	: Action(), m_destination(destination), m_create(create), m_overwrite(overwrite)
 {}
 
 bool CopyAction::execute(Media &media, IFilesystem &fs, QString *error) const
 {
-	const QString destination = media.fileInfo().dir().absoluteFilePath(m_destination);
+	QString templateError;
+	const QString destTemplate = m_destination.resolve(media.data(), &templateError);
+	if (!templateError.isEmpty()) {
+		if (error) *error = templateError;
+		return false;
+	}
+
+	const QString destination = media.fileInfo().dir().absoluteFilePath(destTemplate);
 
 	// Create the destination directory if necessary
 	if (!fs.exists(destination)) {
@@ -44,4 +50,9 @@ bool CopyAction::execute(Media &media, IFilesystem &fs, QString *error) const
 		*error = "Could not copy file: " + fs.errorString();
 	}
 	return ok;
+}
+
+QList<std::pair<QString, QStringList>> CopyAction::requiredKeys() const
+{
+	return m_destination.requiredKeys();
 }

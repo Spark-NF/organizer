@@ -100,4 +100,31 @@ TEST_CASE("MoveAction")
 			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absolutePath());
 		}
 	}
+
+	SECTION("Template destination")
+	{
+		MoveAction action(TemplateString(dir.absolutePath() + "/{extension}"), true, false);
+
+		QFile file("photo.jpg");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		SECTION("Valid")
+		{
+			media.data()["extension"] = "jpg";
+
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == dir.absoluteFilePath("jpg"));
+			REQUIRE(QFile::remove(media.path()));
+		}
+
+		SECTION("Missing data")
+		{
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(!error.isEmpty());
+			REQUIRE(file.remove());
+		}
+	}
 }

@@ -106,4 +106,39 @@ TEST_CASE("HardLinkAction")
 			REQUIRE(dir.exists() == true);
 		}
 	}
+
+	SECTION("Template destination")
+	{
+		SECTION("Valid")
+		{
+			QTemporaryDir tmpDir;
+			QDir dir(tmpDir.path());
+			const QString linkTarget = QDir::temp().absoluteFilePath("hardlink_template_link.jpg");
+
+			HardLinkAction action(TemplateString(QDir::temp().absolutePath() + "/hardlink_template_{extension}.jpg"), false, false);
+
+			QTemporaryFile srcFile;
+			srcFile.open();
+			srcFile.close();
+			Media media(srcFile);
+			media.data()["extension"] = "jpg";
+
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(QFile::remove(QDir::temp().absoluteFilePath("hardlink_template_jpg.jpg")));
+		}
+
+		SECTION("Missing data")
+		{
+			HardLinkAction action("Photos/{extension}/link.jpg", true, false);
+
+			QTemporaryFile srcFile;
+			srcFile.open();
+			srcFile.close();
+			Media media(srcFile);
+
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(!error.isEmpty());
+		}
+	}
 }

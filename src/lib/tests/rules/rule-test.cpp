@@ -1,4 +1,5 @@
 #include <QFileInfo>
+#include <QTemporaryDir>
 #include <catch.h>
 #include "actions/move-action.h"
 #include "actions/rename-action.h"
@@ -110,6 +111,26 @@ TEST_CASE("Rule")
 
 			REQUIRE(failingRule.execute(media, fs) == false);
 			REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
+			REQUIRE(QFile::remove(media.path()));
+		}
+
+		SECTION("Fill data for template actions")
+		{
+			QTemporaryDir tmpDir;
+			QDir tmpDirObj(tmpDir.path());
+
+			const QList<std::shared_ptr<Action>> templateActions {
+				std::make_shared<MoveAction>(tmpDir.path() + "/{extension}", true, false),
+			};
+			Rule templateRule("Template rule", {}, false, 0, {}, templateActions);
+
+			QFile file("photo.jpg");
+			file.open(QFile::WriteOnly);
+			file.close();
+			Media media(file);
+
+			REQUIRE(templateRule.execute(media, fs) == true);
+			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == tmpDirObj.absoluteFilePath("jpg"));
 			REQUIRE(QFile::remove(media.path()));
 		}
 	}

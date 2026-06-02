@@ -11,7 +11,20 @@
 #include "actions/shortcut-action.h"
 #include "actions/symbolic-link-action.h"
 #include "actions/trash-action.h"
+#include "loader-loader.h"
+#include "template-string.h"
 
+
+static bool hasUnknownKey(const TemplateString &tmpl)
+{
+	for (const auto &[key, fields] : tmpl.requiredKeys()) {
+		if (!LoaderLoader::isValid(key)) {
+			qWarning() << "Unknown loader key:" << key;
+			return true;
+		}
+	}
+	return false;
+}
 
 static QStringList jsonArrayToStringList(const QJsonArray &array)
 {
@@ -26,7 +39,8 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 	const QString type = obj["type"].toString();
 
 	if (type == "copy") {
-		const QString destination = obj["dest"].toString();
+		const TemplateString destination(obj["dest"].toString());
+		if (hasUnknownKey(destination)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<CopyAction>(destination, create, overwrite);
@@ -34,34 +48,39 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 
 	if (type == "rename") {
 		const QString regexp = obj["from"].toString();
-		const QString replace = obj["to"].toString();
+		const TemplateString replace(obj["to"].toString());
+		if (hasUnknownKey(replace)) return nullptr;
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<RenameAction>(QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move") {
-		const QString destination = obj["dest"].toString();
+		const TemplateString destination(obj["dest"].toString());
+		if (hasUnknownKey(destination)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<MoveAction>(destination, create, overwrite);
 	}
 
 	if (type == "hardlink") {
-		const QString dest = obj["dest"].toString();
+		const TemplateString dest(obj["dest"].toString());
+		if (hasUnknownKey(dest)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<HardLinkAction>(dest, create, overwrite);
 	}
 
 	if (type == "symlink") {
-		const QString dest = obj["dest"].toString();
+		const TemplateString dest(obj["dest"].toString());
+		if (hasUnknownKey(dest)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<SymbolicLinkAction>(dest, create, overwrite);
 	}
 
 	if (type == "shortcut") {
-		const QString dest = obj["dest"].toString();
+		const TemplateString dest(obj["dest"].toString());
+		if (hasUnknownKey(dest)) return nullptr;
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<ShortcutAction>(dest, overwrite);
 	}

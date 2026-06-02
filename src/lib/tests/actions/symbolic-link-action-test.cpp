@@ -113,4 +113,40 @@ TEST_CASE("SymbolicLinkAction")
 			REQUIRE(dir.exists() == true);
 		}
 	}
+
+	SECTION("Template destination")
+	{
+		SECTION("Valid")
+		{
+			QTemporaryDir tmpDir;
+			QDir dir(tmpDir.path());
+
+			SymbolicLinkAction action(TemplateString(dir.absolutePath() + "/{extension}/link.jpg"), true, false);
+
+			QFile file("photo.jpg");
+			file.open(QFile::WriteOnly);
+			file.close();
+			Media media(file);
+			media.data()["extension"] = "jpg";
+
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(QFile::remove(dir.absoluteFilePath("jpg/link.jpg")));
+			REQUIRE(file.remove());
+		}
+
+		SECTION("Missing data")
+		{
+			SymbolicLinkAction action("Photos/{extension}/link.jpg", true, false);
+
+			QFile file("photo.jpg");
+			file.open(QFile::WriteOnly);
+			file.close();
+			Media media(file);
+
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(!error.isEmpty());
+			REQUIRE(file.remove());
+		}
+	}
 }

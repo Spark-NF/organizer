@@ -1,20 +1,27 @@
 #include "rename-action.h"
 #include <QDir>
 #include <QFileInfo>
-#include <utility>
 #include "filesystem/filesystem.h"
 #include "media.h"
 
 
-RenameAction::RenameAction(const QRegularExpression &regexp, QString replace, bool overwrite)
-	: Action(), m_regexp(regexp), m_replace(std::move(replace)), m_overwrite(overwrite)
+RenameAction::RenameAction(const QRegularExpression &regexp, const TemplateString &replace, bool overwrite)
+	: Action(), m_regexp(regexp), m_replace(replace), m_overwrite(overwrite)
 {}
 
 bool RenameAction::execute(Media &media, IFilesystem &fs, QString *error) const
 {
 	const QFileInfo &info = media.fileInfo();
 	const QString original = info.fileName();
-	const QString newName = QString(original).replace(m_regexp, m_replace);
+
+	QString templateError;
+	const QString replacePattern = m_replace.resolve(media.data(), &templateError);
+	if (!templateError.isEmpty()) {
+		if (error) *error = templateError;
+		return false;
+	}
+
+	const QString newName = QString(original).replace(m_regexp, replacePattern);
 	if (newName == original) {
 		return true;
 	}
@@ -46,4 +53,9 @@ bool RenameAction::execute(Media &media, IFilesystem &fs, QString *error) const
 		*error = "Could not rename file: " + fs.errorString();
 	}
 	return ok;
+}
+
+QList<std::pair<QString, QStringList>> RenameAction::requiredKeys() const
+{
+	return m_replace.requiredKeys();
 }

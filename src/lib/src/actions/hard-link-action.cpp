@@ -1,17 +1,23 @@
 #include "hard-link-action.h"
 #include <QFileInfo>
-#include <utility>
 #include "filesystem/filesystem.h"
 #include "media.h"
 
 
-HardLinkAction::HardLinkAction(QString destination, bool create, bool overwrite)
-	: Action(), m_destination(std::move(destination)), m_create(create), m_overwrite(overwrite)
+HardLinkAction::HardLinkAction(const TemplateString &destination, bool create, bool overwrite)
+	: Action(), m_destination(destination), m_create(create), m_overwrite(overwrite)
 {}
 
 bool HardLinkAction::execute(Media &media, IFilesystem &fs, QString *error) const
 {
-	const QString dest = media.fileInfo().dir().absoluteFilePath(m_destination);
+	QString templateError;
+	const QString destTemplate = m_destination.resolve(media.data(), &templateError);
+	if (!templateError.isEmpty()) {
+		if (error) *error = templateError;
+		return false;
+	}
+
+	const QString dest = media.fileInfo().dir().absoluteFilePath(destTemplate);
 	const QString destination = QFileInfo(dest).dir().absolutePath();
 
 	// Create the destination directory if necessary
@@ -43,4 +49,9 @@ bool HardLinkAction::execute(Media &media, IFilesystem &fs, QString *error) cons
 		*error = "Could not create hard link: " + fs.errorString();
 	}
 	return ok;
+}
+
+QList<std::pair<QString, QStringList>> HardLinkAction::requiredKeys() const
+{
+	return m_destination.requiredKeys();
 }

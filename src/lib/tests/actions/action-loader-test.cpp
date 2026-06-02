@@ -17,7 +17,7 @@
 
 TEST_CASE("ActionLoader")
 {
-	SECTION("Invalid")
+	SECTION("Invalid JSON")
 	{
 		std::shared_ptr<Action> action = ActionLoader::load(QJsonObject());
 		REQUIRE(action == nullptr);
@@ -27,6 +27,17 @@ TEST_CASE("ActionLoader")
 	{
 		QJsonObject data {
 			{ "type", "unknown" },
+		};
+
+		std::shared_ptr<Action> action = ActionLoader::load(data);
+		REQUIRE(action == nullptr);
+	}
+
+	SECTION("Unknown loader")
+	{
+		QJsonObject data {
+			{ "type", "move" },
+			{ "dest", "{invalid_key}/dir/" },
 		};
 
 		std::shared_ptr<Action> action = ActionLoader::load(data);

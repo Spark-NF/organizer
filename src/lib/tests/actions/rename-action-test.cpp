@@ -75,4 +75,31 @@ TEST_CASE("RenameAction")
 		REQUIRE(!file.exists());
 		REQUIRE(newFile.remove());
 	}
+
+	SECTION("Template replacement")
+	{
+		RenameAction action(QRegularExpression("photo"), "{extension}", false);
+
+		QFile file("photo.jpg");
+		file.open(QFile::WriteOnly);
+		file.close();
+		Media media(file);
+
+		SECTION("Valid")
+		{
+			media.data()["extension"] = "jpg";
+
+			REQUIRE(action.execute(media, fs) == true);
+			REQUIRE(QFileInfo(media.path()).fileName() == QString("jpg.jpg"));
+			REQUIRE(QFile::remove(media.path()));
+		}
+
+		SECTION("Missing data")
+		{
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(!error.isEmpty());
+			REQUIRE(file.remove());
+		}
+	}
 }

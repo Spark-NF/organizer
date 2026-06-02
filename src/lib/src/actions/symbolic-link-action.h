@@ -2,17 +2,18 @@
 #define SYMBOLIC_LINK_ACTION_H
 
 #include "action.h"
-#include <QString>
+#include "template-string.h"
 
 
 class SymbolicLinkAction : public Action
 {
 	public:
-		explicit SymbolicLinkAction(QString destination, bool create, bool overwrite);
+		explicit SymbolicLinkAction(const TemplateString &destination, bool create, bool overwrite);
 		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
+		QList<std::pair<QString, QStringList>> requiredKeys() const override;
 
 	private:
-		QString m_destination;
+		TemplateString m_destination;
 		bool m_create;
 		bool m_overwrite;
 };

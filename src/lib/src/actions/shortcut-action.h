@@ -2,17 +2,18 @@
 #define SHORTCUT_ACTION_H
 
 #include "action.h"
-#include <QString>
+#include "template-string.h"
 
 
 class ShortcutAction : public Action
 {
 	public:
-		explicit ShortcutAction(QString destination, bool overwrite);
+		explicit ShortcutAction(const TemplateString &destination, bool overwrite);
 		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
+		QList<std::pair<QString, QStringList>> requiredKeys() const override;
 
 	private:
-		QString m_destination;
+		TemplateString m_destination;
 		bool m_overwrite;
 };
 

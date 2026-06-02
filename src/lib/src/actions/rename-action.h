@@ -2,19 +2,20 @@
 #define RENAME_ACTION_H
 
 #include "action.h"
+#include "template-string.h"
 #include <QRegularExpression>
-#include <QString>
 
 
 class RenameAction : public Action
 {
 	public:
-		explicit RenameAction(const QRegularExpression &regexp, QString replace, bool overwrite);
+		explicit RenameAction(const QRegularExpression &regexp, const TemplateString &replace, bool overwrite);
 		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
+		QList<std::pair<QString, QStringList>> requiredKeys() const override;
 
 	private:
 		QRegularExpression m_regexp;
-		QString m_replace;
+		TemplateString m_replace;
 		bool m_overwrite;
 };
 
