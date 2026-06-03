@@ -15,6 +15,7 @@ struct Placeholder
 	QString key;
 	QStringList fields;
 	QList<std::pair<QString, QString>> filters;
+	bool hasDefault = false;
 };
 
 

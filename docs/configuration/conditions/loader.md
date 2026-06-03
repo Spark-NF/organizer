@@ -44,6 +44,16 @@ A few examples:
 * `minute`: zero-padded minute (e.g. `05`)
 * `format:<pattern>`: custom format using [Qt date/time format strings](https://doc.qt.io/qt-6/qdatetime.html#toString) (e.g. `format:yyyy-MM-dd`, `format:MMM yyyy`)
 
+### Fallback filter
+
+`default:<value>` will substitute `<value>` if the key is missing or resolves to an empty string. Filters placed after `default` are applied to the fallback value as well.
+
+A few examples:
+
+* `{unknown_data|default:Unknown}`: "Unknown"
+* `{stem|trim|default:file}`: "file" if the stem is blank after trimming
+* `{unknown_data|default:Unknown|upper}`: "UNKNOWN"
+
 ## Options
 
 ### extension

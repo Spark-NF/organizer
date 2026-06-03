@@ -106,5 +106,25 @@ TEST_CASE("TemplateString")
 			REQUIRE(TemplateString("{date|format:yyyy/MM}").resolve(data) == QString("2024/06"));
 			REQUIRE(TemplateString("{date|format:MMM yyyy}").resolve(data) == QString("Jun 2024"));
 		}
+
+		SECTION("Default")
+		{
+			SECTION("Missing key")
+			{
+				QString error;
+				REQUIRE(TemplateString("{key|default:Unknown}").resolve({}, &error) == QString("Unknown"));
+				REQUIRE(error.isEmpty());
+			}
+
+			SECTION("Empty value after filters")
+			{
+				REQUIRE(TemplateString("{stem|trim|default:file}").resolve({{"stem", "  "}}) == QString("file"));
+			}
+
+			SECTION("Non-empty value")
+			{
+				REQUIRE(TemplateString("{stem|default:file}").resolve({{"stem", "photo"}}) == QString("photo"));
+			}
+		}
 	}
 }

@@ -16,13 +16,16 @@ TemplateString::TemplateString(const QString &tmpl)
 
 		// Build filters
 		QList<std::pair<QString, QString>> filters;
+		bool hasDefault = false;
 		const QStringList filterParts = match.captured(2).split('|', Qt::SkipEmptyParts);
 		for (const auto &filter : filterParts) {
 			const int sep = filter.indexOf(':');
-			filters.append({
-				sep < 0 ? filter : filter.left(sep),
-				sep < 0 ? QString{} : filter.mid(sep + 1)
-			});
+			const QString name = sep < 0 ? filter : filter.left(sep);
+			const QString arg  = sep < 0 ? QString{} : filter.mid(sep + 1);
+			if (name == "default") {
+				hasDefault = true;
+			}
+			filters.append({name, arg});
 		}
 
 		// Build the placeholder used for replacement in resolve()
@@ -31,7 +34,8 @@ TemplateString::TemplateString(const QString &tmpl)
 			static_cast<int>(match.capturedEnd()),
 			match.captured(1),
 			{},
-			filters
+			filters,
+			hasDefault
 		};
 		m_placeholders.append(placeholder);
 
@@ -55,14 +59,14 @@ QString TemplateString::resolve(const QVariantMap &data, QString *error) const
 	int lastEnd = 0;
 	for (const auto &placeholder : m_placeholders) {
 		result += m_template.mid(lastEnd, placeholder.start - lastEnd);
-		if (!data.contains(placeholder.key)) {
+		if (!data.contains(placeholder.key) && !placeholder.hasDefault) {
 			if (error) *error = "Missing loader key: " + placeholder.key;
 			return {};
 		}
 		result += std::accumulate(
 			placeholder.filters.begin(),
 			placeholder.filters.end(),
-			data[placeholder.key],
+			data.value(placeholder.key),
 			&TemplateString::applyFilter
 		).toString();
 		lastEnd = placeholder.end;
@@ -98,6 +102,8 @@ QVariant TemplateString::applyFilter(const QVariant &value, const std::pair<QStr
 		return value;
 	}
 
+	if (filter == "default")
+		return value.toString().isEmpty() ? QVariant(arg) : value;
 	if (filter == "upper")
 		return value.toString().toUpper();
 	if (filter == "lower")
@@ -117,7 +123,8 @@ bool TemplateString::hasUnknownFilters() const
 {
 	static const QStringList known = {
 		"upper", "lower", "trim",
-		"year", "month", "day", "hour", "minute", "format"
+		"year", "month", "day", "hour", "minute", "format",
+		"default"
 	};
 	for (const auto &ph : m_placeholders)
 		for (const auto &[f, arg] : ph.filters)
