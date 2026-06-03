@@ -206,6 +206,60 @@ TEST_CASE("CLI")
 			REQUIRE(files == QStringList{ "image_b.png", "jpg_c.jpg", "txt_a.txt" });
 		}
 
+		SECTION("Recursive directory input")
+		{
+			const QString flag = GENERATE(QString("-r"), QString("--recursive"));
+
+			DYNAMIC_SECTION(flag.toStdString())
+			{
+				QTemporaryDir dir;
+				QDir subDir(dir.filePath("sub"));
+				subDir.mkpath(".");
+
+				QFile fileA(dir.filePath("a.txt"));
+				fileA.open(QFile::WriteOnly);
+				fileA.close();
+				QFile fileB(subDir.filePath("b.txt"));
+				fileB.open(QFile::WriteOnly);
+				fileB.close();
+
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), flag, dir.path() });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+				REQUIRE(process.exitCode() == 0);
+
+				// Both top-level and subdirectory files should be renamed
+				REQUIRE(QFile::exists(dir.filePath("txt_a.txt")));
+				REQUIRE(QFile::exists(subDir.filePath("txt_b.txt")));
+			}
+		}
+
+		SECTION("Non-recursive directory input does not descend into subdirectories")
+		{
+			QTemporaryDir dir;
+			QDir subDir(dir.filePath("sub"));
+			subDir.mkpath(".");
+
+			QFile fileA(dir.filePath("a.txt"));
+			fileA.open(QFile::WriteOnly);
+			fileA.close();
+			QFile fileB(subDir.filePath("b.txt"));
+			fileB.open(QFile::WriteOnly);
+			fileB.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), dir.path() });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+			REQUIRE(process.exitCode() == 0);
+
+			// Only top-level file should be renamed
+			REQUIRE(QFile::exists(dir.filePath("txt_a.txt")));
+			REQUIRE(QFile::exists(subDir.filePath("b.txt")));
+			REQUIRE(!QFile::exists(subDir.filePath("txt_b.txt")));
+		}
+
 		SECTION("No matching rule")
 		{
 			QTemporaryDir dir;

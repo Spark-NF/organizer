@@ -12,6 +12,6 @@ class Profile;
 
 int runCli(const QStringList &arguments);
 bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName, IFilesystem &fs, bool dryRun);
-bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun);
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun, bool recursive);
 
 #endif // COMMAND_WINDOW_H

@@ -2,6 +2,7 @@
 #include <memory>
 #include <QCommandLineParser>
 #include <QDir>
+#include <QDirIterator>
 #include <QFileInfo>
 #include <QTextStream>
 #include "filesystem/filesystem.h"
@@ -32,6 +33,8 @@ int runCli(const QStringList &arguments)
 	parser.addOption(profileOption);
 	QCommandLineOption dryRunOption({ "n", "dry-run" }, "Preview actions without modifying any files.");
 	parser.addOption(dryRunOption);
+	QCommandLineOption recursiveOption({ "r", "recursive" }, "Process directories recursively.");
+	parser.addOption(recursiveOption);
 
 	// Positional arguments
 	parser.addPositionalArgument("files", "The files to organize.", "files...");
@@ -41,6 +44,7 @@ int runCli(const QStringList &arguments)
 	const QString profilePath = parser.value(profileOption);
 	const QStringList files = parser.positionalArguments();
 	const bool dryRun = parser.isSet(dryRunOption);
+	const bool recursive = parser.isSet(recursiveOption);
 
 	if (parser.isSet(helpOption) || files.isEmpty()) {
 		parser.showHelp(0);
@@ -76,7 +80,7 @@ int runCli(const QStringList &arguments)
 		}
 
 		if (fileInfo.isDir()) {
-			if (!processDir(profile, QDir(filePath), *fs, dryRun)) {
+			if (!processDir(profile, QDir(filePath), *fs, dryRun, recursive)) {
 				success = false;
 			}
 		} else {
@@ -144,12 +148,15 @@ bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileNam
 }
 
 
-bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun)
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun, bool recursive)
 {
 	bool success = true;
-	QFileInfoList infoList = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
-	for (const QFileInfo &info : infoList) {
-		if (!processFile(profile, info.absoluteFilePath(), fs, dryRun)) {
+	const QDirIterator::IteratorFlags flags = recursive
+		? QDirIterator::Subdirectories
+		: QDirIterator::NoIteratorFlags;
+	QDirIterator it(dir.absolutePath(), QDir::Files | QDir::NoDotAndDotDot, flags);
+	while (it.hasNext()) {
+		if (!processFile(profile, it.next(), fs, dryRun)) {
 			success = false;
 		}
 	}

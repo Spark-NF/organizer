@@ -17,6 +17,7 @@ Options:
   -h, --help               Displays help on commandline options.
   -v, --version            Displays version information.
   -p, --profile <profile>  The rule profile file to use.
+  -r, --recursive          Process directories recursively.
 
 Arguments:
   files                    The files to organize.
