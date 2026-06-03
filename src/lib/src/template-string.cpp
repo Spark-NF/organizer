@@ -8,12 +8,22 @@
 TemplateString::TemplateString(const QString &tmpl)
 	: m_template(tmpl)
 {
-	static const QRegularExpression re(R"(\{(\w+)((?:\|\w+)*)\})");
+	static const QRegularExpression re(R"(\{(\w+)((?:\|[^|}]+)*)\})");
 
 	auto it = re.globalMatch(tmpl);
 	while (it.hasNext()) {
 		const auto match = it.next();
-		const QStringList filters = match.captured(2).split('|', Qt::SkipEmptyParts);
+
+		// Build filters
+		QList<std::pair<QString, QString>> filters;
+		const QStringList filterParts = match.captured(2).split('|', Qt::SkipEmptyParts);
+		for (const auto &filter : filterParts) {
+			const int sep = filter.indexOf(':');
+			filters.append({
+				sep < 0 ? filter : filter.left(sep),
+				sep < 0 ? QString{} : filter.mid(sep + 1)
+			});
+		}
 
 		// Build the placeholder used for replacement in resolve()
 		Placeholder placeholder {
@@ -61,8 +71,10 @@ QString TemplateString::resolve(const QVariantMap &data, QString *error) const
 	return result;
 }
 
-QVariant TemplateString::applyFilter(const QVariant &value, const QString &filter)
+QVariant TemplateString::applyFilter(const QVariant &value, const std::pair<QString, QString> &pair)
 {
+	const auto &[filter, arg] = pair;
+
 	if (value.typeId() == QMetaType::QDateTime) {
 		const QDateTime dt = value.toDateTime();
 		if (filter == "year")
@@ -75,6 +87,13 @@ QVariant TemplateString::applyFilter(const QVariant &value, const QString &filte
 			return dt.toString("HH");
 		if (filter == "minute")
 			return dt.toString("mm");
+		if (filter == "format") {
+			if (arg.isEmpty()) {
+				qWarning() << "Filter 'format' requires an argument (e.g. format:yyyy-MM-dd)";
+				return value.toString();
+			}
+			return dt.toString(arg);
+		}
 		qWarning() << "Filter" << filter << "cannot be applied to a date value";
 		return value;
 	}
@@ -98,10 +117,10 @@ bool TemplateString::hasUnknownFilters() const
 {
 	static const QStringList known = {
 		"upper", "lower", "trim",
-		"year", "month", "day", "hour", "minute"
+		"year", "month", "day", "hour", "minute", "format"
 	};
 	for (const auto &ph : m_placeholders)
-		for (const auto &f : ph.filters)
+		for (const auto &[f, arg] : ph.filters)
 			if (!known.contains(f))
 				return true;
 	return false;

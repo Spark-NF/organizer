@@ -83,6 +83,7 @@ TEST_CASE("TemplateString")
 		SECTION("hasUnknownFilters")
 		{
 			REQUIRE(TemplateString("{stem|upper|trim}/{extension|lower}").hasUnknownFilters() == false);
+			REQUIRE(TemplateString("{date|format:yyyy}").hasUnknownFilters() == false);
 			REQUIRE(TemplateString("{stem|unknown_filter}").hasUnknownFilters() == true);
 		}
 
@@ -95,6 +96,15 @@ TEST_CASE("TemplateString")
 			REQUIRE(TemplateString("{date|day}").resolve(data) == QString("03"));
 			REQUIRE(TemplateString("{date|hour}").resolve(data) == QString("10"));
 			REQUIRE(TemplateString("{date|minute}").resolve(data) == QString("05"));
+		}
+
+		SECTION("Date format")
+		{
+			const QDateTime dt(QDate(2024, 6, 3), QTime(10, 5, 0));
+			const QVariantMap data{{"date", QVariant(dt)}};
+			REQUIRE(TemplateString("{date|format:yyyy-MM-dd}").resolve(data) == QString("2024-06-03"));
+			REQUIRE(TemplateString("{date|format:yyyy/MM}").resolve(data) == QString("2024/06"));
+			REQUIRE(TemplateString("{date|format:MMM yyyy}").resolve(data) == QString("Jun 2024"));
 		}
 	}
 }

@@ -42,6 +42,7 @@ A few examples:
 * `day`: zero-padded day of month (e.g. `03`)
 * `hour`: zero-padded hour, 24-hour clock (e.g. `14`)
 * `minute`: zero-padded minute (e.g. `05`)
+* `format:<pattern>`: custom format using [Qt date/time format strings](https://doc.qt.io/qt-6/qdatetime.html#toString) (e.g. `format:yyyy-MM-dd`, `format:MMM yyyy`)
 
 ## Options
 
