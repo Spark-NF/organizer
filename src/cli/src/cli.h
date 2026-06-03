@@ -10,8 +10,17 @@
 class IFilesystem;
 class Profile;
 
+
+struct ProcessOptions
+{
+	bool dryRun = false;
+	bool recursive = false;
+	bool quiet = false;
+};
+
+
 int runCli(const QStringList &arguments);
-bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName, IFilesystem &fs, bool dryRun);
-bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, bool dryRun, bool recursive);
+bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName, IFilesystem &fs, const ProcessOptions &opts);
+bool processDir(const std::shared_ptr<Profile> &profile, const QDir &dir, IFilesystem &fs, const ProcessOptions &opts);
 
 #endif // COMMAND_WINDOW_H

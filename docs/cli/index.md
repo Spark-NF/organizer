@@ -4,8 +4,6 @@
 
 Use `-h` or `--help` to trigger. Will also trigger if no file is passed to the program.
 
-Will show the program's help then exit.
-
 ### Example
 ```
 $ Organizer-cli --help
@@ -16,8 +14,11 @@ Organizer
 Options:
   -h, --help               Displays help on commandline options.
   -v, --version            Displays version information.
-  -p, --profile <profile>  The rule profile file to use.
+  -p, --profile <profile>  The rule profile file to use (required).
+  -n, --dry-run            Preview actions without modifying any files.
   -r, --recursive          Process directories recursively.
+      --check              Validate the profile file and exit without processing any files.
+  -q, --quiet              Suppress all non-error output.
 
 Arguments:
   files                    The files to organize.
@@ -27,8 +28,6 @@ Arguments:
 ## Version
 
 Use `-v` or `--version` to trigger.
-
-Will show the program's version then exit.
 
 ### Example
 ```
@@ -40,7 +39,13 @@ Organizer 1.2.3
 
 ## Organizing files
 
-Simply pass a profile file with `-p` or `--profile` and the files you want to be organized, and the rules will be executed as needed.
+Pass a profile file with `-p` or `--profile` and the files to organize. Directories are also accepted; use `-r` to descend into subdirectories.
+
+File paths can also be piped via stdin by passing `-` as an argument:
+
+```
+$ find . -name "*.jpg" | Organizer-cli --profile rules.json -
+```
 
 ### Example
 ```
@@ -50,3 +55,18 @@ Ran rule Test on file image1.jpg
 No matching rule for image2.jpg, ignoring
 Ran rule Something on file image3.jpg
 ```
+
+
+## Validating a profile
+
+Use `--check` to validate a profile file without processing any files. Exits 0 if valid, 1 if not.
+
+```
+$ Organizer-cli --profile "rules.json" --check
+Profile is valid.
+```
+
+
+## Verbosity
+
+- `--quiet` / `-q`: suppress all non-error output. Only errors are written to stderr.

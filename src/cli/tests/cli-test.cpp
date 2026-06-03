@@ -273,12 +273,86 @@ TEST_CASE("CLI")
 			REQUIRE(process.waitForStarted());
 			REQUIRE(process.waitForFinished());
 
-			REQUIRE(process.exitCode() == 1);
+			REQUIRE(process.exitCode() == 0);
 			REQUIRE(QString(process.readAllStandardOutput()) == "No matching rule for " + file.fileName() + ", ignoring" + br);
 			REQUIRE(QString(process.readAllStandardError()) == "");
 
 			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
 			REQUIRE(files == QStringList{ "a.test" });
+		}
+
+		SECTION("Stdin piping")
+		{
+			QTemporaryDir dir;
+
+			QFile file(dir.filePath("a.txt"));
+			file.open(QFile::WriteOnly);
+			file.close();
+
+			QProcess process;
+			process.start(program, { "-p", profileFile.fileName(), "-" });
+			REQUIRE(process.waitForStarted());
+			process.write((file.fileName() + "\n").toUtf8());
+			process.closeWriteChannel();
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 0);
+			REQUIRE(QFile::exists(dir.filePath("txt_a.txt")));
+		}
+
+		SECTION("Check")
+		{
+			SECTION("Valid profile")
+			{
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--check" });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 0);
+				REQUIRE(QString(process.readAllStandardOutput()) == "Profile is valid." + br);
+				REQUIRE(QString(process.readAllStandardError()) == "");
+			}
+
+			SECTION("Invalid profile")
+			{
+				QTemporaryFile invalidProfileFile;
+				invalidProfileFile.open();
+				invalidProfileFile.write("invalid");
+				invalidProfileFile.close();
+
+				QProcess process;
+				process.start(program, { "-p", invalidProfileFile.fileName(), "--check" });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 1);
+				REQUIRE(QString(process.readAllStandardOutput()) == "");
+				REQUIRE(!QString(process.readAllStandardError()).isEmpty());
+			}
+		}
+
+		SECTION("Quiet")
+		{
+			const QString flag = GENERATE(QString("-q"), QString("--quiet"));
+
+			DYNAMIC_SECTION(flag.toStdString())
+			{
+				QTemporaryDir dir;
+
+				QFile file(dir.filePath("a.txt"));
+				file.open(QFile::WriteOnly);
+				file.close();
+
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), flag, file.fileName() });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 0);
+				REQUIRE(QString(process.readAllStandardOutput()) == "");
+				REQUIRE(QString(process.readAllStandardError()) == "");
+			}
 		}
 
 		SECTION("Conflicting rules")
