@@ -42,6 +42,10 @@ TEST_CASE("ActionLoader")
 
 		std::shared_ptr<Action> action = ActionLoader::load(data);
 		REQUIRE(action == nullptr);
+
+		QString error;
+		ActionLoader::load(data, &error);
+		REQUIRE(!error.isEmpty());
 	}
 
 	SECTION("Unknown filter")
@@ -53,6 +57,18 @@ TEST_CASE("ActionLoader")
 
 		std::shared_ptr<Action> action = ActionLoader::load(data);
 		REQUIRE(action == nullptr);
+
+		QString error;
+		ActionLoader::load(data, &error);
+		REQUIRE(!error.isEmpty());
+	}
+
+	SECTION("Unknown action type sets error")
+	{
+		QJsonObject data {{ "type", "unknown_type" }};
+		QString error;
+		REQUIRE(ActionLoader::load(data, &error) == nullptr);
+		REQUIRE(!error.isEmpty());
 	}
 
 	SECTION("Valid")

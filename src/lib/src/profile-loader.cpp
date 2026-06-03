@@ -57,9 +57,12 @@ std::shared_ptr<Profile> ProfileLoader::load(const QJsonObject &obj, QString *er
 		QList<std::shared_ptr<Rule>> res;
 
 		for (const auto &ruleObj : rulesArr) {
-			auto rule = RuleLoader::load(ruleObj.toObject());
-			if (rule == nullptr)
-				continue;
+			QString ruleError;
+			auto rule = RuleLoader::load(ruleObj.toObject(), &ruleError);
+			if (rule == nullptr) {
+				if (error) *error = ruleError;
+				return nullptr;
+			}
 
 			// Prevent duplicate shortcuts
 			const QKeySequence shortcut = rule->shortcut();

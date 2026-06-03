@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QJsonObject>
+#include <QString>
 
 
 class Action;
@@ -10,7 +11,7 @@ class Action;
 class ActionLoader
 {
 	public:
-		static std::shared_ptr<Action> load(const QJsonObject &obj);
+		static std::shared_ptr<Action> load(const QJsonObject &obj, QString *error = nullptr);
 };
 
 #endif // ACTION_LOADER_H

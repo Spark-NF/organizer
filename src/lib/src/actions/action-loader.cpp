@@ -15,16 +15,16 @@
 #include "template-string.h"
 
 
-static bool hasUnknownKey(const TemplateString &tmpl)
+static bool hasUnknownKey(const TemplateString &tmpl, QString *error)
 {
 	for (const auto &[key, fields] : tmpl.requiredKeys()) {
 		if (!LoaderLoader::isValid(key)) {
-			qWarning() << "Unknown loader key:" << key;
+			if (error) *error = "Unknown loader key: " + key;
 			return true;
 		}
 	}
 	if (tmpl.hasUnknownFilters()) {
-		qWarning() << "Unknown filter in template:" << tmpl.pattern();
+		if (error) *error = "Unknown filter in template: " + tmpl.pattern();
 		return true;
 	}
 	return false;
@@ -38,13 +38,13 @@ static QStringList jsonArrayToStringList(const QJsonArray &array)
 	return ret;
 }
 
-std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
+std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *error)
 {
 	const QString type = obj["type"].toString();
 
 	if (type == "copy") {
 		const TemplateString destination(obj["dest"].toString());
-		if (hasUnknownKey(destination)) return nullptr;
+		if (hasUnknownKey(destination, error)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<CopyAction>(destination, create, overwrite);
@@ -53,14 +53,14 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 	if (type == "rename") {
 		const QString regexp = obj["from"].toString();
 		const TemplateString replace(obj["to"].toString());
-		if (hasUnknownKey(replace)) return nullptr;
+		if (hasUnknownKey(replace, error)) return nullptr;
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<RenameAction>(QRegularExpression(regexp), replace, overwrite);
 	}
 
 	if (type == "move") {
 		const TemplateString destination(obj["dest"].toString());
-		if (hasUnknownKey(destination)) return nullptr;
+		if (hasUnknownKey(destination, error)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<MoveAction>(destination, create, overwrite);
@@ -68,7 +68,7 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 
 	if (type == "hardlink") {
 		const TemplateString dest(obj["dest"].toString());
-		if (hasUnknownKey(dest)) return nullptr;
+		if (hasUnknownKey(dest, error)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<HardLinkAction>(dest, create, overwrite);
@@ -76,7 +76,7 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 
 	if (type == "symlink") {
 		const TemplateString dest(obj["dest"].toString());
-		if (hasUnknownKey(dest)) return nullptr;
+		if (hasUnknownKey(dest, error)) return nullptr;
 		const bool create = obj["create"].toBool(true);
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<SymbolicLinkAction>(dest, create, overwrite);
@@ -84,7 +84,7 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 
 	if (type == "shortcut") {
 		const TemplateString dest(obj["dest"].toString());
-		if (hasUnknownKey(dest)) return nullptr;
+		if (hasUnknownKey(dest, error)) return nullptr;
 		const bool overwrite = obj["overwrite"].toBool(false);
 		return std::make_shared<ShortcutAction>(dest, overwrite);
 	}
@@ -108,14 +108,15 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj)
 		QList<std::shared_ptr<Action>> actions;
 		const QJsonArray jsonActions = obj["actions"].toArray();
 		for (const auto &actionObj : jsonActions) {
-			auto action = load(actionObj.toObject());
-			if (action != nullptr)
-				actions.append(action);
+			auto action = load(actionObj.toObject(), error);
+			if (action == nullptr)
+				return nullptr;
+			actions.append(action);
 		}
 
 		return std::make_shared<MultipleAction>(std::move(actions));
 	}
 
-	qWarning() << "Unknown action type" << type;
+	if (error) *error = "Unknown action type: " + type;
 	return nullptr;
 }

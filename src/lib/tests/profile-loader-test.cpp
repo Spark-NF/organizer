@@ -90,25 +90,46 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
-		SECTION("Ignore invalid rules")
+		SECTION("Bad rule fails the profile")
 		{
-			QJsonArray rules = jsonProfile["rules"].toArray();
-			rules.append(QJsonObject {
-				QJsonObject {
-					{ "name", "Another rule" },
-					{ "shortcut", "B" },
-					{ "conditions", QJsonArray() },
-					{ "actions", QJsonArray() },
-				}
-			});
-			jsonProfile["rules"] = rules;
+			QJsonObject badProfile {
+				{ "name", "Test" },
+				{ "rules", QJsonArray {
+					QJsonObject {
+						{ "name", "Good rule" },
+						{ "conditions", QJsonArray { QJsonObject {{ "data", "filename" }, { "glob", "*.jpg" }}}},
+						{ "actions", QJsonArray { QJsonObject {{ "type", "rename" }, { "from", "(.+)" }, { "to", "\\1" }}}},
+					},
+					QJsonObject {
+						{ "name", "Bad rule" },
+						{ "conditions", QJsonArray { QJsonObject {{ "data", "filename" }, { "glob", "*.jpg" }}}},
+						{ "actions", QJsonArray { QJsonObject {{ "type", "unknown_type" }}}},
+					},
+				}}
+			};
 
-			std::shared_ptr<Profile> profile = ProfileLoader::load(jsonProfile);
-			REQUIRE(profile != nullptr);
+			QString error;
+			const auto profile = ProfileLoader::load(badProfile, &error);
+			REQUIRE(profile == nullptr);
+			REQUIRE(!error.isEmpty());
+		}
 
-			REQUIRE(profile->name() == "Test profile");
-			REQUIRE(profile->rules().size() == 1);
-			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
+		SECTION("Error message includes rule name")
+		{
+			QJsonObject badProfile {
+				{ "name", "Test" },
+				{ "rules", QJsonArray {
+					QJsonObject {
+						{ "name", "My Rule" },
+						{ "conditions", QJsonArray {}},
+						{ "actions", QJsonArray { QJsonObject {{ "type", "unknown_type" }}}},
+					},
+				}}
+			};
+
+			QString error;
+			ProfileLoader::load(badProfile, &error);
+			REQUIRE(error.contains("My Rule"));
 		}
 
 		SECTION("Duplicate shortcut")

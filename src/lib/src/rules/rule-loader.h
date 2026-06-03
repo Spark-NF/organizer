@@ -12,7 +12,7 @@ class Rule;
 class RuleLoader
 {
 	public:
-		static std::shared_ptr<Rule> load(const QJsonObject &obj);
+		static std::shared_ptr<Rule> load(const QJsonObject &obj, QString *error = nullptr);
 };
 
 #endif // RULE_LOADER_H

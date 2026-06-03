@@ -1,13 +1,12 @@
 #include "rule-loader.h"
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QtGlobal>
 #include "actions/action-loader.h"
 #include "conditions/condition-loader.h"
 #include "rule.h"
 
 
-std::shared_ptr<Rule> RuleLoader::load(const QJsonObject &obj)
+std::shared_ptr<Rule> RuleLoader::load(const QJsonObject &obj, QString *error)
 {
 	const QString name = obj["name"].toString();
 	const QString shortcut = obj["shortcut"].toString();
@@ -17,20 +16,27 @@ std::shared_ptr<Rule> RuleLoader::load(const QJsonObject &obj)
 	QList<std::shared_ptr<Action>> actions;
 
 	for (const auto &conditionObj : obj["conditions"].toArray()) {
-		auto condition = ConditionLoader::load(conditionObj.toObject());
-		if (condition != nullptr) {
-			conditions.append(condition);
+		QString condError;
+		auto condition = ConditionLoader::load(conditionObj.toObject(), &condError);
+		if (condition == nullptr) {
+			if (error) *error = "Invalid condition in rule '" + name + "': " + condError;
+			return nullptr;
 		}
+		conditions.append(condition);
 	}
 
 	for (const auto &actionObj : obj["actions"].toArray()) {
-		auto action = ActionLoader::load(actionObj.toObject());
-		if (action != nullptr) {
-			actions.append(action);
+		QString actionError;
+		auto action = ActionLoader::load(actionObj.toObject(), &actionError);
+		if (action == nullptr) {
+			if (error) *error = "Invalid action in rule '" + name + "': " + actionError;
+			return nullptr;
 		}
+		actions.append(action);
 	}
+
 	if (actions.isEmpty()) {
-		qWarning() << "No action for rule";
+		if (error) *error = "Rule '" + name + "' has no actions";
 		return nullptr;
 	}
 
