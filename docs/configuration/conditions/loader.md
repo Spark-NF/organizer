@@ -9,9 +9,11 @@ A loader is a string that identifies what data to extract from a file. It is use
 * `created`: the creation time of the file
 * `directory`: the canonical absolute path of the directory containing the file
 * `directory_name`: the name of the directory containing the file (last path component only)
+* `exif`: a metadata tag from the file's EXIF data (e.g. `DateTimeOriginal`, `Make`, `Model`...), requires `exiftool` to be installed
 * `extension`: the file extension, without the leading dot (e.g. `gz`)
 * `filename`: the filename including extension
 * `filesize`: the size of the file on disk, in bytes
+* `id3`: a metadata tag from the file's ID3 tags (e.g. `Artist`, `Album`, `Title`...), requires `exiftool` to be installed
 * `last_modified`: the last modified time of the file
 * `mime_type`: the MIME type of the file (e.g. `image/jpeg`), detected using the file extension first, then the file content
 * `path`: the canonical absolute path of the file
@@ -55,6 +57,36 @@ A few examples:
 * `{unknown_data|default:Unknown|upper}`: "UNKNOWN"
 
 ## Options
+
+### exif
+
+* **tag**: the exiftool tag name to read (e.g. `DateTimeOriginal`, `Make`, `Model`...)
+
+Example:
+```json5
+{
+    "data": "exif",
+    "tag": "DateTimeOriginal",
+    "glob": "2024*"
+}
+```
+
+Template variable: `{exif.DateTimeOriginal}`
+
+### id3
+
+* **tag**: the exiftool tag name to read (e.g. `Artist`, `Album`, `Title`...)
+
+Example:
+```json5
+{
+    "data": "id3",
+    "tag": "Artist",
+    "glob": "Beatles"
+}
+```
+
+Template variable: `{id3.Artist}`
 
 ### extension
 
