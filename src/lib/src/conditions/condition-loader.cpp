@@ -2,7 +2,10 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include "condition.h"
+#include "content-condition.h"
 #include "loader-condition.h"
+#include "text-extractor.h"
+#include "extractors/plain-text-extractor.h"
 #include "comparators/and-comparator.h"
 #include "comparators/glob-comparator.h"
 #include "comparators/in-comparator.h"
@@ -16,7 +19,13 @@
 std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj, QString *error)
 {
 	const QString data = obj["data"].toString();
+	if (data.startsWith("content_"))
+		return loadContentCondition(data, obj, error);
+	return loadLoaderCondition(data, obj, error);
+}
 
+std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QString &data, const QJsonObject &obj, QString *error)
+{
 	const auto &loader = LoaderLoader::load(data, obj);
 	if (loader == nullptr) {
 		if (error) *error = "Unknown loader key: " + data;
@@ -30,6 +39,25 @@ std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj, QString
 	}
 
 	return std::make_shared<LoaderCondition>(data, loader, comparator);
+}
+
+std::shared_ptr<Condition> ConditionLoader::loadContentCondition(const QString &data, const QJsonObject &obj, QString *error)
+{
+	std::shared_ptr<TextExtractor> extractor;
+	if (data == "content_text") {
+		extractor = std::make_shared<PlainTextExtractor>();
+	} else {
+		if (error) *error = "Unknown content key: " + data;
+		return nullptr;
+	}
+
+	const auto &comparator = loadComparator(obj);
+	if (comparator == nullptr) {
+		if (error) *error = "No comparator found for condition";
+		return nullptr;
+	}
+
+	return std::make_shared<ContentCondition>(extractor, comparator);
 }
 
 std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &obj)

@@ -16,6 +16,8 @@ class ConditionLoader
 
 	private:
 		static std::shared_ptr<Comparator> loadComparator(const QJsonObject &obj);
+		static std::shared_ptr<Condition> loadLoaderCondition(const QString &data, const QJsonObject &obj, QString *error);
+		static std::shared_ptr<Condition> loadContentCondition(const QString &data, const QJsonObject &obj, QString *error);
 };
 
 #endif // CONDITION_LOADER_H

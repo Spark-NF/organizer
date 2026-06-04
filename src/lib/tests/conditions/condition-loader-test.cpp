@@ -6,8 +6,10 @@
 #include "conditions/comparators/or-comparator.h"
 #include "conditions/comparators/range-comparator.h"
 #include "conditions/comparators/regex-comparator.h"
+#include "conditions/content-condition.h"
 #include "conditions/condition-loader.h"
 #include "conditions/condition.h"
+#include "conditions/extractors/plain-text-extractor.h"
 #include "conditions/loader-condition.h"
 #include "conditions/loaders/created-loader.h"
 #include "conditions/loaders/directory-loader.h"
@@ -29,6 +31,17 @@ TEST_CASE("ConditionLoader")
 	{
 		QJsonObject data {
 			{ "data", "unknown" },
+		};
+
+		std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+		REQUIRE(condition == nullptr);
+	}
+
+	SECTION("Unknown content key")
+	{
+		QJsonObject data {
+			{ "data", "content_pdf" },
+			{ "glob", "*.pdf" },
 		};
 
 		std::shared_ptr<Condition> condition = ConditionLoader::load(data);
@@ -155,6 +168,19 @@ TEST_CASE("ConditionLoader")
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<OrComparator>(condition->comparator()) != nullptr);
+		}
+
+		SECTION("Content condition")
+		{
+			QJsonObject data {
+				{ "data", "content_text" },
+				{ "glob", "*hello*" },
+			};
+
+			std::shared_ptr<ContentCondition> condition = std::dynamic_pointer_cast<ContentCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<PlainTextExtractor>(condition->extractor()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
 		}
 	}
 }
