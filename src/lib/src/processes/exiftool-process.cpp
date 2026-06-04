@@ -18,22 +18,17 @@ ExiftoolProcess::ExiftoolProcess()
 {
 	// Singleton might be deleted after Qt, which will cause issues with QProcess, so we close it earlier
 	if (qApp) {
-		QObject::connect(qApp, &QCoreApplication::aboutToQuit, [this] { shutdown(); });
+		QObject::connect(qApp, &QCoreApplication::aboutToQuit, [this] { doShutdown(); });
 	}
 }
 
 ExiftoolProcess::~ExiftoolProcess()
 {
-	shutdown();
+	doShutdown();
 }
 
-bool ExiftoolProcess::ensureStarted()
+bool ExiftoolProcess::doStart()
 {
-	if (!m_available)
-		return false;
-	if (m_process.state() == QProcess::Running)
-		return true;
-
 	// Look for the executable in PATH
 	const QString exe = QStandardPaths::findExecutable("exiftool");
 	if (exe.isEmpty()) {
@@ -53,7 +48,7 @@ bool ExiftoolProcess::ensureStarted()
 	return true;
 }
 
-void ExiftoolProcess::shutdown()
+void ExiftoolProcess::doShutdown()
 {
 	if (m_process.state() != QProcess::Running)
 		return;

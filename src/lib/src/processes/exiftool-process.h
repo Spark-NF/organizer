@@ -1,13 +1,12 @@
 #ifndef EXIFTOOL_PROCESS_H
 #define EXIFTOOL_PROCESS_H
 
-#include <QMutex>
-#include <QProcess>
 #include <QStringList>
 #include <QVariantMap>
+#include "persistent-process.h"
 
 
-class ExiftoolProcess
+class ExiftoolProcess : public PersistentProcess
 {
 	public:
 		static ExiftoolProcess &instance();
@@ -15,14 +14,9 @@ class ExiftoolProcess
 
 	protected:
 		ExiftoolProcess();
-		~ExiftoolProcess();
-		bool ensureStarted();
-		void shutdown();
-
-	private:
-		QProcess m_process;
-		QMutex m_mutex;
-		bool m_available = true;
+		~ExiftoolProcess() override;
+		bool doStart() override;
+		void doShutdown() override;
 };
 
 #endif // EXIFTOOL_PROCESS_H
