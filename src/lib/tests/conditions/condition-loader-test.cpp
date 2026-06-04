@@ -8,6 +8,7 @@
 #include "conditions/comparators/regex-comparator.h"
 #include "conditions/condition-loader.h"
 #include "conditions/condition.h"
+#include "conditions/loader-condition.h"
 #include "conditions/loaders/created-loader.h"
 #include "conditions/loaders/directory-loader.h"
 #include "conditions/loaders/filename-loader.h"
@@ -53,7 +54,7 @@ TEST_CASE("ConditionLoader")
 				{ "glob", "*.txt" },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
@@ -66,7 +67,7 @@ TEST_CASE("ConditionLoader")
 				{ "min", 1234 },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<FilesizeLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
@@ -79,7 +80,7 @@ TEST_CASE("ConditionLoader")
 				{ "regex", "^start_" },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<DirectoryLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RegexComparator>(condition->comparator()) != nullptr);
@@ -92,7 +93,7 @@ TEST_CASE("ConditionLoader")
 				{ "regex", "^start_" },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<PathLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RegexComparator>(condition->comparator()) != nullptr);
@@ -105,7 +106,7 @@ TEST_CASE("ConditionLoader")
 				{ "min", "2017-07-24T15:46:29" },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<CreatedLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
@@ -118,7 +119,7 @@ TEST_CASE("ConditionLoader")
 				{ "max", "2017-07-24T15:46:29" },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<LastModifiedLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
@@ -134,7 +135,7 @@ TEST_CASE("ConditionLoader")
 				} },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<AndComparator>(condition->comparator()) != nullptr);
@@ -150,7 +151,7 @@ TEST_CASE("ConditionLoader")
 				} },
 			};
 
-			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<FilenameLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<OrComparator>(condition->comparator()) != nullptr);

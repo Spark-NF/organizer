@@ -1,6 +1,7 @@
 #include "rule.h"
 #include "../actions/action.h"
 #include "../conditions/condition.h"
+#include "../conditions/loaders/loader.h"
 #include "../filesystem/filesystem.h"
 #include "../loader-loader.h"
 #include "../media.h"

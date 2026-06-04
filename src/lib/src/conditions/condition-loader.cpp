@@ -2,6 +2,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include "condition.h"
+#include "loader-condition.h"
 #include "comparators/and-comparator.h"
 #include "comparators/glob-comparator.h"
 #include "comparators/in-comparator.h"
@@ -28,7 +29,7 @@ std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj, QString
 		return nullptr;
 	}
 
-	return std::make_shared<Condition>(data, loader, comparator);
+	return std::make_shared<LoaderCondition>(data, loader, comparator);
 }
 
 std::shared_ptr<Comparator> ConditionLoader::loadComparator(const QJsonObject &obj)
