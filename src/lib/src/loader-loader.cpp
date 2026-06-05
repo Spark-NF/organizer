@@ -12,6 +12,7 @@
 #include "conditions/loaders/path-loader.h"
 #include "conditions/loaders/exif-loader.h"
 #include "conditions/loaders/id3-loader.h"
+#include "conditions/loaders/kind-loader.h"
 #include "conditions/loaders/stem-loader.h"
 
 
@@ -35,6 +36,8 @@ std::shared_ptr<Loader> LoaderLoader::load(const QString &key, const QJsonObject
 		return std::make_shared<FilesizeLoader>();
 	if (key == "id3")
 		return std::make_shared<Id3Loader>(obj["tag"].toString());
+	if (key == "kind")
+		return std::make_shared<KindLoader>();
 	if (key == "last_modified")
 		return std::make_shared<LastModifiedLoader>();
 	if (key == "mime_type")
@@ -52,7 +55,7 @@ bool LoaderLoader::isValid(const QString &key)
 {
 	static const QStringList known = {
 		"created", "directory", "directory_name", "empty", "exif", "extension",
-		"filename", "filesize", "id3", "last_modified", "mime_type", "path", "stem"
+		"filename", "filesize", "id3", "kind", "last_modified", "mime_type", "path", "stem"
 	};
 	return known.contains(key);
 }

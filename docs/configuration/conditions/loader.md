@@ -15,6 +15,7 @@ A loader is a string that identifies what data to extract from a file. It is use
 * `filename`: the filename including extension
 * `filesize`: the size of the file on disk, in bytes
 * `id3`: a metadata tag from the file's ID3 tags (e.g. `Artist`, `Album`, `Title`...), requires `exiftool` to be installed
+* `kind`: the broad category of the file: `image`, `audio`, `video`, `font`, `document`, `archive`, `application`, or `other`
 * `last_modified`: the last modified time of the file
 * `mime_type`: the MIME type of the file (e.g. `image/jpeg`), detected using the file extension first, then the file content
 * `path`: the canonical absolute path of the file
