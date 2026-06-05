@@ -19,12 +19,16 @@
 
 std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj, QString *error)
 {
-	const QString data = obj["data"].toString();
-	if (data == "process")
+	const QString type = obj["type"].toString();
+	if (type == "loader" || type.isEmpty())
+		return loadLoaderCondition(obj, error);
+	if (type == "content")
+		return loadContentCondition(obj, error);
+	if (type == "process")
 		return loadProcessCondition(obj, error);
-	if (data.startsWith("content_"))
-		return loadContentCondition(data, obj, error);
-	return loadLoaderCondition(data, obj, error);
+
+	if (error) *error = "Unknown condition type: " + type;
+	return nullptr;
 }
 
 std::shared_ptr<Condition> ConditionLoader::loadProcessCondition(const QJsonObject &obj, QString *error)
@@ -41,8 +45,9 @@ std::shared_ptr<Condition> ConditionLoader::loadProcessCondition(const QJsonObje
 	return std::make_shared<ProcessCondition>(cmd, args, timeout);
 }
 
-std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QString &data, const QJsonObject &obj, QString *error)
+std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QJsonObject &obj, QString *error)
 {
+	const QString data = obj["data"].toString();
 	const auto &loader = LoaderLoader::load(data, obj);
 	if (loader == nullptr) {
 		if (error) *error = "Unknown loader key: " + data;
@@ -58,13 +63,14 @@ std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QString &d
 	return std::make_shared<LoaderCondition>(data, loader, comparator);
 }
 
-std::shared_ptr<Condition> ConditionLoader::loadContentCondition(const QString &data, const QJsonObject &obj, QString *error)
+std::shared_ptr<Condition> ConditionLoader::loadContentCondition(const QJsonObject &obj, QString *error)
 {
+	const QString extractorKey = obj["extractor"].toString();
 	std::shared_ptr<TextExtractor> extractor;
-	if (data == "content_text") {
+	if (extractorKey == "text") {
 		extractor = std::make_shared<PlainTextExtractor>();
 	} else {
-		if (error) *error = "Unknown content key: " + data;
+		if (error) *error = "Unknown extractor: " + extractorKey;
 		return nullptr;
 	}
 

@@ -37,10 +37,21 @@ TEST_CASE("ConditionLoader")
 		REQUIRE(condition == nullptr);
 	}
 
-	SECTION("Unknown content key")
+	SECTION("Unknown condition type")
 	{
 		QJsonObject data {
-			{ "data", "content_pdf" },
+			{ "type", "unknown_type" },
+		};
+
+		std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+		REQUIRE(condition == nullptr);
+	}
+
+	SECTION("Unknown content extractor")
+	{
+		QJsonObject data {
+			{ "type", "content" },
+			{ "extractor", "pdf" },
 			{ "glob", "*.pdf" },
 		};
 
@@ -173,7 +184,8 @@ TEST_CASE("ConditionLoader")
 		SECTION("Content condition")
 		{
 			QJsonObject data {
-				{ "data", "content_text" },
+				{ "type", "content" },
+				{ "extractor", "text" },
 				{ "glob", "*hello*" },
 			};
 
@@ -181,6 +193,17 @@ TEST_CASE("ConditionLoader")
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<PlainTextExtractor>(condition->extractor()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
+		}
+
+		SECTION("Explicit type:loader is accepted")
+		{
+			QJsonObject data {
+				{ "type", "loader" },
+				{ "data", "filename" },
+				{ "glob", "*.txt" },
+			};
+
+			REQUIRE(ConditionLoader::load(data) != nullptr);
 		}
 	}
 }
