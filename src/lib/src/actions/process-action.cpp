@@ -18,6 +18,7 @@ bool ProcessAction::execute(Media &media, IFilesystem &fs, QString *error) const
 	const QFileInfo &info = media.fileInfo();
 
 	QStringList args;
+	args.reserve(m_args.size());
 	for (QString arg : m_args) {
 		arg.replace("{path}", info.absoluteFilePath());
 		arg.replace("{dir}", info.absolutePath());

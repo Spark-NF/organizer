@@ -4,6 +4,7 @@
 #include "condition.h"
 #include "content-condition.h"
 #include "loader-condition.h"
+#include "process-condition.h"
 #include "text-extractor.h"
 #include "extractors/plain-text-extractor.h"
 #include "comparators/and-comparator.h"
@@ -19,9 +20,25 @@
 std::shared_ptr<Condition> ConditionLoader::load(const QJsonObject &obj, QString *error)
 {
 	const QString data = obj["data"].toString();
+	if (data == "process")
+		return loadProcessCondition(obj, error);
 	if (data.startsWith("content_"))
 		return loadContentCondition(data, obj, error);
 	return loadLoaderCondition(data, obj, error);
+}
+
+std::shared_ptr<Condition> ConditionLoader::loadProcessCondition(const QJsonObject &obj, QString *error)
+{
+	const QString cmd = obj["cmd"].toString();
+	if (cmd.isEmpty()) {
+		if (error) *error = "Process condition requires a non-empty 'cmd'";
+		return nullptr;
+	}
+	QStringList args;
+	for (const auto &v : obj["args"].toArray())
+		args.append(v.toString());
+	const int timeout = obj["timeout"].toInt(30000);
+	return std::make_shared<ProcessCondition>(cmd, args, timeout);
 }
 
 std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QString &data, const QJsonObject &obj, QString *error)
