@@ -63,7 +63,7 @@ TEST_CASE("TemplateString")
 		const QVariantMap data {
 			{"process", QVariant(QVariantMap{
 				{"output", QString("hello")},
-				{"returncode", 0}
+				{"exit_code", 0}
 			})}
 		};
 

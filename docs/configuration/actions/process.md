@@ -20,6 +20,12 @@ Run a custom command.
 * **/**: the native separator of your platform (`\` on Windows, `/` on UNIX)
 
 
+### Output variables
+
+* **{process.output}**: stdout of the process, with the trailing newline stripped
+* **{process.exit_code}**: exit code as an integer
+
+
 ## Examples
 
 ```json
@@ -27,5 +33,25 @@ Run a custom command.
     "type": "process",
     "cmd": "magick",
     "args": ["{path}", "-resize", "150x150", "{dir}/{basename}_150x150.{ext}"]
+}
+```
+
+Using output variables to rename a file based on what a script prints:
+
+```json
+{
+    "type": "multiple",
+    "actions": [
+        {
+            "type": "process",
+            "cmd": "my-tagger",
+            "args": ["{path}"]
+        },
+        {
+            "type": "rename",
+            "from": ".*",
+            "to": "{process.output|trim}.{ext}"
+        }
+    ]
 }
 ```

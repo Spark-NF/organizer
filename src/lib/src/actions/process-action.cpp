@@ -41,5 +41,14 @@ bool ProcessAction::execute(Media &media, IFilesystem &fs, QString *error) const
 	if (!ok && error) {
 		*error = QString("Process exited with code %1").arg(exitCode);
 	}
+
+	QString output = QString::fromLocal8Bit(process.readAllStandardOutput());
+	if (output.endsWith('\n'))
+		output.chop(1);
+	media.data()["process"] = QVariantMap {
+		{"output", output},
+		{"exit_code", exitCode}
+	};
+
 	return ok;
 }
