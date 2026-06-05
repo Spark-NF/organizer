@@ -8,7 +8,7 @@
 TemplateString::TemplateString(const QString &tmpl)
 	: m_template(tmpl)
 {
-	static const QRegularExpression re(R"(\{(\w+)((?:\|[^|}]+)*)\})");
+	static const QRegularExpression re(R"(\{([\w.]+)((?:\|[^|}]+)*)\})");
 
 	auto it = re.globalMatch(tmpl);
 	while (it.hasNext()) {
@@ -32,15 +32,14 @@ TemplateString::TemplateString(const QString &tmpl)
 		Placeholder placeholder {
 			static_cast<int>(match.capturedStart()),
 			static_cast<int>(match.capturedEnd()),
-			match.captured(1),
-			{},
+			match.captured(1).split('.'),
 			filters,
 			hasDefault
 		};
 		m_placeholders.append(placeholder);
 
 		// Build a pair used for detecting which data to load
-		const std::pair<QString, QStringList> entry(placeholder.key, placeholder.fields);
+		const std::pair<QString, QStringList> entry(placeholder.path.first(), placeholder.path.mid(1));
 		if (!m_requiredKeys.contains(entry)) {
 			m_requiredKeys.append(entry);
 		}
@@ -59,14 +58,17 @@ QString TemplateString::resolve(const QVariantMap &data, QString *error) const
 	int lastEnd = 0;
 	for (const auto &placeholder : m_placeholders) {
 		result += m_template.mid(lastEnd, placeholder.start - lastEnd);
-		if (!data.contains(placeholder.key) && !placeholder.hasDefault) {
-			if (error) *error = "Missing loader key: " + placeholder.key;
+		QVariant val = data.value(placeholder.path.first());
+		for (int i = 1; i < placeholder.path.size(); ++i)
+			val = val.toMap().value(placeholder.path[i]);
+		if (!val.isValid() && !placeholder.hasDefault) {
+			if (error) *error = "Missing key: " + placeholder.path.join(".");
 			return {};
 		}
 		result += std::accumulate(
 			placeholder.filters.begin(),
 			placeholder.filters.end(),
-			data.value(placeholder.key),
+			val,
 			&TemplateString::applyFilter
 		).toString();
 		lastEnd = placeholder.end;

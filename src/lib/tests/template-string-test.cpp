@@ -58,6 +58,49 @@ TEST_CASE("TemplateString")
 		}
 	}
 
+	SECTION("Sub-field access")
+	{
+		const QVariantMap data {
+			{"process", QVariant(QVariantMap{
+				{"output", QString("hello")},
+				{"returncode", 0}
+			})}
+		};
+
+		SECTION("Valid")
+		{
+			QString error;
+			REQUIRE(TemplateString("{process.output}").resolve(data, &error) == QString("hello"));
+			REQUIRE(error.isEmpty());
+		}
+
+		SECTION("Filters")
+		{
+			REQUIRE(TemplateString("{process.output|upper}").resolve(data) == QString("HELLO"));
+		}
+
+		SECTION("Missing")
+		{
+			QString error;
+			REQUIRE(TemplateString("{process.missing}").resolve(data, &error) == QString(""));
+			REQUIRE(!error.isEmpty());
+		}
+
+		SECTION("Missing with default")
+		{
+			QString error;
+			REQUIRE(TemplateString("{process.missing|default:fallback}").resolve(data, &error) == QString("fallback"));
+			REQUIRE(error.isEmpty());
+		}
+
+		SECTION("Non-map fails")
+		{
+			QString error;
+			REQUIRE(TemplateString("{extension.sub}").resolve({{"extension", QString("jpg")}}, &error) == QString(""));
+			REQUIRE(!error.isEmpty());
+		}
+	}
+
 	SECTION("Filters")
 	{
 		SECTION("Upper")

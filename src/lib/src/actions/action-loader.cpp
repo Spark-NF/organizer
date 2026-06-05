@@ -18,7 +18,7 @@
 static bool hasUnknownKey(const TemplateString &tmpl, QString *error)
 {
 	for (const auto &[key, fields] : tmpl.requiredKeys()) {
-		if (!LoaderLoader::isValid(key)) {
+		if (!LoaderLoader::isValid(key) && !ActionLoader::isValid(key)) {
 			if (error) *error = "Unknown loader key: " + key;
 			return true;
 		}
@@ -119,4 +119,10 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *erro
 
 	if (error) *error = "Unknown action type: " + type;
 	return nullptr;
+}
+
+bool ActionLoader::isValid(const QString &key)
+{
+	static const QStringList runtimeKeys = {"process"};
+	return runtimeKeys.contains(key);
 }

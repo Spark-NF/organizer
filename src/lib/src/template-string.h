@@ -12,8 +12,7 @@ struct Placeholder
 {
 	int start;
 	int end;
-	QString key;
-	QStringList fields;
+	QStringList path;
 	QList<std::pair<QString, QString>> filters;
 	bool hasDefault = false;
 };

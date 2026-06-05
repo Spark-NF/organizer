@@ -1,5 +1,6 @@
 #include "rule.h"
 #include "../actions/action.h"
+#include "../actions/action-loader.h"
 #include "../conditions/condition.h"
 #include "../conditions/loaders/loader.h"
 #include "../filesystem/filesystem.h"
@@ -72,6 +73,10 @@ bool Rule::execute(Media &media, IFilesystem &fs, QString *error) const
 	// Preload keys that not already loaded by conditions
 	for (auto it = needed.begin(); it != needed.end(); ++it) {
 		if (media.data().contains(it.key()))
+			continue;
+
+		// Some actions can provide keys but cannot be preloaded
+		if (ActionLoader::isValid(it.key()))
 			continue;
 
 		const auto loader = LoaderLoader::load(it.key(), {}); // TODO(Spark): how to populate settings?
