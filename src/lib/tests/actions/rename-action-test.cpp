@@ -12,7 +12,7 @@ TEST_CASE("RenameAction")
 
 	SECTION("Execute")
 	{
-		RenameAction action(QRegularExpression("(.+)"), "test_\\1", false);
+		RenameAction action("new_name.bin", false);
 
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
@@ -20,13 +20,13 @@ TEST_CASE("RenameAction")
 		Media media(file);
 
 		REQUIRE(action.execute(media, fs) == true);
-		REQUIRE(QFileInfo(media.path()).fileName() == "test_file.bin");
+		REQUIRE(QFileInfo(media.path()).fileName() == "new_name.bin");
 		REQUIRE(QFile::remove(media.path()));
 	}
 
 	SECTION("No change")
 	{
-		RenameAction action(QRegularExpression("(.+)"), "\\1", false);
+		RenameAction action("file.bin", false);
 
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
@@ -39,22 +39,22 @@ TEST_CASE("RenameAction")
 
 	SECTION("Already exists")
 	{
-		RenameAction action(QRegularExpression("(.+)"), "test_\\1", false);
+		RenameAction action("new_name.bin", false);
 
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
 		file.close();
-		file.copy("test_file.bin");
+		file.copy("new_name.bin");
 		Media media(file);
 
 		REQUIRE(action.execute(media, fs) == false);
 		REQUIRE(file.remove());
-		REQUIRE(QFile::remove("test_file.bin"));
+		REQUIRE(QFile::remove("new_name.bin"));
 	}
 
 	SECTION("Overwrite")
 	{
-		RenameAction action(QRegularExpression("(.+)"), "test_\\1", true);
+		RenameAction action("new_name.bin", true);
 
 		QFile file("file.bin");
 		file.open(QFile::WriteOnly);
@@ -62,7 +62,7 @@ TEST_CASE("RenameAction")
 		file.close();
 		Media media(file);
 
-		QFile newFile("test_file.bin");
+		QFile newFile("new_name.bin");
 		newFile.open(QFile::WriteOnly);
 		newFile.close();
 
@@ -78,7 +78,7 @@ TEST_CASE("RenameAction")
 
 	SECTION("Template replacement")
 	{
-		RenameAction action(QRegularExpression("photo"), "{extension}", false);
+		RenameAction action("{extension}_prefix.{stem}", false);
 
 		QFile file("photo.jpg");
 		file.open(QFile::WriteOnly);
@@ -88,9 +88,10 @@ TEST_CASE("RenameAction")
 		SECTION("Valid")
 		{
 			media.data()["extension"] = "jpg";
+			media.data()["stem"] = "photo";
 
 			REQUIRE(action.execute(media, fs) == true);
-			REQUIRE(QFileInfo(media.path()).fileName() == QString("jpg.jpg"));
+			REQUIRE(QFileInfo(media.path()).fileName() == QString("jpg_prefix.photo"));
 			REQUIRE(QFile::remove(media.path()));
 		}
 

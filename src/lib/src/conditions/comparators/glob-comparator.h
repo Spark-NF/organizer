@@ -10,7 +10,7 @@ class GlobComparator : public Comparator
 {
 	public:
 		explicit GlobComparator(const QString &pattern);
-		bool match(const QVariant &data) const override;
+		bool match(const QVariant &data, QVariantMap *output = nullptr) const override;
 		bool accepts(QMetaType type) const override;
 
 	private:

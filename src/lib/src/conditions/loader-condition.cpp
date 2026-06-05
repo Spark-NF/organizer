@@ -18,7 +18,8 @@ bool LoaderCondition::match(Media &media) const
 		qWarning() << "Incompatible types for condition" << m_key;
 		return false;
 	}
-	return m_comparator->match(data);
+
+	return matchAndCapture(data, *m_comparator, media, m_key);
 }
 
 QVariant LoaderCondition::getOrLoad(Media &media) const

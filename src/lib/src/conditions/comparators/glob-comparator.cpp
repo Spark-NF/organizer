@@ -14,7 +14,7 @@ bool GlobComparator::accepts(QMetaType type) const
 	return type == QMetaType::fromType<QString>();
 }
 
-bool GlobComparator::match(const QVariant &data) const
+bool GlobComparator::match(const QVariant &data, QVariantMap *) const
 {
 	const QString str = data.toString();
 	return std::any_of(

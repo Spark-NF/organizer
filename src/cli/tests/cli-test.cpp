@@ -69,8 +69,7 @@ TEST_CASE("CLI")
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "image_\\1" },
+						{ "dest", "image_{filename}" },
 					}}},
 				},
 				QJsonObject {
@@ -82,8 +81,7 @@ TEST_CASE("CLI")
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "jpg_\\1" },
+						{ "dest", "jpg_{filename}" },
 					}}},
 				},
 				QJsonObject {
@@ -95,8 +93,7 @@ TEST_CASE("CLI")
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "txt_\\1" },
+						{ "dest", "txt_{filename}" },
 					}}},
 				},
 				QJsonObject {
@@ -108,8 +105,7 @@ TEST_CASE("CLI")
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "text_\\1" },
+						{ "dest", "text_{filename}" },
 					}}},
 				}
 			}}

@@ -55,8 +55,7 @@ TEST_CASE("Main window")
 					{ "shortcut", "B" },
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "before_\\1" },
+						{ "dest", "before_{filename}" },
 					}}},
 				},
 				QJsonObject {
@@ -64,8 +63,7 @@ TEST_CASE("Main window")
 					{ "shortcut", "A" },
 					{ "actions", QJsonArray { QJsonObject {
 						{ "type", "rename" },
-						{ "from", "(.+)" },
-						{ "to", "\\1_after" },
+						{ "dest", "{filename}_after" },
 					}}},
 				}
 			}}

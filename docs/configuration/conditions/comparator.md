@@ -106,3 +106,39 @@ Example:
     "regex": "^start_with_"
 }
 ```
+
+#### Capture groups
+
+Named and positional capture groups are extracted on a successful match and made available as template variables in other actions via `{captures.$data.$group}`, where:
+
+* `$data`: the loader key of the condition, or "content" for content loaders
+* `$group` the group index, or name when using named groups: `(?P<name>...)`
+
+With `"data": "filename"` and `"regex": "(?P<title>.+)-(\\d+)\\.jpg"`, a match on `photo-42.jpg` exposes:
+
+- `{captures.filename.title}`: `photo`
+- `{captures.filename.1}`: `photo` (same group but by position)
+- `{captures.filename.2}`: `42`
+
+These values are usable in any action template in the same rule. For example, to rename `photo-2024-06-01.jpg` into `2024-06-01-photo.jpg`:
+
+```json
+{
+    "name": "Rename photos",
+    "conditions": [
+        {
+            "data": "stem",
+            "regex": "(?P<name>.+)-(?P<date>\\d{4}-\\d{2}-\\d{2})"
+        }
+    ],
+    "actions": {
+        "type": "rename",
+        "dest": "{captures.stem.date}-{captures.stem.name}.{extension}"
+    }
+}
+```
+
+#### Composite comparators
+
+* `and` / `or`: when multiple regex comparators are composed, all of them write into the same capture map. Positional indices are shared and the last-evaluated regex wins. Prefer named groups (`(?P<name>...)`) whenever captures will be used in templates inside a composite condition.
+* `not`: the inner comparator's captures are passed through even when `not` inverts the result.

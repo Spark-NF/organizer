@@ -14,7 +14,7 @@ bool ContentCondition::match(Media &media) const
 {
 	bool matched = false;
 	m_extractor->extractLines(media, [&](const QString &line) {
-		if (m_comparator->match(QVariant(line))) {
+		if (matchAndCapture(QVariant(line), *m_comparator, media, "content")) {
 			matched = true;
 			return false;
 		}

@@ -9,7 +9,7 @@ class NotComparator : public Comparator
 {
 	public:
 		explicit NotComparator(std::shared_ptr<Comparator> comparator);
-		bool match(const QVariant &data) const override;
+		bool match(const QVariant &data, QVariantMap *output = nullptr) const override;
 		bool accepts(QMetaType type) const override;
 
 	private:

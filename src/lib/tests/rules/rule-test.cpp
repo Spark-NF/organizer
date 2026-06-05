@@ -3,9 +3,11 @@
 #include <catch.h>
 #include "actions/move-action.h"
 #include "actions/rename-action.h"
-#include "conditions/loader-condition.h"
 #include "conditions/comparators/glob-comparator.h"
+#include "conditions/comparators/regex-comparator.h"
+#include "conditions/loader-condition.h"
 #include "conditions/loaders/filename-loader.h"
+#include "conditions/loaders/stem-loader.h"
 #include "filesystem/real-filesystem.h"
 #include "media.h"
 #include "rules/rule.h"
@@ -27,8 +29,8 @@ TEST_CASE("Rule")
 	const QList<std::shared_ptr<Condition>> conditions { imgCondition, jpgCondition };
 
 	const QList<std::shared_ptr<Action>> actions {
-		std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
-		std::make_shared<RenameAction>(QRegularExpression("(.+)"), "second_\\1", false),
+		std::make_shared<RenameAction>("step1.bin", false),
+		std::make_shared<RenameAction>("step2.bin", false),
 	};
 
 	Rule rule("Test rule", QKeySequence("A"), true, 1, conditions, actions);
@@ -91,17 +93,16 @@ TEST_CASE("Rule")
 			Media media(file);
 
 			REQUIRE(rule.execute(media, fs) == true);
-			REQUIRE(QFileInfo(media.path()).fileName() == "second_first_file.bin");
+			REQUIRE(QFileInfo(media.path()).fileName() == "step2.bin");
 			REQUIRE(QFile::remove(media.path()));
 		}
 
 		SECTION("Fail if any action fails")
 		{
 			const QList<std::shared_ptr<Action>> actions {
-				std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+				std::make_shared<RenameAction>("step1.bin", false),
 				std::make_shared<MoveAction>("unknown_dir/", false, false),
 			};
-
 			Rule failingRule("Test rule", QKeySequence("A"), true, 1, conditions, actions);
 
 			QFile file("file.bin");
@@ -110,7 +111,7 @@ TEST_CASE("Rule")
 			Media media(file);
 
 			REQUIRE(failingRule.execute(media, fs) == false);
-			REQUIRE(QFileInfo(media.path()).fileName() == "first_file.bin"); // FIXME: we should probably not leave files partially changed
+			REQUIRE(QFileInfo(media.path()).fileName() == "step1.bin"); // FIXME: we should probably not leave files partially changed
 			REQUIRE(QFile::remove(media.path()));
 		}
 
@@ -131,6 +132,32 @@ TEST_CASE("Rule")
 
 			REQUIRE(templateRule.execute(media, fs) == true);
 			REQUIRE(QFileInfo(media.path()).dir().absolutePath() == tmpDirObj.absoluteFilePath("jpg"));
+			REQUIRE(QFile::remove(media.path()));
+		}
+
+		SECTION("Regex captures are available in action template")
+		{
+			// photo-2024-06-01.jpg → 2024-06-01-photo.jpg
+			const QList<std::shared_ptr<Condition>> captureConditions {
+				std::make_shared<LoaderCondition>(
+					"stem",
+					std::make_shared<StemLoader>(false),
+					std::make_shared<RegexComparator>(R"((?P<name>.+)-(?P<date>\d{4}-\d{2}-\d{2}))")
+				)
+			};
+			const QList<std::shared_ptr<Action>> captureActions {
+				std::make_shared<RenameAction>("{captures.stem.date}-{captures.stem.name}.{extension}", false)
+			};
+			Rule captureRule("Capture rule", {}, false, 0, captureConditions, captureActions);
+
+			QFile file("photo-2024-06-01.jpg");
+			file.open(QFile::WriteOnly);
+			file.close();
+			Media media(file);
+
+			REQUIRE(captureRule.match(media) == true);
+			REQUIRE(captureRule.execute(media, fs) == true);
+			REQUIRE(QFileInfo(media.path()).fileName() == QString("2024-06-01-photo.jpg"));
 			REQUIRE(QFile::remove(media.path()));
 		}
 	}

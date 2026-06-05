@@ -5,8 +5,8 @@
 #include "media.h"
 
 
-RenameAction::RenameAction(const QRegularExpression &regexp, const TemplateString &replace, bool overwrite)
-	: Action(), m_regexp(regexp), m_replace(replace), m_overwrite(overwrite)
+RenameAction::RenameAction(TemplateString destination, bool overwrite)
+	: Action(), m_destination(std::move(destination)), m_overwrite(overwrite)
 {}
 
 bool RenameAction::execute(Media &media, IFilesystem &fs, QString *error) const
@@ -15,13 +15,12 @@ bool RenameAction::execute(Media &media, IFilesystem &fs, QString *error) const
 	const QString original = info.fileName();
 
 	QString templateError;
-	const QString replacePattern = m_replace.resolve(media.data(), &templateError);
+	const QString newName = m_destination.resolve(media.data(), &templateError);
 	if (!templateError.isEmpty()) {
 		if (error) *error = templateError;
 		return false;
 	}
 
-	const QString newName = QString(original).replace(m_regexp, replacePattern);
 	if (newName == original) {
 		return true;
 	}
@@ -57,5 +56,5 @@ bool RenameAction::execute(Media &media, IFilesystem &fs, QString *error) const
 
 QList<std::pair<QString, QStringList>> RenameAction::requiredKeys() const
 {
-	return m_replace.requiredKeys();
+	return m_destination.requiredKeys();
 }

@@ -11,7 +11,7 @@ bool NotComparator::accepts(QMetaType type) const
 	return m_comparator->accepts(type);
 }
 
-bool NotComparator::match(const QVariant &data) const
+bool NotComparator::match(const QVariant &data, QVariantMap *output) const
 {
-	return !m_comparator->match(data);
+	return !m_comparator->match(data, output);
 }

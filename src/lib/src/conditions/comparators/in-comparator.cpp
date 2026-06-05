@@ -12,7 +12,7 @@ bool InComparator::accepts(QMetaType type) const
 	return type == QMetaType::fromType<QString>();
 }
 
-bool InComparator::match(const QVariant &data) const
+bool InComparator::match(const QVariant &data, QVariantMap *) const
 {
 	return m_values.contains(
 		data.toString(),

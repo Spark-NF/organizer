@@ -13,7 +13,7 @@ bool RangeComparator::accepts(QMetaType type) const
 		|| QMetaType::canConvert(type, QMetaType::fromType<double>());
 }
 
-bool RangeComparator::match(const QVariant &data) const
+bool RangeComparator::match(const QVariant &data, QVariantMap *) const
 {
 	if (data.typeId() == QMetaType::QDateTime)
 	{

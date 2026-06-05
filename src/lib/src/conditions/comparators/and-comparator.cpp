@@ -16,11 +16,11 @@ bool AndComparator::accepts(QMetaType type) const
 	);
 }
 
-bool AndComparator::match(const QVariant &data) const
+bool AndComparator::match(const QVariant &data, QVariantMap *output) const
 {
 	return std::all_of(
 		m_comparators.begin(),
 		m_comparators.end(),
-		[&data](const auto &cmp) { return cmp->match(data); }
+		[&data, output](const auto &cmp) { return cmp->match(data, output); }
 	);
 }

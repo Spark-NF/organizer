@@ -77,8 +77,7 @@ TEST_CASE("ActionLoader")
 		{
 			QJsonObject data {
 				{ "type", "rename" },
-				{ "from", "a" },
-				{ "to", "b" },
+				{ "dest", "b" },
 			};
 
 			std::shared_ptr<Action> action = ActionLoader::load(data);

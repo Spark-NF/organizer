@@ -32,11 +32,11 @@ TEST_CASE("MultipleAction")
 		Media media(file);
 
 		MultipleAction action({
-			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
-			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "second_\\1", false),
+			std::make_shared<RenameAction>("step1.bin", false),
+			std::make_shared<RenameAction>("step2.bin", false),
 		});
 		REQUIRE(action.execute(media, fs) == true);
-		REQUIRE(QFileInfo(media.path()).fileName() == "second_first_file.bin");
+		REQUIRE(QFileInfo(media.path()).fileName() == "step2.bin");
 		REQUIRE(QFile::remove(media.path()));
 	}
 
@@ -48,7 +48,7 @@ TEST_CASE("MultipleAction")
 		Media media(file);
 
 		MultipleAction action({
-			std::make_shared<RenameAction>(QRegularExpression("(.+)"), "first_\\1", false),
+			std::make_shared<RenameAction>("step1.bin", false),
 			std::make_shared<MoveAction>("unknown_dir/", false, false),
 		});
 		REQUIRE(action.execute(media, fs) == false);

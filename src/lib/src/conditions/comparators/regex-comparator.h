@@ -3,13 +3,14 @@
 
 #include "comparator.h"
 #include <QRegularExpression>
+#include <QString>
 
 
 class RegexComparator : public Comparator
 {
 	public:
 		explicit RegexComparator(const QString &regex);
-		bool match(const QVariant &data) const override;
+		bool match(const QVariant &data, QVariantMap *output = nullptr) const override;
 		bool accepts(QMetaType type) const override;
 
 	private:

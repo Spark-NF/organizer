@@ -3,19 +3,17 @@
 
 #include "action.h"
 #include "template-string.h"
-#include <QRegularExpression>
 
 
 class RenameAction : public Action
 {
 	public:
-		explicit RenameAction(const QRegularExpression &regexp, const TemplateString &replace, bool overwrite);
+		explicit RenameAction(TemplateString destination, bool overwrite);
 		bool execute(Media &media, IFilesystem &fs, QString *error = nullptr) const override;
 		QList<std::pair<QString, QStringList>> requiredKeys() const override;
 
 	private:
-		QRegularExpression m_regexp;
-		TemplateString m_replace;
+		TemplateString m_destination;
 		bool m_overwrite;
 };
 

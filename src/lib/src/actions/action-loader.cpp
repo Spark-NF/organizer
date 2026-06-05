@@ -51,11 +51,10 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *erro
 	}
 
 	if (type == "rename") {
-		const QString regexp = obj["from"].toString();
-		const TemplateString replace(obj["to"].toString());
-		if (hasUnknownKey(replace, error)) return nullptr;
+		const TemplateString dest(obj["dest"].toString());
+		if (hasUnknownKey(dest, error)) return nullptr;
 		const bool overwrite = obj["overwrite"].toBool(false);
-		return std::make_shared<RenameAction>(QRegularExpression(regexp), replace, overwrite);
+		return std::make_shared<RenameAction>(dest, overwrite);
 	}
 
 	if (type == "move") {
@@ -123,6 +122,6 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *erro
 
 bool ActionLoader::isValid(const QString &key)
 {
-	static const QStringList runtimeKeys = {"process"};
+	static const QStringList runtimeKeys = {"captures", "process"};
 	return runtimeKeys.contains(key);
 }

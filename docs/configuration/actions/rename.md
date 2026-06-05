@@ -5,27 +5,24 @@ Rename the file. The new name can be in another folder. If it doesn't exist, it 
 
 ## Options
 
-* **from**: a regular expression to match the original filename
-* **to**: what to replace the regular expression match with. Supports regex back-references (`\1`, `\2`...) and `{key}` placeholders (see [Loader](../conditions/loader.md)) resolved at execution time.
-* **overwrite**: set to true to will overwrite any already existing file (default: `false`)
+* **dest**: the new filename. Supports `{key}` placeholders (see [Loader](../conditions/loader.md)) resolved at execution time.
+* **overwrite**: set to `true` to overwrite any already existing file (default: `false`)
 
 
 ## Examples
 
-Using a regex back-reference:
+Rename using loader placeholders:
 ```json
 {
     "type": "rename",
-    "from": "!*(.+)",
-    "to": "!!!\\1"
+    "dest": "{created|year}-{created|month}-{created|day}_{filename}"
 }
 ```
 
-Prepending the file extension using a loader placeholder:
+Rename based on a capture group from a condition regex (see [Comparator](../conditions/comparator.md)):
 ```json
 {
     "type": "rename",
-    "from": "(.+)",
-    "to": "{extension}_\\1"
+    "dest": "{captures.stem.date}-{captures.stem.name}.{extension}"
 }
 ```

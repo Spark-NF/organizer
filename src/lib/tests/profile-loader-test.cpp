@@ -22,8 +22,7 @@ TEST_CASE("ProfileLoader")
 				}}},
 				{ "actions", QJsonArray { QJsonObject {
 					{ "type", "rename" },
-					{ "from", "(.+)" },
-					{ "to", "before_\\1" },
+					{ "dest", "before_{filename}" },
 				}}},
 			}
 		}}
@@ -98,7 +97,7 @@ TEST_CASE("ProfileLoader")
 					QJsonObject {
 						{ "name", "Good rule" },
 						{ "conditions", QJsonArray { QJsonObject {{ "data", "filename" }, { "glob", "*.jpg" }}}},
-						{ "actions", QJsonArray { QJsonObject {{ "type", "rename" }, { "from", "(.+)" }, { "to", "\\1" }}}},
+						{ "actions", QJsonArray { QJsonObject {{ "type", "rename" }, { "dest", "{filename}" }}}},
 					},
 					QJsonObject {
 						{ "name", "Bad rule" },
@@ -145,8 +144,7 @@ TEST_CASE("ProfileLoader")
 					}}},
 					{ "actions", QJsonArray { QJsonObject {
 						 { "type", "rename" },
-						 { "from", "(.+)" },
-						 { "to", "after_\\1" },
+						 { "dest", "after_{filename}" },
 					 }}},
 				}
 			});
