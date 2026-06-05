@@ -3,6 +3,7 @@
 #include "conditions/loaders/created-loader.h"
 #include "conditions/loaders/directory-loader.h"
 #include "conditions/loaders/directory-name-loader.h"
+#include "conditions/loaders/empty-loader.h"
 #include "conditions/loaders/extension-loader.h"
 #include "conditions/loaders/filename-loader.h"
 #include "conditions/loaders/filesize-loader.h"
@@ -22,6 +23,8 @@ std::shared_ptr<Loader> LoaderLoader::load(const QString &key, const QJsonObject
 		return std::make_shared<DirectoryLoader>();
 	if (key == "directory_name")
 		return std::make_shared<DirectoryNameLoader>();
+	if (key == "empty")
+		return std::make_shared<EmptyLoader>();
 	if (key == "exif")
 		return std::make_shared<ExifLoader>(obj["tag"].toString());
 	if (key == "extension")
@@ -48,7 +51,7 @@ std::shared_ptr<Loader> LoaderLoader::load(const QString &key, const QJsonObject
 bool LoaderLoader::isValid(const QString &key)
 {
 	static const QStringList known = {
-		"created", "directory", "directory_name", "exif", "extension",
+		"created", "directory", "directory_name", "empty", "exif", "extension",
 		"filename", "filesize", "id3", "last_modified", "mime_type", "path", "stem"
 	};
 	return known.contains(key);

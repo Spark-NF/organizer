@@ -9,6 +9,7 @@ A loader is a string that identifies what data to extract from a file. It is use
 * `content_text`: matches plain-text file content line by line; the comparator is applied to each line and the condition passes if any line matches. Files larger than 10 MB or containing binary data are skipped. Not usable as a template placeholder.
 * `created`: the creation time of the file
 * `directory`: the canonical absolute path of the directory containing the file
+* `empty`: if the file is zero bytes, or if the directory has no contents
 * `directory_name`: the name of the directory containing the file (last path component only)
 * `exif`: a metadata tag from the file's EXIF data (e.g. `DateTimeOriginal`, `Make`, `Model`...), requires `exiftool` to be installed
 * `extension`: the file extension, without the leading dot (e.g. `gz`)
