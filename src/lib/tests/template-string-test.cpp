@@ -150,6 +150,16 @@ TEST_CASE("TemplateString")
 			REQUIRE(TemplateString("{date|format:MMM yyyy}").resolve(data) == QString("Jun 2024"));
 		}
 
+		SECTION("Size filters")
+		{
+			const qint64 size = 2LL * 1024 * 1024 * 1024;
+			const QVariantMap data{{"filesize", QVariant(size)}};
+			REQUIRE(TemplateString("{filesize|kb}").resolve(data) == QString("2097152"));
+			REQUIRE(TemplateString("{filesize|mb}").resolve(data) == QString("2048"));
+			REQUIRE(TemplateString("{filesize|gb}").resolve(data) == QString("2"));
+			REQUIRE(!TemplateString("{filesize|filesize}").resolve(data).isEmpty());
+		}
+
 		SECTION("Default")
 		{
 			SECTION("Missing key")

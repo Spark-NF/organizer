@@ -47,6 +47,13 @@ A few examples:
 * `minute`: zero-padded minute (e.g. `05`)
 * `format:<pattern>`: custom format using [Qt date/time format strings](https://doc.qt.io/qt-6/qdatetime.html#toString) (e.g. `format:yyyy-MM-dd`, `format:MMM yyyy`)
 
+### Size filters
+
+* `kb`: convert bytes to kilobytes
+* `mb`: convert bytes to megabytes
+* `gb`: convert bytes to gigabytes
+* `filesize`: human-readable size string using system locale (e.g. `1.5 MB`, `300 KB`)
+
 ### Fallback filter
 
 `default:<value>` will substitute `<value>` if the key is missing or resolves to an empty string. Filters placed after `default` are applied to the fallback value as well.

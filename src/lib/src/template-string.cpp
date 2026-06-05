@@ -1,8 +1,31 @@
 #include "template-string.h"
 #include <numeric>
 #include <QDateTime>
+#include <QLocale>
 #include <QRegularExpression>
 #include <QtGlobal>
+
+
+static bool isIntegral(const QVariant &v)
+{
+	switch (v.typeId()) {
+		case QMetaType::Char:
+		case QMetaType::SChar:
+		case QMetaType::UChar:
+		case QMetaType::Short:
+		case QMetaType::UShort:
+		case QMetaType::Int:
+		case QMetaType::UInt:
+		case QMetaType::Long:
+		case QMetaType::ULong:
+		case QMetaType::LongLong:
+		case QMetaType::ULongLong:
+			return true;
+
+		default:
+			return false;
+	}
+}
 
 
 TemplateString::TemplateString(const QString &tmpl)
@@ -81,6 +104,7 @@ QVariant TemplateString::applyFilter(const QVariant &value, const std::pair<QStr
 {
 	const auto &[filter, arg] = pair;
 
+	// Date methods
 	if (value.typeId() == QMetaType::QDateTime) {
 		const QDateTime dt = value.toDateTime();
 		if (filter == "year")
@@ -102,6 +126,19 @@ QVariant TemplateString::applyFilter(const QVariant &value, const std::pair<QStr
 		}
 		qWarning() << "Filter" << filter << "cannot be applied to a date value";
 		return value;
+	}
+
+	// Size methods (integral numbers only)
+	if (isIntegral(value)) {
+		const qint64 bytes = value.toLongLong();
+		if (filter == "kb")
+			return bytes / 1024;
+		if (filter == "mb")
+			return bytes / (1024 * 1024);
+		if (filter == "gb")
+			return bytes / (1024LL * 1024 * 1024);
+		if (filter == "filesize")
+			return QLocale::system().formattedDataSize(bytes, 1, QLocale::DataSizeTraditionalFormat);
 	}
 
 	if (filter == "default")
@@ -126,6 +163,7 @@ bool TemplateString::hasUnknownFilters() const
 	static const QStringList known = {
 		"upper", "lower", "trim",
 		"year", "month", "day", "hour", "minute", "format",
+		"kb", "mb", "gb", "filesize",
 		"default"
 	};
 	for (const auto &ph : m_placeholders)
