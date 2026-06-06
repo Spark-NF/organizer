@@ -51,8 +51,8 @@ TEST_CASE("ConditionLoader")
 	{
 		QJsonObject data {
 			{ "type", "content" },
-			{ "extractor", "pdf" },
-			{ "glob", "*.pdf" },
+			{ "extractor", "unknown" },
+			{ "glob", "*.xyz" },
 		};
 
 		std::shared_ptr<Condition> condition = ConditionLoader::load(data);

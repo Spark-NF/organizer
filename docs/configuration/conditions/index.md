@@ -36,7 +36,8 @@ Matches against the text content of a file. The comparator is applied line by li
 
 ### Extractors
 
-* `text`: plain text file
+* `text`: plain text file (.txt, .md, .log, etc.)
+* `pdf`: PDF document (requires `pdftotext`)
 
 ### Examples
 

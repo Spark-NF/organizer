@@ -7,6 +7,7 @@
 #include "process-condition.h"
 #include "text-extractor.h"
 #include "extractors/plain-text-extractor.h"
+#include "extractors/pdf-text-extractor.h"
 #include "comparators/and-comparator.h"
 #include "comparators/glob-comparator.h"
 #include "comparators/in-comparator.h"
@@ -69,6 +70,8 @@ std::shared_ptr<Condition> ConditionLoader::loadContentCondition(const QJsonObje
 	std::shared_ptr<TextExtractor> extractor;
 	if (extractorKey == "text") {
 		extractor = std::make_shared<PlainTextExtractor>();
+	} else if (extractorKey == "pdf") {
+		extractor = std::make_shared<PdfTextExtractor>();
 	} else {
 		if (error) *error = "Unknown extractor: " + extractorKey;
 		return nullptr;
