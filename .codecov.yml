@@ -10,6 +10,8 @@ coverage:
     - "src/*/tests/**/*"
     - "src/vendor/*"
     - "src/vendor/**/*"
+    - "src/lib/vendor/*"
+    - "src/lib/vendor/**/*"
 
 component_management:
   individual_components:

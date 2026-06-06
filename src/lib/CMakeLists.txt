@@ -6,15 +6,19 @@ set(QT_LIBRARIES Qt6::Core Qt6::Gui Qt6::Multimedia Qt6::Network)
 
 # Input
 file(GLOB_RECURSE SOURCES "src/*.cpp")
-include_directories("src/")
+include_directories("src/" "vendor/")
+
+# Add the miniz dependency as a pure C file
+set(MINIZ_SRC vendor/miniz/miniz.c)
+set_source_files_properties(${MINIZ_SRC} PROPERTIES LANGUAGE C COMPILE_FLAGS "-w")
 
 # Target
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES} ${MINIZ_SRC})
 target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
 # Tests
 file(GLOB_RECURSE SOURCES_TESTS "tests/*.cpp")
-include_directories("src/" "../tests/src/" "../vendor" "../vendor/catch/src")
+include_directories("src/" "vendor/" "../tests/src/" "../vendor" "../vendor/catch/src")
 add_executable(${PROJECT_NAME}-tests ${SOURCES_TESTS})
 add_test(${PROJECT_NAME}-tests ${PROJECT_NAME}-tests)
 find_package(Qt6 COMPONENTS Test REQUIRED)
