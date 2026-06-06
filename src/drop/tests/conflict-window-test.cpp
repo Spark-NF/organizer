@@ -8,7 +8,7 @@
 #include <catch.h>
 #include "actions/action.h"
 #include "conditions/comparators/glob-comparator.h"
-#include "conditions/condition.h"
+#include "conditions/loader-condition.h"
 #include "conditions/loaders/filename-loader.h"
 #include "conflict-window.h"
 #include "media.h"
@@ -18,7 +18,7 @@
 
 static std::shared_ptr<Condition> makeFilenameCondition(const QString &globPattern)
 {
-	return std::make_shared<Condition>(
+	return std::make_shared<LoaderCondition>(
 		"filename",
 		std::make_shared<FilenameLoader>(),
 		std::make_shared<GlobComparator>(globPattern)
