@@ -38,6 +38,7 @@ Matches against the text content of a file. The comparator is applied line by li
 
 * `text`: plain text file (.txt, .md, .log, etc.)
 * `pdf`: PDF document (requires `pdftotext`)
+* `docx`: Microsoft Word document (.docx). The legacy Word 97–2003 format(.doc) is not supported.
 
 ### Examples
 
