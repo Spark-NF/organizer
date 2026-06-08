@@ -11,6 +11,7 @@
 #include "actions/shortcut-action.h"
 #include "actions/symbolic-link-action.h"
 #include "actions/trash-action.h"
+#include "actions/write-action.h"
 #include "loader-loader.h"
 #include "template-string.h"
 
@@ -114,6 +115,22 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *erro
 		}
 
 		return std::make_shared<MultipleAction>(std::move(actions));
+	}
+
+	if (type == "write") {
+		const TemplateString file(obj["file"].toString());
+		const TemplateString text(obj["text"].toString());
+		if (hasUnknownKey(file, error)) return nullptr;
+		if (hasUnknownKey(text, error)) return nullptr;
+
+		const QString modeStr = obj["mode"].toString();
+		const auto mode = writeModeFromString(modeStr);
+		if (!mode) {
+			if (error) *error = modeStr.isEmpty() ? "Missing required field: mode" : "Unknown write mode: " + modeStr;
+			return nullptr;
+		}
+
+		return std::make_shared<WriteAction>(file, text, *mode);
 	}
 
 	if (error) *error = "Unknown action type: " + type;

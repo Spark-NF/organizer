@@ -1,7 +1,26 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
+#include <optional>
 #include <QString>
+
+
+enum class WriteMode {
+	Append,
+	Overwrite,
+	Prepend,
+};
+
+inline std::optional<WriteMode> writeModeFromString(const QString &val)
+{
+	if (val == "append")
+		return WriteMode::Append;
+	if (val == "overwrite")
+		return WriteMode::Overwrite;
+	if (val == "prepend")
+		return WriteMode::Prepend;
+	return std::nullopt;
+}
 
 
 class IFilesystem
@@ -18,6 +37,7 @@ class IFilesystem
 		virtual bool hardLink(const QString &from, const QString &to) = 0;
 		virtual bool symbolicLink(const QString &from, const QString &to) = 0;
 		virtual bool shortcut(const QString &from, const QString &to) = 0;
+		virtual bool writeFile(const QString &path, const QString &text, WriteMode mode) = 0;
 
 		virtual QString errorString() const { return {}; }
 };

@@ -109,6 +109,37 @@ bool RealFilesystem::shortcut(const QString &from, const QString &to)
 	#endif
 }
 
+bool RealFilesystem::writeFile(const QString &path, const QString &text, const WriteMode mode)
+{
+	// Prepending requires reading the whole file and writing it again
+	if (mode == WriteMode::Prepend) {
+		QFile file(path);
+		QByteArray existing;
+		if (file.open(QFile::ReadOnly)) {
+			existing = file.readAll();
+			file.close();
+		}
+		if (!file.open(QFile::WriteOnly | QFile::Truncate)) {
+			m_errorString = file.errorString();
+			return false;
+		}
+		file.write(text.toUtf8());
+		file.write(existing);
+		return true;
+	}
+
+	QFile::OpenMode flags = QFile::WriteOnly;
+	flags |= mode == WriteMode::Append ? QFile::Append : QFile::Truncate;
+
+	QFile file(path);
+	if (!file.open(flags)) {
+		m_errorString = file.errorString();
+		return false;
+	}
+	file.write(text.toUtf8());
+	return true;
+}
+
 QString RealFilesystem::errorString() const
 {
 	return m_errorString;

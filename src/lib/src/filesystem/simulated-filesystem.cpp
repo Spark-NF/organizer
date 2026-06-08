@@ -75,6 +75,13 @@ bool SimulatedFilesystem::shortcut(const QString &from, const QString &to)
 	return true;
 }
 
+bool SimulatedFilesystem::writeFile(const QString &path, const QString &text, const WriteMode mode)
+{
+	const QString modeName = mode == WriteMode::Append ? "Append" : mode == WriteMode::Overwrite ? "Overwrite" : "Prepend";
+	m_log.append(QString("%1 to '%2': %3").arg(modeName, path, text));
+	return true;
+}
+
 const QStringList &SimulatedFilesystem::log() const
 {
 	return m_log;

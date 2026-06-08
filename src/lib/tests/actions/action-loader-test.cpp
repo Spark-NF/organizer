@@ -185,4 +185,50 @@ TEST_CASE("ActionLoader")
 			REQUIRE(std::dynamic_pointer_cast<MultipleAction>(action) != nullptr);
 		}
 	}
+
+	SECTION("Write action")
+	{
+		SECTION("Valid")
+		{
+			for (const QString &mode : {"append", "overwrite", "prepend"}) {
+				QJsonObject data {{"type", "write"}, {"file", "/tmp/f"}, {"text", "t"}, {"mode", mode}};
+				REQUIRE(ActionLoader::load(data) != nullptr);
+			}
+		}
+
+		SECTION("Missing mode")
+		{
+			QJsonObject data {{"type", "write"}, {"file", "/tmp/log.txt"}, {"text", "x"}};
+			QString error;
+			REQUIRE(ActionLoader::load(data, &error) == nullptr);
+			REQUIRE(!error.isEmpty());
+		}
+
+		SECTION("Unknown mode")
+		{
+			QJsonObject data {{"type", "write"}, {"file", "/tmp/f"}, {"text", "t"}, {"mode", "bad"}};
+			QString error;
+			REQUIRE(ActionLoader::load(data, &error) == nullptr);
+			REQUIRE(error.contains("bad"));
+		}
+
+		SECTION("Unknown loader key")
+		{
+			SECTION("File template")
+			{
+				QJsonObject data {{"type", "write"}, {"file", "{unknown_key}/log.txt"}, {"text", "t"}, {"mode", "append"}};
+				QString error;
+				REQUIRE(ActionLoader::load(data, &error) == nullptr);
+				REQUIRE(!error.isEmpty());
+			}
+
+			SECTION("Text template")
+			{
+				QJsonObject data {{"type", "write"}, {"file", "/tmp/log.txt"}, {"text", "{unknown_key}"}, {"mode", "append"}};
+				QString error;
+				REQUIRE(ActionLoader::load(data, &error) == nullptr);
+				REQUIRE(!error.isEmpty());
+			}
+		}
+	}
 }

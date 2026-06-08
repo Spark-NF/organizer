@@ -16,6 +16,7 @@ class RealFilesystem : public IFilesystem
 		bool hardLink(const QString &from, const QString &to) override;
 		bool symbolicLink(const QString &from, const QString &to) override;
 		bool shortcut(const QString &from, const QString &to) override;
+		bool writeFile(const QString &path, const QString &text, WriteMode mode) override;
 
 		QString errorString() const override;
 
