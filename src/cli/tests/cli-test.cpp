@@ -5,6 +5,7 @@
 #include <QProcess>
 #include <QTemporaryDir>
 #include <QTemporaryFile>
+#include <QTest>
 #include <catch.h>
 #include <catch2/generators/catch_generators.hpp>
 #include <iostream>
@@ -474,6 +475,88 @@ TEST_CASE("CLI")
 					const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
 					REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
 				}
+			}
+		}
+
+		SECTION("Watch")
+		{
+			SECTION("Requires directories")
+			{
+				QTemporaryDir dir;
+				QFile file(dir.filePath("a.txt"));
+				file.open(QFile::WriteOnly);
+				file.close();
+
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch", file.fileName() });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 1);
+				REQUIRE(QString(process.readAllStandardError()).contains("--watch requires directory paths"));
+			}
+
+			SECTION("Incompatible with --check")
+			{
+				QTemporaryDir dir;
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch", "--check", dir.path() });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 1);
+				REQUIRE(QString(process.readAllStandardError()).contains("--watch and --check cannot be used together"));
+			}
+
+			SECTION("Requires at least one directory argument")
+			{
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch" });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 0);
+				REQUIRE(QString(process.readAllStandardOutput()).contains("Usage:"));
+			}
+
+			SECTION("Non-existent path")
+			{
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch", "path_does_not_exist" });
+				REQUIRE(process.waitForStarted());
+				REQUIRE(process.waitForFinished());
+
+				REQUIRE(process.exitCode() == 1);
+				REQUIRE(QString(process.readAllStandardError()).contains("does not exist"));
+			}
+
+			SECTION("Prints startup message on launch")
+			{
+				QTemporaryDir dir;
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch", dir.path() });
+				REQUIRE(process.waitForStarted());
+
+				// Give the process time to print the startup message then kill it
+				QTest::qWait(500);
+				process.kill();
+				process.waitForFinished();
+
+				REQUIRE(QString(process.readAllStandardOutput()).contains("Watching " + dir.path()));
+			}
+
+			SECTION("No startup message with --quiet")
+			{
+				QTemporaryDir dir;
+				QProcess process;
+				process.start(program, { "-p", profileFile.fileName(), "--watch", "--quiet", dir.path() });
+				REQUIRE(process.waitForStarted());
+
+				QTest::qWait(500);
+				process.kill();
+				process.waitForFinished();
+
+				REQUIRE(QString(process.readAllStandardOutput()) == "");
 			}
 		}
 	}

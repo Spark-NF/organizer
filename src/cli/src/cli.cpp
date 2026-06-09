@@ -1,6 +1,7 @@
 #include "cli.h"
 #include <memory>
 #include <QCommandLineParser>
+#include <QCoreApplication>
 #include <QDir>
 #include <QDirIterator>
 #include <QFileInfo>
@@ -8,6 +9,7 @@
 #include "filesystem/filesystem.h"
 #include "filesystem/real-filesystem.h"
 #include "filesystem/simulated-filesystem.h"
+#include "folder-watcher.h"
 #include "media.h"
 #include "operation-logger.h"
 #include "profile-loader.h"
@@ -39,6 +41,8 @@ int runCli(const QStringList &arguments)
 	parser.addOption(checkOption);
 	QCommandLineOption quietOption({ "q", "quiet" }, "Suppress all non-error output.");
 	parser.addOption(quietOption);
+	QCommandLineOption watchOption({ "w", "watch" }, "Watch the given directories for new files and process them automatically.");
+	parser.addOption(watchOption);
 
 	// Positional arguments
 	parser.addPositionalArgument("files", "The files to organize.", "files...");
@@ -51,12 +55,14 @@ int runCli(const QStringList &arguments)
 	}
 
 	const bool check = parser.isSet(checkOption);
+	const bool watch = parser.isSet(watchOption);
 	QStringList files = parser.positionalArguments();
 
 	const ProcessOptions opts {
 		parser.isSet(dryRunOption),
 		parser.isSet(recursiveOption),
 		parser.isSet(quietOption),
+		watch,
 	};
 
 	// "-" in the file list means read paths from stdin
@@ -70,17 +76,22 @@ int runCli(const QStringList &arguments)
 		}
 	}
 
+	// Validate options
 	if (!check && files.isEmpty()) {
 		parser.showHelp(0);
 		return 0;
 	}
-
 	if (!parser.isSet(profileOption)) {
 		stdErr << "Missing required option: --profile" << Qt::endl;
 		parser.showHelp(1);
 		return 1;
 	}
+	if (watch && check) {
+		stdErr << "--watch and --check cannot be used together" << Qt::endl;
+		return 1;
+	}
 
+	// Load and validate profile file
 	const QString profilePath = parser.value(profileOption);
 	QString profileError;
 	std::shared_ptr<Profile> profile = ProfileLoader::loadFile(profilePath, &profileError);
@@ -89,9 +100,17 @@ int runCli(const QStringList &arguments)
 		return 1;
 	}
 
+	// Stop here if we just wanted to check
 	if (check) {
 		stdOut << "Profile is valid." << Qt::endl;
 		return 0;
+	}
+
+	for (const QString &path : files) {
+		if (!QFileInfo::exists(path)) {
+			stdErr << "Path " << path << " does not exist" << Qt::endl;
+			return 1;
+		}
 	}
 
 	std::unique_ptr<IFilesystem> fs;
@@ -101,15 +120,30 @@ int runCli(const QStringList &arguments)
 		fs = std::make_unique<RealFilesystem>();
 	}
 
-	bool success = true;
-	for (const QString &filePath : files) {
-		QFileInfo fileInfo(filePath);
-		if (!fileInfo.exists()) {
-			stdErr << "Path " << filePath << " does not exist" << Qt::endl;
-			return 1;
+	if (watch) {
+		// Validate that all passed paths must be directories
+		for (const QString &dir : files) {
+			if (!QFileInfo(dir).isDir()) {
+				stdErr << "--watch requires directory paths, got file: " << dir << Qt::endl;
+				return 1;
+			}
 		}
 
-		if (fileInfo.isDir()) {
+		// Print a nice "Watching" message
+		if (!opts.quiet) {
+			const QString watchingList = files.size() <= 3
+				? files.join(", ")
+				: files.mid(0, 3).join(", ") + " and " + QString::number(files.size() - 3) + " more";
+			stdOut << "Watching " << watchingList << " for changes. Press Ctrl+C to stop." << Qt::endl;
+		}
+
+		FolderWatcher watcher(profile, *fs, opts, files);
+		return QCoreApplication::exec();
+	}
+
+	bool success = true;
+	for (const QString &filePath : files) {
+		if (QFileInfo(filePath).isDir()) {
 			if (!processDir(profile, QDir(filePath), *fs, opts)) {
 				success = false;
 			}
@@ -119,7 +153,6 @@ int runCli(const QStringList &arguments)
 			}
 		}
 	}
-
 	return success ? 0 : 1;
 }
 
@@ -127,6 +160,11 @@ int runCli(const QStringList &arguments)
 bool processFile(const std::shared_ptr<Profile> &profile, const QString &fileName, IFilesystem &fs, const ProcessOptions &opts)
 {
 	Media media(fileName);
+	return processFile(profile, media, fs, opts);
+}
+bool processFile(const std::shared_ptr<Profile> &profile, Media &media, IFilesystem &fs, const ProcessOptions &opts)
+{
+	const QString fileName = media.path();
 	QList<std::shared_ptr<Rule>> matches = profile->match(media);
 
 	// No matching rule found
