@@ -41,6 +41,9 @@ theme:
         icon: material/brightness-4
         name: Switch to system preference
 
+extra:
+  generator: false
+
 markdown_extensions:
   - admonition
   - pymdownx.details
