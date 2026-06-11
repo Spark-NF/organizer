@@ -1,11 +1,12 @@
 #include "process-condition.h"
 #include <QProcess>
 #include <QtGlobal>
+#include "comparators/comparator.h"
 #include "media.h"
 
 
-ProcessCondition::ProcessCondition(QString cmd, QStringList args, int timeout)
-	: m_cmd(std::move(cmd)), m_args(std::move(args)), m_timeout(timeout)
+ProcessCondition::ProcessCondition(QString cmd, QStringList args, int timeout, std::shared_ptr<Comparator> comparator)
+	: m_cmd(std::move(cmd)), m_args(std::move(args)), m_timeout(timeout), m_comparator(std::move(comparator))
 {}
 
 bool ProcessCondition::match(Media &media) const
@@ -31,6 +32,11 @@ bool ProcessCondition::match(Media &media) const
 		process.kill();
 		qWarning() << "Process timed out:" << m_cmd;
 		return false;
+	}
+
+	if (m_comparator) {
+		const QString output = QString::fromUtf8(process.readAllStandardOutput()).trimmed();
+		return matchAndCapture(QVariant(output), *m_comparator, media, "process");
 	}
 
 	return process.exitCode() == 0;

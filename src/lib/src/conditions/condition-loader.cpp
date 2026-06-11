@@ -44,7 +44,12 @@ std::shared_ptr<Condition> ConditionLoader::loadProcessCondition(const QJsonObje
 	for (const auto &v : obj["args"].toArray())
 		args.append(v.toString());
 	const int timeout = obj["timeout"].toInt(30000);
-	return std::make_shared<ProcessCondition>(cmd, args, timeout);
+
+	std::shared_ptr<Comparator> comparator;
+	if (obj.contains("comparator"))
+		comparator = loadComparator(obj["comparator"].toObject());
+
+	return std::make_shared<ProcessCondition>(cmd, args, timeout, std::move(comparator));
 }
 
 std::shared_ptr<Condition> ConditionLoader::loadLoaderCondition(const QJsonObject &obj, QString *error)
