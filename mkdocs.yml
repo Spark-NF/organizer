@@ -7,6 +7,7 @@ use_directory_urls: false
 
 plugins:
   - search
+  - awesome-pages
   - git-revision-date-localized
 
 theme:
@@ -16,6 +17,7 @@ theme:
   favicon: assets/favicon.ico
 
   features:
+    - navigation.tabs
     - navigation.sections
     - navigation.top
     - search.suggest

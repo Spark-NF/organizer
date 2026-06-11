@@ -1,0 +1,7 @@
+nav:
+  - Home: index.md
+  - Docs:
+    - getting-started.md
+    - cli.md
+    - configuration
+  - Issue Tracker: https://github.com/Spark-NF/organizer/issues
