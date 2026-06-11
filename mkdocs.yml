@@ -45,6 +45,11 @@ theme:
 
 extra:
   generator: false
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Spark-NF
+      name: GitHub
+
 
 markdown_extensions:
   - admonition
