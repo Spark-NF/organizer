@@ -11,15 +11,25 @@
 [![Project license](https://img.shields.io/github/license/Spark-NF/organizer.svg)](https://raw.githubusercontent.com/Spark-NF/organizer/develop/LICENSE)
 
 ## About
-Organizer allows to automatically or manually apply actions on your files. It can be configured to perform actions automatically given the file's name, size, etc. to allow for automated sorting of many files at once.
+Organizer applies rules to your files. Each rule has conditions (filename matches a pattern, extension is one of several types, EXIF tag equals a value...) and actions (move, rename, trash, run a script...). Rules run automatically on a batch of files, or on demand at the press of a key.
 
 For example, it can be used to sort a vacation's pictures and videos and put them in separate folders according to their location, the context, etc. or to move old unused downloaded files to the trash automatically.
 
-It is composed of a few projects:
+[Documentation](https://spark-nf.github.io/organizer/)
 
-* A command-line interface (CLI), which takes a configuration file and a list of files, and will apply actions matching conditions on your files automatically.
-* A drop window that does the same thing as the CLI, but with a user interface.
-* A manual sorting interface, which allows to load a bunch of media files, show/play them one-by-one, and allowing the user to do custom actions on them on the press of a button.
+### Features
+
+* **Three interfaces**:
+  * **Drop window**: small always-on-top window for drag-and-drop sorting
+  * **Manual sorting**: media viewer interface for working through media files one by one
+  * **CLI**: for scripting and automation
+* **Rich conditions**: filename, extension, MIME type, file size, date, EXIF metadata, ID3 tags, file content (text, PDF, DOCX)...
+* **Templating**: use `{created|year}`, `{id3.Artist}`, `{extension|upper}`, etc. in action targets.
+* **Composite actions**: a single rule can run multiple actions on a file in sequence.
+* **Dry-run mode**: preview every operation before it touches a file.
+* **Operation history**: every operation is logged.
+* **Cross-platform**: Windows, macOS, and Linux.
+* **Free and open source**: Apache 2.0 license.
 
 ### Download
 You can download the latest release [here](https://github.com/Spark-NF/organizer/releases/latest), or find all previous releases [here](https://github.com/Spark-NF/organizer/releases).
