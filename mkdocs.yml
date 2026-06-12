@@ -18,6 +18,9 @@ theme:
 
   features:
     - navigation.tabs
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
     - navigation.sections
     - navigation.top
     - search.suggest
@@ -46,6 +49,9 @@ theme:
   custom_dir: docs/theme
   subtitle: Organize your files
   description: Organizer applies rules to your files and is free, open source, and cross-platform.
+
+extra_css:
+  - assets/css/home.css
 
 extra:
   generator: false
