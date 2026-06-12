@@ -38,7 +38,7 @@ For users interested, a nightly version is built automatically on every commit, 
 
 ### Screenshots
 
-![Main](src/gui/resources/images/screenshots/main.png)
+![Manual](docs/assets/img/screenshots/manual.png)
 
 ### Languages
 * English

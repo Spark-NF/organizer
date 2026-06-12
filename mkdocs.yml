@@ -43,6 +43,10 @@ theme:
         icon: material/brightness-4
         name: Switch to system preference
 
+  custom_dir: docs/theme
+  subtitle: Organize your files
+  description: Organizer applies rules to your files and is free, open source, and cross-platform.
+
 extra:
   generator: false
   social:
@@ -50,11 +54,14 @@ extra:
       link: https://github.com/Spark-NF
       name: GitHub
 
-
 markdown_extensions:
+  - md_in_html
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - github-callouts
   - toc:
       permalink: '¶'
