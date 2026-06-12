@@ -51,7 +51,7 @@ theme:
   description: Organizer applies rules to your files and is free, open source, and cross-platform.
 
 extra_css:
-  - assets/css/home.css
+  - assets/css/extra.css
 
 extra:
   generator: false
