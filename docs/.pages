@@ -1,5 +1,5 @@
 nav:
-  - Home: index.md
+  - index.md
   - Docs:
     - getting-started.md
     - cli.md
