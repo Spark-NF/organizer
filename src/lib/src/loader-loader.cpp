@@ -1,5 +1,7 @@
 #include "loader-loader.h"
 #include <QtGlobal>
+#include "plugin-registry.h"
+#include "conditions/loaders/plugin-loader.h"
 #include "conditions/loaders/created-loader.h"
 #include "conditions/loaders/directory-loader.h"
 #include "conditions/loaders/directory-name-loader.h"
@@ -46,6 +48,8 @@ std::shared_ptr<Loader> LoaderLoader::load(const QString &key, const QJsonObject
 		return std::make_shared<PathLoader>();
 	if (key == "stem")
 		return std::make_shared<StemLoader>(obj["base"].toBool(false));
+	if (auto process = PluginRegistry::instance().loaderFor(key))
+		return std::make_shared<PluginLoader>(key, process);
 
 	qWarning() << "Unknown loader key:" << key;
 	return nullptr;
@@ -57,5 +61,5 @@ bool LoaderLoader::isValid(const QString &key)
 		"created", "directory", "directory_name", "empty", "exif", "extension",
 		"filename", "filesize", "id3", "kind", "last_modified", "mime_type", "path", "stem"
 	};
-	return known.contains(key);
+	return known.contains(key) || PluginRegistry::instance().loaderFor(key) != nullptr;
 }

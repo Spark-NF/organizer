@@ -12,6 +12,7 @@
 #include "folder-watcher.h"
 #include "media.h"
 #include "operation-logger.h"
+#include "plugin-registry.h"
 #include "profile-loader.h"
 #include "profile.h"
 #include "rules/rule.h"
@@ -23,6 +24,8 @@ static QTextStream stdErr(stderr);
 
 int runCli(const QStringList &arguments)
 {
+	PluginRegistry::instance().initializeDefault();
+
 	// General settings
 	QCommandLineParser parser;
 	parser.setApplicationDescription("Organizer");

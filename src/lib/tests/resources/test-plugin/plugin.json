@@ -1,0 +1,9 @@
+{
+    "name": "test-plugin",
+    "cmd": "python3",
+    "args": ["plugin.py"],
+    "provides": {
+        "loaders": ["plugin_loader"],
+        "actions": ["plugin_action"]
+    }
+}

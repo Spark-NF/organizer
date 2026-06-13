@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "drop-window.h"
+#include "plugin-registry.h"
 
 
 int main(int argc, char *argv[])
@@ -13,6 +14,8 @@ int main(int argc, char *argv[])
 	app.setApplicationDisplayName(QString("Organizer (%1 - %2)").arg(VERSION, VERSION_PLATFORM));
 	app.setApplicationVersion(VERSION);
 	app.setOrganizationName("Spark-NF");
+
+	PluginRegistry::instance().initializeDefault();
 
 	DropWindow dropWindow;
 	dropWindow.show();

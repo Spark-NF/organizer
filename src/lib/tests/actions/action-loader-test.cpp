@@ -1,8 +1,10 @@
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QStandardPaths>
 #include <catch.h>
 #include <catch2/generators/catch_generators.hpp>
 #include "actions/action-loader.h"
+#include "plugin-registry.h"
 #include "actions/action.h"
 #include "actions/delete-action.h"
 #include "actions/hard-link-action.h"
@@ -230,5 +232,18 @@ TEST_CASE("ActionLoader")
 				REQUIRE(!error.isEmpty());
 			}
 		}
+	}
+
+	SECTION("Plugin action")
+	{
+		if (QStandardPaths::findExecutable("python3").isEmpty())
+			SKIP("python3 not installed");
+
+		PluginRegistry::instance().initialize({QString(TEST_RESOURCES)});
+		QJsonObject data;
+		data["type"] = "plugin_action";
+		REQUIRE(ActionLoader::load(data) != nullptr);
+
+		PluginRegistry::instance().reset();
 	}
 }

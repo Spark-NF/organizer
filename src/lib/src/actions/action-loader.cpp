@@ -1,6 +1,8 @@
 #include "action-loader.h"
 #include <QJsonArray>
 #include <QtGlobal>
+#include "plugin-registry.h"
+#include "actions/plugin-action.h"
 #include "actions/copy-action.h"
 #include "actions/delete-action.h"
 #include "actions/hard-link-action.h"
@@ -131,6 +133,12 @@ std::shared_ptr<Action> ActionLoader::load(const QJsonObject &obj, QString *erro
 		}
 
 		return std::make_shared<WriteAction>(file, text, *mode);
+	}
+
+	if (auto process = PluginRegistry::instance().actionFor(type)) {
+		QJsonObject params = obj;
+		params.remove("type");
+		return std::make_shared<PluginAction>(type, std::move(process), std::move(params));
 	}
 
 	if (error) *error = "Unknown action type: " + type;

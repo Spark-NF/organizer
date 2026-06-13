@@ -1,14 +1,15 @@
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QStandardPaths>
 #include <catch.h>
 #include "conditions/comparators/and-comparator.h"
 #include "conditions/comparators/glob-comparator.h"
 #include "conditions/comparators/or-comparator.h"
 #include "conditions/comparators/range-comparator.h"
 #include "conditions/comparators/regex-comparator.h"
-#include "conditions/content-condition.h"
 #include "conditions/condition-loader.h"
 #include "conditions/condition.h"
+#include "conditions/content-condition.h"
 #include "conditions/extractors/plain-text-extractor.h"
 #include "conditions/loader-condition.h"
 #include "conditions/loaders/created-loader.h"
@@ -17,6 +18,8 @@
 #include "conditions/loaders/filesize-loader.h"
 #include "conditions/loaders/last-modified-loader.h"
 #include "conditions/loaders/path-loader.h"
+#include "conditions/loaders/plugin-loader.h"
+#include "plugin-registry.h"
 
 
 TEST_CASE("ConditionLoader")
@@ -204,6 +207,26 @@ TEST_CASE("ConditionLoader")
 			};
 
 			REQUIRE(ConditionLoader::load(data) != nullptr);
+		}
+
+		SECTION("Plugin condition")
+		{
+			if (QStandardPaths::findExecutable("python3").isEmpty())
+				SKIP("python3 not installed");
+
+			PluginRegistry::instance().initialize({QString(TEST_RESOURCES)});
+
+			QJsonObject data {
+				{ "data", "plugin_loader" },
+				{ "glob", "*.txt" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<PluginLoader>(condition->loader()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
+
+			PluginRegistry::instance().reset();
 		}
 	}
 }

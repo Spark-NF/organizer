@@ -4,4 +4,5 @@ nav:
     - getting-started.md
     - cli.md
     - configuration
+    - plugins
   - Issue Tracker: https://github.com/Spark-NF/organizer/issues
