@@ -7,7 +7,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardPaths>
-#include <QtGlobal>
 #include "processes/plugin-process.h"
 
 
@@ -36,11 +35,13 @@ void PluginRegistry::initialize(const QStringList &paths)
 
 void PluginRegistry::initializeDefault()
 {
-	initialize({
-		qEnvironmentVariable("ORGANIZER_PLUGINS"),
-		QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/plugins",
-		QCoreApplication::applicationDirPath() + "/plugins",
-	});
+	QStringList paths = {qEnvironmentVariable("ORGANIZER_PLUGINS")};
+	paths += QStandardPaths::locateAll(QStandardPaths::AppDataLocation, "plugins", QStandardPaths::LocateDirectory);
+	#if defined(Q_OS_LINUX)
+		// Already included in AppDataLocation on other platforms
+		paths << QCoreApplication::applicationDirPath() + "/plugins";
+	#endif
+	initialize(paths);
 }
 
 void PluginRegistry::reset()

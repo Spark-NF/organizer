@@ -19,6 +19,7 @@ A loader is a string that identifies what data to extract from a file. It is use
 * `last_modified`: the last modified time of the file
 * `mime_type`: the MIME type of the file (e.g. `image/jpeg`), detected using the file extension first, then the file content
 * `path`: the canonical absolute path of the file
+* `scene`: metadata parsed from the filename using [guessit](https://github.com/guessit-io/guessit) (e.g. title, season, episode), requires Python and `guessit` to be installed (`pip install guessit`)
 * `stem`: the filename without its last extension (e.g. `archive.tar` from `archive.tar.gz`)
 
 ## Template filters
@@ -96,6 +97,27 @@ Example:
 ```
 
 Template variable: `{id3.Artist}`
+
+### scene
+
+Parses the filename using [guessit](https://github.com/guessit-io/guessit) and exposes all extracted fields as sub-fields. See the [guessit documentation](https://guessit-io.github.io/guessit/properties/) for the full list.
+
+Commonly used fields:
+
+* `{scene.title}`: show or movie title
+* `{scene.season}`: season number
+* `{scene.episode}`: episode number (first episode for multi-episode files)
+* `{scene.year}`: year, if present in the filename
+
+Example:
+
+```json5
+{
+    "data": "scene",
+    "tag": "season",
+    "in": [1]
+}
+```
 
 ### extension
 

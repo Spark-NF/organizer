@@ -58,6 +58,7 @@ add_subdirectory(gui)
 add_subdirectory(drop)
 add_subdirectory(cli)
 add_subdirectory(tests)
+add_subdirectory(plugins)
 
 # Install
 if(UNIX AND (NOT APPLE))
@@ -67,3 +68,12 @@ if(UNIX AND (NOT APPLE))
 	install(FILES "dist/linux/hicolor/128x128/organizer.png" DESTINATION "share/icons/hicolor/128x128/apps")
 	install(FILES "dist/linux/organizer.appdata.xml" DESTINATION "share/metainfo")
 endif()
+
+# Copy plugins to build directory (for dev builds and macOS installs)
+add_custom_target(copy-plugins ALL
+	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/plugins/src" "$<TARGET_FILE_DIR:cli>/plugins"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/plugins/src" "$<TARGET_FILE_DIR:drop>/plugins"
+	COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/plugins/src" "$<TARGET_FILE_DIR:gui>/plugins"
+	COMMENT "Copying plugins to build directories"
+)
+add_dependencies(copy-plugins cli drop gui)

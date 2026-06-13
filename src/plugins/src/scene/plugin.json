@@ -1,0 +1,8 @@
+{
+    "name": "scene",
+    "cmd": "python3",
+    "args": ["plugin.py"],
+    "provides": {
+        "loaders": ["scene"]
+    }
+}

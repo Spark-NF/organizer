@@ -15,13 +15,16 @@ loaded; if two plugins provide the same key, the first path in the list wins.
 
     1. `%ORGANIZER_PLUGINS%` (if set)
     2. `%APPDATA%\Organizer\plugins\`
-    3. `<install directory>\plugins\`
+    3. `%ProgramData%\Organizer\plugins\`
+    4. `<install directory>\plugins\`
 
 === "Linux"
 
     1. `$ORGANIZER_PLUGINS` (if set)
     2. `~/.local/share/organizer/plugins/`
-    3. `<install directory>/plugins/`
+    3. `/usr/local/share/organizer/plugins/`
+    4. `/usr/share/organizer/plugins/`
+    5. `<install directory>/plugins/`
 
 === "macOS"
 
