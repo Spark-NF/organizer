@@ -2,6 +2,7 @@ site_name: Organizer
 site_url: https://spark-nf.github.io/organizer
 repo_url: https://github.com/Spark-NF/organizer
 repo_name: Spark-NF/organizer
+edit_uri: edit/main/docs/
 copyright: This project is maintained by <a href="https://github.com/Spark-NF" data-label="Owner">Spark-NF</a>
 use_directory_urls: false
 
