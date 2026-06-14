@@ -5,7 +5,7 @@
 
 TEST_CASE("InComparator")
 {
-	SECTION("case-insensitive by default")
+	SECTION("Case-insensitive by default")
 	{
 		InComparator comparator(QStringList{ "jpg", "jpeg", "png" });
 		REQUIRE(comparator.match("jpg") == true);
@@ -16,11 +16,17 @@ TEST_CASE("InComparator")
 		REQUIRE(comparator.match("") == false);
 	}
 
-	SECTION("case-sensitive when enabled")
+	SECTION("Case-sensitive when enabled")
 	{
 		InComparator comparator(QStringList{ "jpg", "png" }, true);
 		REQUIRE(comparator.match("jpg") == true);
 		REQUIRE(comparator.match("JPG") == false);
 	}
 
+	SECTION("Accepts only strings")
+	{
+		InComparator comparator(QStringList{ "jpg" });
+		REQUIRE(comparator.accepts(QMetaType::fromType<QString>()) == true);
+		REQUIRE(comparator.accepts(QMetaType::fromType<int>()) == false);
+	}
 }

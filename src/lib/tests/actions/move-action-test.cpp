@@ -4,6 +4,7 @@
 #include <catch.h>
 #include "actions/move-action.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/failing-filesystem.h"
 #include "media.h"
 #include <catch2/generators/catch_generators.hpp>
 
@@ -125,6 +126,50 @@ TEST_CASE("MoveAction")
 			REQUIRE(action.execute(media, fs, &error) == false);
 			REQUIRE(!error.isEmpty());
 			REQUIRE(file.remove());
+		}
+	}
+
+	SECTION("requiredKeys")
+	{
+		MoveAction action(TemplateString("{extension}/subdir"), true, false);
+		const auto keys = action.requiredKeys();
+		REQUIRE(keys.size() == 1);
+		REQUIRE(keys[0].first == QString("extension"));
+	}
+
+	SECTION("Error")
+	{
+		FailingFilesystem fs;
+		Media media("/src/file.bin");
+
+		SECTION("Error creating directory")
+		{
+			MoveAction action("/nonexistent/dest", true, false);
+			fs.failMkpath = true;
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(error.contains("Could not create directory"));
+		}
+
+		SECTION("Error removing file on overwrite")
+		{
+			MoveAction action("/dest", false, true);
+			fs.addPath("/dest");
+			fs.addPath("/dest/file.bin");
+			fs.failRemove = true;
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(error.contains("Could not remove"));
+		}
+
+		SECTION("Error moving file")
+		{
+			MoveAction action("/dest", false, false);
+			fs.addPath("/dest");
+			fs.failMove = true;
+			QString error;
+			REQUIRE(action.execute(media, fs, &error) == false);
+			REQUIRE(error.contains("Could not move"));
 		}
 	}
 }

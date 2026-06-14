@@ -3,6 +3,7 @@
 #include <catch.h>
 #include "actions/rename-action.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/failing-filesystem.h"
 #include "media.h"
 
 
@@ -101,6 +102,50 @@ TEST_CASE("RenameAction")
 			REQUIRE(action.execute(media, fs, &error) == false);
 			REQUIRE(!error.isEmpty());
 			REQUIRE(file.remove());
+		}
+	}
+
+	SECTION("requiredKeys")
+	{
+		RenameAction action(TemplateString("{extension}_file"), false);
+		const auto keys = action.requiredKeys();
+		REQUIRE(keys.size() == 1);
+		REQUIRE(keys[0].first == QString("extension"));
+	}
+
+	SECTION("Error")
+	{
+		FailingFilesystem failFs;
+		Media media("/src/file.bin");
+
+		SECTION("Error creating directory")
+		{
+			RenameAction action("subdir/new_name.bin", false);
+			failFs.failMkpath = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create directory"));
+		}
+
+		SECTION("Error removing file on overwrite")
+		{
+			RenameAction action("new_name.bin", true);
+			failFs.addPath("/src");
+			failFs.addPath("/src/new_name.bin");
+			failFs.failRemove = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not remove existing file"));
+		}
+
+		SECTION("Error moving file")
+		{
+			RenameAction action("new_name.bin", false);
+			failFs.addPath("/src");
+			failFs.failMove = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not rename file"));
 		}
 	}
 }

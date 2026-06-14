@@ -32,4 +32,22 @@ TEST_CASE("ProcessAction")
 		Media media("test.jpg");
 		REQUIRE(action.execute(media, fs) == true);
 	}
+
+	SECTION("Non-zero exit code")
+	{
+		#if defined(Q_OS_WINDOWS)
+			const QString command = "cmd";
+			const QStringList args { "/C", "exit 1" };
+		#else
+			const QString command = "sh";
+			const QStringList args { "-c", "exit 1" };
+		#endif
+
+		ProcessAction action(command, args, 30000);
+
+		Media media("test.jpg");
+		QString error;
+		REQUIRE(action.execute(media, fs, &error) == false);
+		REQUIRE(error.contains("1"));
+	}
 }

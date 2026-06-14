@@ -14,4 +14,7 @@ TEST_CASE("AndComparator")
 	REQUIRE(comparator.match("hello_end") == false);
 	REQUIRE(comparator.match("start_hello") == false);
 	REQUIRE(comparator.match("does_not_match") == false);
+
+	REQUIRE(comparator.accepts(QMetaType::fromType<QString>()) == true);
+	REQUIRE(comparator.accepts(QMetaType::fromType<int>()) == false);
 }

@@ -46,6 +46,13 @@ TEST_CASE("PlainTextExtractor")
 
 	SECTION("Invalid")
 	{
+		SECTION("File not found")
+		{
+			Media media("/nonexistent/path/file.txt");
+			const bool ok = extractor.extractLines(media, [](const QString &) { return true; });
+			REQUIRE(ok == false);
+		}
+
 		SECTION("Binary file")
 		{
 			QTemporaryFile f;

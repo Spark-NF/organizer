@@ -4,6 +4,7 @@
 #include <catch.h>
 #include "actions/symbolic-link-action.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/failing-filesystem.h"
 #include "media.h"
 
 #if defined(Q_OS_WINDOWS)
@@ -147,6 +148,50 @@ TEST_CASE("SymbolicLinkAction")
 			REQUIRE(action.execute(media, fs, &error) == false);
 			REQUIRE(!error.isEmpty());
 			REQUIRE(file.remove());
+		}
+	}
+
+	SECTION("requiredKeys")
+	{
+		SymbolicLinkAction action(TemplateString("{extension}/link"), true, false);
+		const auto keys = action.requiredKeys();
+		REQUIRE(keys.size() == 1);
+		REQUIRE(keys[0].first == QString("extension"));
+	}
+
+	SECTION("Error")
+	{
+		FailingFilesystem failFs;
+		Media media("/src/file.bin");
+
+		SECTION("Error creating directory")
+		{
+			SymbolicLinkAction action("/nonexistent/dest/link", true, false);
+			failFs.failMkpath = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create directory"));
+		}
+
+		SECTION("Error removing file on overwrite")
+		{
+			SymbolicLinkAction action("/dest/link", false, true);
+			failFs.addPath("/dest");
+			failFs.addPath("/dest/link");
+			failFs.failRemove = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not remove existing file"));
+		}
+
+		SECTION("Error creating symbolic link")
+		{
+			SymbolicLinkAction action("/dest/link", false, false);
+			failFs.addPath("/dest");
+			failFs.failSymbolicLink = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create symbolic link"));
 		}
 	}
 }

@@ -148,6 +148,7 @@ TEST_CASE("TemplateString")
 			REQUIRE(TemplateString("{date|format:yyyy-MM-dd}").resolve(data) == QString("2024-06-03"));
 			REQUIRE(TemplateString("{date|format:yyyy/MM}").resolve(data) == QString("2024/06"));
 			REQUIRE(TemplateString("{date|format:MMM yyyy}").resolve(data) == QString("Jun 2024"));
+			REQUIRE(!TemplateString("{date|format}").resolve(data).isEmpty());
 		}
 
 		SECTION("Size filters")
@@ -178,6 +179,16 @@ TEST_CASE("TemplateString")
 			{
 				REQUIRE(TemplateString("{stem|default:file}").resolve({{"stem", "photo"}}) == QString("photo"));
 			}
+		}
+
+		SECTION("Unknown filter")
+		{
+			const QVariantMap data{
+				{"stem", QString("photo")},
+				{"date", QDateTime(QDate(2024, 1, 1), QTime(0, 0, 0))},
+			};
+			REQUIRE(!TemplateString("{stem|unknown_filter}").resolve(data).isEmpty());
+			REQUIRE(!TemplateString("{date|unknown_filter}").resolve(data).isEmpty());
 		}
 	}
 }

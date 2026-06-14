@@ -10,4 +10,7 @@ TEST_CASE("NotComparator")
 	REQUIRE(comparator.match("hello world") == false);
 	REQUIRE(comparator.match("world hello") == true);
 	REQUIRE(comparator.match("") == true);
+
+	REQUIRE(comparator.accepts(QMetaType::fromType<QString>()) == true);
+	REQUIRE(comparator.accepts(QMetaType::fromType<int>()) == false);
 }

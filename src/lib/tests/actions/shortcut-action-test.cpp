@@ -3,6 +3,7 @@
 #include <catch.h>
 #include "actions/shortcut-action.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/failing-filesystem.h"
 #include "media.h"
 
 
@@ -71,5 +72,38 @@ TEST_CASE("ShortcutAction")
 		REQUIRE(action.execute(media, fs, &error) == false);
 		REQUIRE(!error.isEmpty());
 		REQUIRE(file.remove());
+	}
+
+	SECTION("requiredKeys")
+	{
+		ShortcutAction action(TemplateString("{extension}/link.lnk"), false);
+		const auto keys = action.requiredKeys();
+		REQUIRE(keys.size() == 1);
+		REQUIRE(keys[0].first == QString("extension"));
+	}
+
+	SECTION("Error")
+	{
+		FailingFilesystem failFs;
+		Media media("/src/file.bin");
+
+		SECTION("Error removing file on overwrite")
+		{
+			ShortcutAction action("/dest/link.lnk", true);
+			failFs.addPath("/dest/link.lnk");
+			failFs.failRemove = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not remove existing file"));
+		}
+
+		SECTION("Error creating shortcut")
+		{
+			ShortcutAction action("/dest/link.lnk", false);
+			failFs.failShortcut = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create shortcut"));
+		}
 	}
 }

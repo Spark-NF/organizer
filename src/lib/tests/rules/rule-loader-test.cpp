@@ -20,6 +20,20 @@ TEST_CASE("RuleLoader")
 		REQUIRE(rule == nullptr);
 	}
 
+	SECTION("Invalid condition")
+	{
+		QJsonObject data {
+			{ "name", "Test rule" },
+			{ "conditions", QJsonArray { QJsonObject { { "data", "unknown_loader" } } } },
+			{ "actions", QJsonArray { QJsonObject { { "type", "trash" } } } },
+		};
+
+		QString error;
+		std::shared_ptr<Rule> rule = RuleLoader::load(data, &error);
+		REQUIRE(rule == nullptr);
+		REQUIRE(error.contains("Test rule"));
+	}
+
 	SECTION("Valid")
 	{
 		QJsonObject data {

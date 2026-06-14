@@ -117,6 +117,17 @@ TEST_CASE("CLI")
 		profileFile.write(QJsonDocument(jsonProfile).toJson());
 		profileFile.close();
 
+		SECTION("Missing profile option")
+		{
+			QProcess process;
+			process.start(program, { "test.txt" });
+			REQUIRE(process.waitForStarted());
+			REQUIRE(process.waitForFinished());
+
+			REQUIRE(process.exitCode() == 1);
+			REQUIRE(QString(process.readAllStandardError()).contains("Missing required option: --profile"));
+		}
+
 		SECTION("Profile file not found")
 		{
 			QProcess process;
@@ -375,24 +386,26 @@ TEST_CASE("CLI")
 
 		SECTION("Error executing rule")
 		{
+			auto useDir = GENERATE(false, true);
+
 			QTemporaryDir dir;
 
 			QFile file(dir.filePath("c.jpg"));
 			file.open(QFile::WriteOnly);
 			file.close();
-			file.copy(dir.filePath("jpg_c.jpg"));
+			QDir(dir.path()).mkdir("jpg_c.jpg");
 
 			QProcess process;
-			process.start(program, { "-p", profileFile.fileName(), file.fileName() });
+			process.start(program, { "-p", profileFile.fileName(), useDir ? dir.path() : file.fileName() });
 			REQUIRE(process.waitForStarted());
 			REQUIRE(process.waitForFinished());
 
 			REQUIRE(process.exitCode() == 1);
-			REQUIRE(QString(process.readAllStandardOutput()) == "");
 			REQUIRE(QString(process.readAllStandardError()) == "Error executing rule JPG on file " + file.fileName() + ": Destination already exists: " + dir.filePath("jpg_c.jpg") + br);
 
+			REQUIRE(QString(process.readAllStandardOutput()) == "");
 			const QStringList files = QDir(dir.path()).entryList(QDir::Files | QDir::NoDotAndDotDot);
-			REQUIRE(files == QStringList{ "c.jpg", "jpg_c.jpg" });
+			REQUIRE(files == QStringList{ "c.jpg" });
 		}
 
 		SECTION("Dry run")

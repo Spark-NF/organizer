@@ -38,22 +38,15 @@ TEST_CASE("ProcessCondition")
 		SECTION("Match")
 		{
 			auto comparator = std::make_shared<GlobComparator>("yes");
-			ProcessCondition cond(sh, makeArgs("printf yes"), 5000, comparator);
+			ProcessCondition cond(sh, makeArgs("echo yes"), 5000, comparator);
 			REQUIRE(cond.match(media) == true);
 		}
 
 		SECTION("No match")
 		{
 			auto comparator = std::make_shared<GlobComparator>("yes");
-			ProcessCondition cond(sh, makeArgs("printf no"), 5000, comparator);
+			ProcessCondition cond(sh, makeArgs("echo no"), 5000, comparator);
 			REQUIRE(cond.match(media) == false);
-		}
-
-		SECTION("Stdout is trimmed")
-		{
-			auto comparator = std::make_shared<GlobComparator>("yes");
-			ProcessCondition cond(sh, makeArgs("echo yes"), 5000, comparator);
-			REQUIRE(cond.match(media) == true);
 		}
 
 		SECTION("Exit code is irrelevant")

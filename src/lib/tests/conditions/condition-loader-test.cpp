@@ -4,6 +4,8 @@
 #include <catch.h>
 #include "conditions/comparators/and-comparator.h"
 #include "conditions/comparators/glob-comparator.h"
+#include "conditions/comparators/in-comparator.h"
+#include "conditions/comparators/not-comparator.h"
 #include "conditions/comparators/or-comparator.h"
 #include "conditions/comparators/range-comparator.h"
 #include "conditions/comparators/regex-comparator.h"
@@ -14,11 +16,19 @@
 #include "conditions/loader-condition.h"
 #include "conditions/loaders/created-loader.h"
 #include "conditions/loaders/directory-loader.h"
+#include "conditions/loaders/directory-name-loader.h"
+#include "conditions/loaders/empty-loader.h"
+#include "conditions/loaders/exif-loader.h"
+#include "conditions/loaders/extension-loader.h"
 #include "conditions/loaders/filename-loader.h"
 #include "conditions/loaders/filesize-loader.h"
+#include "conditions/loaders/id3-loader.h"
+#include "conditions/loaders/kind-loader.h"
 #include "conditions/loaders/last-modified-loader.h"
+#include "conditions/loaders/mime-type-loader.h"
 #include "conditions/loaders/path-loader.h"
 #include "conditions/loaders/plugin-loader.h"
+#include "conditions/loaders/stem-loader.h"
 #include "plugin-registry.h"
 
 
@@ -117,13 +127,13 @@ TEST_CASE("ConditionLoader")
 		{
 			QJsonObject data {
 				{ "data", "path" },
-				{ "regex", "^start_" },
+				{ "not", QJsonObject { { "regex", "^start_" } } },
 			};
 
 			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<PathLoader>(condition->loader()) != nullptr);
-			REQUIRE(std::dynamic_pointer_cast<RegexComparator>(condition->comparator()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<NotComparator>(condition->comparator()) != nullptr);
 		}
 
 		SECTION("Created condition")
@@ -150,6 +160,92 @@ TEST_CASE("ConditionLoader")
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<LastModifiedLoader>(condition->loader()) != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<RangeComparator>(condition->comparator()) != nullptr);
+		}
+
+		SECTION("Directory name condition")
+		{
+			QJsonObject data {
+				{ "data", "directory_name" },
+				{ "glob", "Photos" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<DirectoryNameLoader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("Empty condition")
+		{
+			QJsonObject data {
+				{ "data", "empty" },
+				{ "glob", "true" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<EmptyLoader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("EXIF condition")
+		{
+			QJsonObject data {
+				{ "data", "exif" },
+				{ "tag", "Artist" },
+				{ "glob", "*" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<ExifLoader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("ID3 condition")
+		{
+			QJsonObject data {
+				{ "data", "id3" },
+				{ "tag", "artist" },
+				{ "glob", "*" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<Id3Loader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("Kind condition")
+		{
+			QJsonObject data {
+				{ "data", "kind" },
+				{ "glob", "image" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<KindLoader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("Mime type condition")
+		{
+			QJsonObject data {
+				{ "data", "mime_type" },
+				{ "glob", "image/*" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<MimeTypeLoader>(condition->loader()) != nullptr);
+		}
+
+		SECTION("Stem condition")
+		{
+			QJsonObject data {
+				{ "data", "stem" },
+				{ "glob", "photo" },
+			};
+
+			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<StemLoader>(condition->loader()) != nullptr);
 		}
 
 		SECTION("And condition")
@@ -218,15 +314,90 @@ TEST_CASE("ConditionLoader")
 
 			QJsonObject data {
 				{ "data", "plugin_loader" },
-				{ "glob", "*.txt" },
+				{ "in", QJsonArray { "jpg", "png", "gif" } },
 			};
 
 			std::shared_ptr<LoaderCondition> condition = std::dynamic_pointer_cast<LoaderCondition>(ConditionLoader::load(data));
 			REQUIRE(condition != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<PluginLoader>(condition->loader()) != nullptr);
-			REQUIRE(std::dynamic_pointer_cast<GlobComparator>(condition->comparator()) != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<InComparator>(condition->comparator()) != nullptr);
 
 			PluginRegistry::instance().reset();
+		}
+
+		SECTION("Process condition")
+		{
+			QJsonObject data {
+				{ "type", "process" },
+				{ "cmd", "echo" },
+				{ "args", QJsonArray { "hello" } },
+				{ "timeout", 5000 },
+			};
+
+			std::shared_ptr<Condition> condition = ConditionLoader::load(data);
+			REQUIRE(condition != nullptr);
+		}
+
+		SECTION("PDF content condition")
+		{
+			QJsonObject data {
+				{ "type", "content" },
+				{ "extractor", "pdf" },
+				{ "glob", "*hello*" },
+			};
+
+			std::shared_ptr<ContentCondition> condition = std::dynamic_pointer_cast<ContentCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+		}
+
+		SECTION("DOCX content condition")
+		{
+			QJsonObject data {
+				{ "type", "content" },
+				{ "extractor", "docx" },
+				{ "glob", "*hello*" },
+			};
+
+			std::shared_ptr<ContentCondition> condition = std::dynamic_pointer_cast<ContentCondition>(ConditionLoader::load(data));
+			REQUIRE(condition != nullptr);
+		}
+	}
+
+	SECTION("Error")
+	{
+		SECTION("Unknown condition type")
+		{
+			QJsonObject data {{ "type", "unknown_type" }};
+			QString error;
+			REQUIRE(ConditionLoader::load(data, &error) == nullptr);
+			REQUIRE(error.contains("unknown_type"));
+		}
+
+		SECTION("Missing comparator")
+		{
+			QJsonObject data {{ "data", "filename" }};
+			QString error;
+			REQUIRE(ConditionLoader::load(data, &error) == nullptr);
+			REQUIRE(!error.isEmpty());
+		}
+
+		SECTION("Process condition missing cmd")
+		{
+			QJsonObject data {{ "type", "process" }};
+			QString error;
+			REQUIRE(ConditionLoader::load(data, &error) == nullptr);
+			REQUIRE(!error.isEmpty());
+		}
+
+		SECTION("Content condition missing comparator")
+		{
+			QJsonObject data {
+				{ "type", "content" },
+				{ "extractor", "text" },
+			};
+			QString error;
+			REQUIRE(ConditionLoader::load(data, &error) == nullptr);
+			REQUIRE(!error.isEmpty());
 		}
 	}
 }

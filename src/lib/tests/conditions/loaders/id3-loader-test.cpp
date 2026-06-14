@@ -11,6 +11,12 @@ TEST_CASE("Id3Loader")
 
 	const QString mp3 = QString(TEST_RESOURCES) + "/id3-sample.mp3";
 
+	SECTION("Empty tag")
+	{
+		Media media("/some/path.mp3");
+		REQUIRE(Id3Loader().load(media).isNull());
+	}
+
 	SECTION("Valid tag")
 	{
 		SECTION("Constructor")

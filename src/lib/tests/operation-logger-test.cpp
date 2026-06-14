@@ -1,6 +1,7 @@
 #include <catch.h>
 #include <QFile>
 #include <QTemporaryDir>
+#include <QTemporaryFile>
 #include <QTextStream>
 #include "operation-logger.h"
 
@@ -95,5 +96,19 @@ TEST_CASE("OperationLogger")
 		REQUIRE(!entries.isEmpty());
 		const QDateTime dt = QDateTime::fromString(entries[0][0], Qt::ISODate);
 		REQUIRE(dt.isValid());
+	}
+
+	SECTION("Invalid path")
+	{
+		// Use an existing regular file as if it were a directory, so mkpath fails
+		QTemporaryFile blockingFile;
+		blockingFile.open();
+		blockingFile.close();
+		const QString invalidPath = blockingFile.fileName() + "/history.log";
+
+		OperationLogger logger(invalidPath);
+		logger.logSkipped("/a.jpg");  // Silent no-op
+
+		REQUIRE(!QFile::exists(invalidPath));
 	}
 }

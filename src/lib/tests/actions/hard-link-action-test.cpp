@@ -4,6 +4,7 @@
 #include <catch.h>
 #include "actions/hard-link-action.h"
 #include "filesystem/real-filesystem.h"
+#include "filesystem/failing-filesystem.h"
 #include "media.h"
 
 #if defined(Q_OS_WINDOWS)
@@ -139,6 +140,50 @@ TEST_CASE("HardLinkAction")
 			QString error;
 			REQUIRE(action.execute(media, fs, &error) == false);
 			REQUIRE(!error.isEmpty());
+		}
+	}
+
+	SECTION("requiredKeys")
+	{
+		HardLinkAction action(TemplateString("{extension}/link"), true, false);
+		const auto keys = action.requiredKeys();
+		REQUIRE(keys.size() == 1);
+		REQUIRE(keys[0].first == QString("extension"));
+	}
+
+	SECTION("Error")
+	{
+		FailingFilesystem failFs;
+		Media media("/src/file.bin");
+
+		SECTION("Error creating directory")
+		{
+			HardLinkAction action("/nonexistent/dest/link", true, false);
+			failFs.failMkpath = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create directory"));
+		}
+
+		SECTION("Error removing file on overwrite")
+		{
+			HardLinkAction action("/dest/link", false, true);
+			failFs.addPath("/dest");
+			failFs.addPath("/dest/link");
+			failFs.failRemove = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not remove existing file"));
+		}
+
+		SECTION("Error creating hard link")
+		{
+			HardLinkAction action("/dest/link", false, false);
+			failFs.addPath("/dest");
+			failFs.failHardLink = true;
+			QString error;
+			REQUIRE(action.execute(media, failFs, &error) == false);
+			REQUIRE(error.contains("Could not create hard link"));
 		}
 	}
 }

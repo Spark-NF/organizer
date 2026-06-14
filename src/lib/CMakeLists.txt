@@ -18,7 +18,7 @@ target_link_libraries(${PROJECT_NAME} ${QT_LIBRARIES})
 
 # Tests
 file(GLOB_RECURSE SOURCES_TESTS "tests/*.cpp")
-include_directories("src/" "vendor/" "../tests/src/" "../vendor" "../vendor/catch/src")
+include_directories("src/" "vendor/" "tests/" "../tests/src/" "../vendor" "../vendor/catch/src")
 add_executable(${PROJECT_NAME}-tests ${SOURCES_TESTS})
 add_test(${PROJECT_NAME}-tests ${PROJECT_NAME}-tests)
 find_package(Qt6 COMPONENTS Test REQUIRED)

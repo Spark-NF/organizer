@@ -30,6 +30,14 @@ TEST_CASE("RangeComparator")
 		}
 	}
 
+	SECTION("Accepts numbers and dates")
+	{
+		RangeComparator comparator(0, 100);
+		REQUIRE(comparator.accepts(QMetaType::fromType<QDateTime>()) == true);
+		REQUIRE(comparator.accepts(QMetaType::fromType<double>()) == true);
+		REQUIRE(comparator.accepts(QMetaType::fromType<int>()) == true);
+	}
+
 	SECTION("Dates")
 	{
 		const QDateTime date = QDateTime::currentDateTimeUtc();

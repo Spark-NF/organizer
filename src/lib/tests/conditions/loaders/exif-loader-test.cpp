@@ -11,6 +11,12 @@ TEST_CASE("ExifLoader")
 
 	const QString jpg = QString(TEST_RESOURCES) + "/exif-sample.jpg";
 
+	SECTION("Empty tag")
+	{
+		Media media("/some/path.jpg");
+		REQUIRE(ExifLoader().load(media).isNull());
+	}
+
 	SECTION("Valid tag")
 	{
 		SECTION("Constructor")

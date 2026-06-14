@@ -89,6 +89,20 @@ TEST_CASE("ProfileLoader")
 			REQUIRE(profile->rules()[0][0]->name() == "Test rule");
 		}
 
+		SECTION("Unsupported version")
+		{
+			QJsonObject versionedProfile {
+				{ "version", 999 },
+				{ "name", "Test" },
+				{ "rules", QJsonArray() },
+			};
+
+			QString error;
+			const auto profile = ProfileLoader::load(versionedProfile, &error);
+			REQUIRE(profile == nullptr);
+			REQUIRE(error.contains("Unsupported profile version"));
+		}
+
 		SECTION("Bad rule fails the profile")
 		{
 			QJsonObject badProfile {

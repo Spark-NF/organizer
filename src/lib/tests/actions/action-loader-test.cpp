@@ -6,6 +6,7 @@
 #include "actions/action-loader.h"
 #include "plugin-registry.h"
 #include "actions/action.h"
+#include "actions/copy-action.h"
 #include "actions/delete-action.h"
 #include "actions/hard-link-action.h"
 #include "actions/move-action.h"
@@ -75,6 +76,18 @@ TEST_CASE("ActionLoader")
 
 	SECTION("Valid")
 	{
+		SECTION("Copy action")
+		{
+			QJsonObject data {
+				{ "type", "copy" },
+				{ "dest", "dir/" },
+			};
+
+			std::shared_ptr<Action> action = ActionLoader::load(data);
+			REQUIRE(action != nullptr);
+			REQUIRE(std::dynamic_pointer_cast<CopyAction>(action) != nullptr);
+		}
+
 		SECTION("Rename action")
 		{
 			QJsonObject data {
@@ -185,6 +198,17 @@ TEST_CASE("ActionLoader")
 			std::shared_ptr<Action> action = ActionLoader::load(data);
 			REQUIRE(action != nullptr);
 			REQUIRE(std::dynamic_pointer_cast<MultipleAction>(action) != nullptr);
+		}
+
+		SECTION("Multiple action with invalid inner action")
+		{
+			QJsonObject data {
+				{ "type", "multiple" },
+				{ "actions", QJsonArray { QJsonObject { { "type", "unknown_inner" } } } },
+			};
+
+			std::shared_ptr<Action> action = ActionLoader::load(data);
+			REQUIRE(action == nullptr);
 		}
 	}
 
